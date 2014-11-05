@@ -13,7 +13,6 @@ import org.alternativevision.gpx.GPXParser;
 import org.alternativevision.gpx.beans.GPX;
 import org.alternativevision.gpx.beans.Route;
 import org.alternativevision.gpx.beans.Track;
-import org.alternativevision.gpx.beans.TrackPoint;
 import org.alternativevision.gpx.beans.Waypoint;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.ClientProtocolException;
@@ -28,6 +27,7 @@ import uk.co.ordnancesurvey.gpx.extensions.RoutePointAzimuthParser;
 import uk.co.ordnancesurvey.gpx.extensions.RoutePointDirectionParser;
 import uk.co.ordnancesurvey.gpx.extensions.RoutePointDistanceParser;
 import uk.co.ordnancesurvey.gpx.extensions.RoutePointTimeParser;
+
 
 public class GraphHopperGPXParserRouteTest {
 
