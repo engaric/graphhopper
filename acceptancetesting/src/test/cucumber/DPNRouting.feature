@@ -5,7 +5,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route  (Mill lane-BUXTON)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB             |
       | 53.176062,-1.871472 | 53.154773,-1.77272 |
     Then I should be able to verify the waypoints on the route map:
@@ -18,7 +18,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route  (Chatswoth Park)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.211013,-1.619393 | 53.185757,-1.611969 |
     Then I should be able to verify the waypoints on the route map:
@@ -32,7 +32,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route (Musden Low)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.049589,-1.823866 | 53.076372,-1.853379 |
     Then I should be able to verify the waypoints on the route map:
@@ -45,7 +45,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route (A54)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.173064,-2.060321 | 53.214387,-2.017271 |
     Then I should be able to verify the waypoints on the route map:
@@ -58,7 +58,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route (Townhead )
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB             |
       | 53.122676,-1.909914 | 53.088159,-1.87142 |
     Then I should be able to verify the waypoints on the route map:
@@ -71,7 +71,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route (Martin's Low)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA             | pointB              |
       | 53.06535,-1.906169 | 53.100994,-1.956274 |
     Then I should be able to verify the waypoints on the route map:
@@ -84,7 +84,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route (Castleton Road)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.348832,-1.761122 | 53.197338,-1.594157 |
     Then I should be able to verify the waypoints on the route map:
@@ -97,7 +97,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route (Hernstone Lane )
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.300714,-1.786126 | 53.287803,-1.816746 |
     Then I should be able to verify the waypoints on the route map:
@@ -110,7 +110,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route (Monyash Road)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.194909,-1.710481 | 53.156696,-1.634947 |
     Then I should be able to verify the waypoints on the route map:
@@ -123,7 +123,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route (Whitfield lane)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.142876,-1.642599 | 53.163897,-1.714249 |
     Then I should be able to verify the waypoints on the route map:
@@ -136,7 +136,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route  (Cardlemere Lane)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB             |
       | 53.114295,-1.762789 | 53.086961,-1.69626 |
     Then I should be able to verify the waypoints on the route map:
@@ -149,7 +149,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route using one intermediate point ( Old Coalpit Lane)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via via "<pointC>"
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via "<pointC>"
       | pointA              | pointB            | pointC              |
       | 53.238625,-1.794511 | 53.1651,-1.776435 | 53.125221,-1.871205 |
     Then I should be able to verify the waypoints on the route map:
@@ -164,7 +164,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route using one intermediate point ( Newhouses Farm)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via via "<pointC>"
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via "<pointC>"
       | pointA              | pointB             | pointC              |
       | 53.303058,-1.836061 | 53.28261,-1.761964 | 53.233207,-1.633878 |
     Then I should be able to verify the waypoints on the route map:
@@ -178,7 +178,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route using one intermediate point ( Bakewell)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via via "<pointC>"
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via "<pointC>"
       | pointA              | pointB              | pointC              |
       | 53.138247,-1.752507 | 53.195653,-1.762655 | 53.211574,-1.682278 |
     Then I should be able to verify the waypoints on the route map:
@@ -193,7 +193,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route  using 2 intermediate waypoints (Mill Lane)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via via "<pointC>" and "<pointD>"
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via "<pointC>" and "<pointD>"
       | pointA              | pointB              | pointC             | pointD              |
       | 53.139805,-1.803217 | 53.133646,-1.826223 | 53.14993,-1.868096 | 53.181298,-1.869034 |
     Then I should be able to verify the waypoints on the route map:
@@ -208,7 +208,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route  using 2 intermediate waypoints (Tag Lane)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via via "
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via "
       | pointA              | pointB              | pointC              | pointD              |
       | 53.190346,-1.802704 | 53.239419,-1.818421 | 53.280601,-1.764495 | 53.233207,-1.633878 |
     Then I should be able to verify the waypoints on the route map:
@@ -224,7 +224,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  Road Names on a Walking Route  using 2 intermediate waypoints (Dowlow Farm)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
       | pointA              | pointB              | pointC              | pointD             |
       | 53.206965,-1.839021 | 53.203607,-1.857557 | 53.149631,-1.867364 | 53.11417,-1.895082 |
     Then I should be able to verify the waypoints on the route map:
@@ -241,7 +241,7 @@ Feature: Verify a route from A to B
   #scree
   @Routing
   Scenario Outline: Verify DPN Route without Scree avoidance -(scree)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.267104,-1.818304 | 53.131858,-1.661941 |
     Then I should be able to verify the waypoints on the route map:
@@ -254,7 +254,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify DPN Route with Scree avoidance -(scree)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.267104,-1.818304 | 53.131858,-1.661941 |
     Then I should be able to verify the waypoints not on the route map:
@@ -269,7 +269,7 @@ Feature: Verify a route from A to B
   ##############
   @Routing
   Scenario Outline: Verify DPN Route without cliff avoidance -(cliff)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA             | pointB              |
       | 53.31676,-1.631903 | 53.156465,-1.908797 |
     Then I should be able to verify the waypoints on the route map:
@@ -282,7 +282,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify DPN Route with cliff avoidance -(cliff)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA             | pointB              |
       | 53.31676,-1.631903 | 53.156465,-1.908797 |
     Then I should be able to verify the waypoints not on the route map:
@@ -295,7 +295,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify DPN Route with cliff avoidance -(cliff)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA            | pointB              |
       | 53.5534,-1.983177 | 53.540061,-1.978324 |
     Then I should be able to verify the waypoints on the route map:
@@ -310,7 +310,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify DPN Route with cliff avoidance -(cliff)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA            | pointB              |
       | 53.5534,-1.983177 | 53.540061,-1.978324 |
     Then I should be able to verify the waypoints not on the route map:
@@ -326,7 +326,7 @@ Feature: Verify a route from A to B
   #boulders
   @Routing
   Scenario Outline: Verify DPN Route without boulders avoidance -(boulders)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.311217,-1.629849 | 53.156465,-1.908797 |
     Then I should be able to verify the waypoints on the route map:
@@ -339,7 +339,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify DPN Route with boulders avoidance -(boulders)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.311217,-1.629849 | 53.156465,-1.908797 |
     Then I should be able to verify the waypoints not on the route map:
@@ -353,7 +353,7 @@ Feature: Verify a route from A to B
   #Multiple Avoidance
   @Routing
   Scenario Outline: Verify DPN Route without boulders avoidance -(boulders)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA            | pointB              |
       | 53.5534,-1.983177 | 53.490733,-1.977715 |
     Then I should be able to verify the waypoints on the route map:
@@ -367,7 +367,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify DPN Route with boulders avoidance -(boulders)
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA            | pointB              |
       | 53.5534,-1.983177 | 53.490733,-1.977715 |
     Then I should be able to verify the waypoints not on the route map:
@@ -381,7 +381,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify DPN Route with boulders avoidance -()
-    Given I request a route between pointA and pointB as a "<routeOptions>" from RoutingAPI and avoid "<avoidances>" via
+    Given I request a route between points with "<routeOptions>" from RoutingAPI and avoid "<avoidances>"
       | pointA              | pointB              |
       | 53.298525,-1.679533 | 53.203145,-1.799292 |
     Then I should be able to verify the waypoints on the route map:

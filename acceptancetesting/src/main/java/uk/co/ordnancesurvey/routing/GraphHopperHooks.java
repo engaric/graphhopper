@@ -131,7 +131,7 @@ public class GraphHopperHooks {
 
 
 
-@Given("^I request a route between pointA and pointB as a \"([^\"]*)\" from RoutingAPI and avoid \"([^\"]*)\" via$")
+@Given("^I request a route between points with \"([^\"]*)\" from RoutingAPI and avoid \"([^\"]*)\"$")
 public void getRouteWithAvoidancesintermediatepoints(String routeOptions,String avoidances,DataTable dt)
 		throws InterruptedException {
 	
