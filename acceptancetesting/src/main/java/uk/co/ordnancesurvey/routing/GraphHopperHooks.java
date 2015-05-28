@@ -198,15 +198,15 @@ public class GraphHopperHooks {
 		requestParameters.put(key, tempList);
 	}
 
-	@Given("^I have route points as$")
-	public void setRoutingpoints(DataTable dt) {
+	@Given("^I have route ([^\"]*) as$")
+	public void setRoutingpoints(String paramName,DataTable dt) {
 		List<List<String>> data = dt.raw();
 
 		String[] points = new String[data.get(1).size()];
 		points = data.get(1).toArray(points);
 
 		for (int i = 0; i < points.length; i++) {
-			addParameter("point", points[i]);
+			addParameter(paramName, points[i]);
 		}
 
 	}
