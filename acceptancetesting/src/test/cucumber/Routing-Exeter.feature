@@ -644,3 +644,23 @@ Feature: Verify a route from A to B
     Examples: 
       | routeOptions | avoidances |
       | car          |            |
+
+  @yogi
+  Scenario Outline: 
+    Given I have route points as
+    | pointA              | pointB              | 
+    | 50.729961,-3.524853 | 50.723364,-3.523895 | 
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    When I request for a route
+    Then I should be able to verify the responseCode as "<responseCode>"
+    Then I should be able to verify the response message as "<errorMessage>"
+    
+    
+
+    Examples: 
+      | vehicleType | avoidances | routeType |responseFormat|responseCode|errorMessage|
+      | cars         |            | fastest   |json|200|OK|
+
