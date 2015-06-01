@@ -617,7 +617,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			// String time = (String) trackPointsList.get(i).get("time");
 
 			Waypoint trackPoint = buildWayPoint(waypointco);
-			if (IntegrationTestProperties.getTestProperty("routeType").equals(
+			if (requestParameters.get("type").get(0).equals(
 					"gpx")) {
 				assertTrue(!GPHService.isWayPointOnTrack(trackPoint, GPHService
 						.getTracks().iterator().next()));
@@ -766,13 +766,24 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					.getTestProperty("graphHopperWebUrl"));
 		}
 		sb.append("route?");
-		if (requestParameters.get("type").get(0) == "") {
+		
+		if (!requestParameters.containsKey("type") )
+		{			
+			ArrayList<String> responseType = new ArrayList<String>();
+			responseType.add(IntegrationTestProperties
+					.getTestProperty("routeType"));
+			requestParameters.put("type",responseType);
+		
+		}
+		else
+			if (requestParameters.get("type").get(0).isEmpty()){
+		
 			requestParameters.remove("type");
 			ArrayList<String> responseType = new ArrayList<String>();
 			responseType.add(IntegrationTestProperties
 					.getTestProperty("routeType"));
 			requestParameters.put("type", responseType);
-		}
+			}
 		ArrayList<String> pointscoding = new ArrayList<String>();
 		pointscoding.add("false");
 		requestParameters.put("points_encoded", pointscoding);
