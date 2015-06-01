@@ -2,7 +2,7 @@ package com.graphhopper.routing.util;
 
 import java.util.ArrayList;
 
-public class OsBikeFlagEncoder extends BikeFlagEncoder {
+public class OsBikeFlagEncoder extends MountainBikeFlagEncoder {
 	
 		public OsBikeFlagEncoder() {
 	        super(4, 2, 0);
@@ -27,5 +27,13 @@ public class OsBikeFlagEncoder extends BikeFlagEncoder {
 				encoderDecorators = new ArrayList<EncoderDecorator>(2);
 			}
 			encoderDecorators.add(new OsAvoidanceDecorator());
+		}
+		
+		@Override
+		public boolean supports(Class<?> feature) {
+			 if (super.supports(feature))
+		            return true;
+			 
+			 return (PriorityWithAvoidancesWeighting.class.isAssignableFrom(feature));
 		}
 }
