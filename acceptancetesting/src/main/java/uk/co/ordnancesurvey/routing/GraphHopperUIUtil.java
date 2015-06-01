@@ -2,7 +2,29 @@ package uk.co.ordnancesurvey.routing;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.*;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ADD_WAYPOINT;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.INSTRUCTIONS;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_SEARCH;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_BIKE;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_CAR;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_WALK;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.TOTAL_ROUTE_TIME;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_ARoad;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Boulders;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Cliff;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_InlandWater;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Marsh;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Mud;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_QuarryOrPit;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Rock;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Sand;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Scree;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Shingle;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.dropDown;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.fastest_RButton;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.settingsButton;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.shortest_RButton;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.waypoint;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -11,17 +33,19 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TimeZone;
 
 import javax.imageio.ImageIO;
 
 import org.alternativevision.gpx.beans.Route;
 import org.alternativevision.gpx.beans.Waypoint;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -32,13 +56,12 @@ import org.slf4j.LoggerFactory;
 import uk.co.ordnancesurvey.gpx.extensions.ExtensionConstants;
 import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXParserRouteTest;
 import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperJSONParser;
-import uk.co.ordnancesurvey.webtests.base.ComponentByXPATH;
+import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
 import uk.co.ordnancesurvey.webtests.base.ComponentID;
-import uk.co.ordnancesurvey.webtests.base.ComponentIdentifier;
 import uk.co.ordnancesurvey.webtests.base.ImageComparison;
 import uk.co.ordnancesurvey.webtests.multiplatform.MultiplatformTest;
 import uk.co.ordnancesurvey.webtests.platforms.BrowserPlatformOptions;
-import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
+import cucumber.api.DataTable;
 
 public class GraphHopperUIUtil extends MultiplatformTest {
 
@@ -47,6 +70,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	String testOn = IntegrationTestProperties.getTestProperty("testON");
 	GraphHopperGPXParserRouteTest GPHService = new GraphHopperGPXParserRouteTest();
 	GraphHopperJSONParser GPHJsonService = new GraphHopperJSONParser();
+	private Map<String, ArrayList<String>> requestParameters = new HashMap<String, ArrayList<String>>();
 
 	JavascriptExecutor js = (JavascriptExecutor) driver;
 	WebElement we;
@@ -68,11 +92,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	}
 
 	private void init() throws InterruptedException {
-		// baseUrl = IntegrationTestProperties
-		// .getTestProperty("graphHopperWebUrl");
-		// if (null == baseUrl) {
-		// baseUrl = "http://os-graphhopper.elasticbeanstalk.com/";
-		// }
 
 		if (!testOn.equalsIgnoreCase("SERVICE")) {
 			initialiseWebDriver();
@@ -177,16 +196,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					break;
 				}
 			}
-			/*
-			 * switch (routeOption) { case "shortavoid":
-			 * clickElement(shortest_RButton); break; case "fastavoid":
-			 * clickElement(fastest_RButton); break; case "fastest":
-			 * 
-			 * clickElement(fastest_RButton); break; case "shortest":
-			 * clickElement(shortest_RButton); break;
-			 * 
-			 * default: break; }
-			 */if (routeOption.equalsIgnoreCase("shortavoid")) {
+
+			if (routeOption.equalsIgnoreCase("shortavoid")) {
 				clickElement(shortest_RButton);
 			}
 
@@ -332,7 +343,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					wayPointDescription, avoidance);
 			break;
 		case "SERVICE":
-			if (IntegrationTestProperties.getTestProperty("routeType").equals(
+			if (requestParameters.get("type").get(0).equals(
 					"gpx")) {
 				wp = buildWayPoint(wayPoint_Coordinates, wayPointDescription,
 						azimuth, direction, time, distance);
@@ -352,7 +363,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			isWayPointonRouteMapUI = verifyInstructionThroughUI(wayPointIndex,
 					wayPointDescription, avoidance);
 
-			if (IntegrationTestProperties.getTestProperty("routeType").equals(
+			if (requestParameters.get("type").get(0).equals(
 					"gpx")) {
 				wp = buildWayPoint(wayPoint_Coordinates, wayPointDescription,
 						azimuth, direction, time, distance);
@@ -367,7 +378,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				isWayPointonRouteMapService = GPHJsonService
 						.isWayPointinPath(wp);
 			}
-			isWayPointonRouteMap=(isWayPointonRouteMapUI) && (isWayPointonRouteMapService);
+			isWayPointonRouteMap = (isWayPointonRouteMapUI)
+					&& (isWayPointonRouteMapService);
 
 			break;
 		}
@@ -397,9 +409,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	public boolean isWayPointNotonRouteMap(
 			List<Map<String, String>> waypointList) {
-		
+
 		boolean isWayPointNotonsRouteMap = true;
-		boolean isWayPointNotonRouteMap=true;
+		boolean isWayPointNotonRouteMap = true;
 		for (int i = 0; i < waypointList.size(); i++) {
 
 			if (waypointList.get(i).size() > 2) {
@@ -420,9 +432,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				isWayPointNotonRouteMap = isWayPointonRouteMap(wayPointIndex,
 						waypointco, waypointdesc, azimuth, direction, time,
 						distance, avoidance);
-				
-				isWayPointNotonsRouteMap=(isWayPointNotonsRouteMap&&isWayPointNotonRouteMap);
-					
+
+				isWayPointNotonsRouteMap = (isWayPointNotonsRouteMap && isWayPointNotonRouteMap);
+
 			}
 
 			else
@@ -435,15 +447,13 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 						"waypointdesc");
 				isWayPointNotonRouteMap = verifyInstructionThroughUI(
 						wayPointIndex, waypointdesc, "");
-				
-				isWayPointNotonsRouteMap=(isWayPointNotonsRouteMap||isWayPointNotonRouteMap);
-				
+
+				isWayPointNotonsRouteMap = (isWayPointNotonsRouteMap || isWayPointNotonRouteMap);
 
 			}
 
 		}
 		return isWayPointNotonsRouteMap;
-
 
 	}
 
@@ -470,10 +480,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				isWayPointonRouteMap = isWayPointonRouteMap(wayPointIndex,
 						waypointco, waypointdesc, azimuth, direction, time,
 						distance, avoidance);
-				
-				isWayPointsonRouteMap=isWayPointsonRouteMap&&isWayPointonRouteMap;
 
-					
+				isWayPointsonRouteMap = isWayPointsonRouteMap
+						&& isWayPointonRouteMap;
+
 			}
 
 			else
@@ -486,9 +496,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 						"waypointdesc");
 				isWayPointonRouteMap = verifyInstructionThroughUI(
 						wayPointIndex, waypointdesc, "");
-				
-				isWayPointsonRouteMap=isWayPointsonRouteMap&&isWayPointonRouteMap;
-				
+
+				isWayPointsonRouteMap = isWayPointsonRouteMap
+						&& isWayPointonRouteMap;
 
 			}
 
@@ -496,10 +506,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		return isWayPointsonRouteMap;
 
 	}
-	
-	
-
-	
 
 	public void verifyTotalRouteTime(String totalRouteTime)
 			throws ParseException {
@@ -705,6 +711,237 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		return GPHJsonService.getNearestPointDistance();
 
+	}
+
+	protected void addParameter(String key, String value) {
+		ArrayList<String> tempList = null;
+		if (requestParameters.containsKey(key)) {
+			tempList = requestParameters.get(key);
+			if (tempList == null)
+				tempList = new ArrayList<String>();
+			tempList.add(value);
+		} else {
+			tempList = new ArrayList<String>();
+			tempList.add(value);
+		}
+		requestParameters.put(key, tempList);
+	}
+
+	protected void addRoutePointsToParameters(String paramName, DataTable dt) {
+		List<List<String>> data = dt.raw();
+
+		String[] points = new String[data.get(1).size()];
+		points = data.get(1).toArray(points);
+
+		for (int i = 0; i < points.length; i++) {
+			addParameter(paramName, points[i]);
+		}
+
+	}
+
+	public void getRouteFromServiceWithParameters(StringBuffer sb) {
+
+		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx"))
+				 {
+			GPHService.parseRoute(sb);
+		}
+
+		else {
+
+			GPHJsonService.parse(sb);
+		}
+
+	}
+
+	protected void getRouteFromServiceWithParameters() {
+
+		StringBuffer sb = new StringBuffer();
+
+		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {
+			sb.append(IntegrationTestProperties
+					.getTestProperty("graphHopperWebUrlViaApigee"));
+
+		} else {
+			sb.append(IntegrationTestProperties
+					.getTestProperty("graphHopperWebUrl"));
+		}
+		sb.append("route?");
+		if (requestParameters.get("type").get(0) == "") {
+			requestParameters.remove("type");
+			ArrayList<String> responseType = new ArrayList<String>();
+			responseType.add(IntegrationTestProperties
+					.getTestProperty("routeType"));
+			requestParameters.put("type", responseType);
+		}
+		ArrayList<String> pointscoding = new ArrayList<String>();
+		pointscoding.add("false");
+		requestParameters.put("points_encoded", pointscoding);
+		for (Entry<String, ArrayList<String>> entry : requestParameters
+				.entrySet()) {
+			String key = entry.getKey();
+			ArrayList<String> value = entry.getValue();
+			for (String string : value) {
+				sb.append("&" + key + "=" + string);
+			}
+
+		}
+
+		getRouteFromServiceWithParameters(sb);
+	}
+
+	/*
+	 * try {
+	 * 
+	 * CloseableHttpClient httpClient = HttpClientUtils.createClient(); HttpGet
+	 * httpget = new HttpGet(sb.toString());
+	 * 
+	 * CloseableHttpResponse clientResponse = httpClient .execute(httpget);
+	 * 
+	 * getRouteFromServiceWithParameters(sb);
+	 * 
+	 * String routeResponse = IOUtils.toString(clientResponse.getEntity()
+	 * .getContent(), "UTF-8");
+	 * 
+	 * String routeResponsecode = String.valueOf(clientResponse
+	 * .getStatusLine().getStatusCode()); String routeResponseMessage =
+	 * clientResponse.getStatusLine() .getReasonPhrase();
+	 * 
+	 * 
+	 * } catch (IOException e) {
+	 * 
+	 * System.out.println(e.getMessage()); }
+	 */
+
+	public void getRouteFromUI() {
+
+		String weighting = requestParameters.get("weighting").get(0);
+
+		String avoidances = requestParameters.get("avoidances").get(0);
+		String vehicle = requestParameters.get("vehicle").get(0);
+
+		ArrayList<String> points = requestParameters.get("point");
+		switch (vehicle) {
+		case "car":
+			clickElement(ROUTE_TYPE_CAR);
+
+			break;
+		case "bike":
+			clickElement(ROUTE_TYPE_BIKE);
+			break;
+		case "foot":
+			clickElement(ROUTE_TYPE_WALK);
+			break;
+		default:
+			clickElement(ROUTE_TYPE_CAR);
+			break;
+
+		}
+		clickElement(settingsButton);
+
+		if (!avoidances.equals("")) {
+			for (int i = 0; i < avoidances.split(",").length; i++) {
+				String avoidance = avoidances.split(",")[i];
+				switch (avoidance.toLowerCase().trim()) {
+
+				case "aroad":
+					clickElement(avoidance_ARoad);
+					break;
+
+				case "boulders":
+					clickElement(avoidance_Boulders);
+					break;
+				case "cliff":
+					clickElement(avoidance_Cliff);
+					break;
+				case "inlandwater":
+					clickElement(avoidance_InlandWater);
+					break;
+				case "marsh":
+					clickElement(avoidance_Marsh);
+					break;
+				case "quarryorpit":
+					clickElement(avoidance_QuarryOrPit);
+					break;
+				case "scree":
+					clickElement(avoidance_Scree);
+					break;
+				case "rock":
+					clickElement(avoidance_Rock);
+					break;
+				case "mud":
+					clickElement(avoidance_Mud);
+					break;
+
+				case "sand":
+					clickElement(avoidance_Sand);
+					break;
+
+				case "shingle":
+					clickElement(avoidance_Shingle);
+					break;
+
+				default:
+					break;
+				}
+			}
+
+			if (weighting.equalsIgnoreCase("shortavoid")) {
+				clickElement(shortest_RButton);
+			}
+
+			else {
+				clickElement(fastest_RButton);
+			}
+
+		}
+
+		else {
+			if (weighting.equalsIgnoreCase("shortest")) {
+				clickElement(shortest_RButton);
+			}
+
+			else {
+				clickElement(fastest_RButton);
+			}
+		}
+
+		for (int i = 0; i < points.size() - 2; i++)
+
+		{
+			clickElement(ADD_WAYPOINT);
+		}
+
+		for (int i = 0; i < points.size(); i++) {
+			String point = points.get(i);
+
+			int length = point.split(",").length;
+
+			if (length == 2) {
+
+				waypoint = new ComponentID(i + "_searchBox");
+				typeIntoField(waypoint, point);
+
+			}
+
+			else {
+				waypoint = new ComponentID(i + "_searchBox");
+				typeIntoField(waypoint, point);
+				clickElement(dropDown);
+			}
+		}
+
+		clickElement(ROUTE_SEARCH);
+
+		waitFor(INSTRUCTIONS);
+
+	}
+
+	public void verifyErrorMessage(String responseMessage) {
+		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
+			GPHService.verifyMessage(responseMessage);
+		} else {
+			GPHJsonService.verifyMessage(responseMessage);
+		}
 	}
 
 }

@@ -61,7 +61,7 @@ public class RouteWayPoint {
 							
 							if (!isEqual)
 							{
-								LOG.info("Way point Description "+thisValueAsString+" is not matching with "+thatValueAsString);
+								//LOG.info("Way point Description "+thisValueAsString+" is not matching with "+thatValueAsString);
 							}
 						}
 

@@ -19,6 +19,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,24 +96,22 @@ public class GraphHopperGPXParserRouteTest {
 		return httpClient.execute(httpget);
 	}
 
-	public String parseRoute(String routeType, String avoidances,String routeOptions, String[] points) {
+	public String parseRoute(String routeType, String avoidances,
+			String routeOptions, String[] points) {
 		LOG.debug("Here we are");
 		// Set up the URL
 		String xmlResponse = "";
 		String coordinateString = "";
 		String graphHopperUrl;
-		
-		String vehicle="";
-		String routeOption="";
-		
-		if (routeOptions.split(",").length>1)
-		{
-		 vehicle=routeOptions.split(",")[0];
-		 routeOption=routeOptions.split(",")[1];
-		}
-		else
-		{
-			vehicle=routeOptions;
+
+		String vehicle = "";
+		String routeOption = "";
+
+		if (routeOptions.split(",").length > 1) {
+			vehicle = routeOptions.split(",")[0];
+			routeOption = routeOptions.split(",")[1];
+		} else {
+			vehicle = routeOptions;
 		}
 
 		for (int i = 0; i < points.length; i++) {
@@ -121,22 +120,18 @@ public class GraphHopperGPXParserRouteTest {
 
 		}
 
-		
-		if (IntegrationTestProperties.getTestPropertyBool("viaApigee"))
-		{
-			graphHopperUrl = IntegrationTestProperties.getTestProperty("graphHopperWebUrlViaApigee");
+		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {
+			graphHopperUrl = IntegrationTestProperties
+					.getTestProperty("graphHopperWebUrlViaApigee");
+		} else {
+			graphHopperUrl = IntegrationTestProperties
+					.getTestProperty("graphHopperWebUrl");
 		}
-		else
-		{
-			graphHopperUrl = IntegrationTestProperties.getTestProperty("graphHopperWebUrl");
-		}
-		
-				
+
 		String apikey = IntegrationTestProperties.getTestProperty("apiKey");
 
-		if (vehicle.equalsIgnoreCase("mountainbike"))
-		{
-			vehicle="mtb";
+		if (vehicle.equalsIgnoreCase("mountainbike")) {
+			vehicle = "mtb";
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(graphHopperUrl);
@@ -154,7 +149,30 @@ public class GraphHopperGPXParserRouteTest {
 		sb.append(apikey);
 		if (!avoidances.equals("")) {
 			sb.append("&avoidances=" + avoidances);
-					}
+		}
+		try {
+			CloseableHttpResponse httpResponse = sendAndGetResponse(sb
+					.toString());
+			xmlResponse = IOUtils.toString(httpResponse.getEntity()
+					.getContent(), "UTF-8");
+
+		} catch (IOException e) {
+			LOG.info("Exception raised whilst attempting to call graphhopper server "
+					+ e.getMessage());
+		}
+
+		if (xmlResponse != null && xmlResponse.length() > 0) {
+			parseGPXFromString(xmlResponse);
+		}
+
+		return xmlResponse;
+	}
+
+	public String parseRoute(StringBuffer sb) {
+		LOG.debug("Here we are");
+		// Set up the URL
+		String xmlResponse = "";
+
 		try {
 			CloseableHttpResponse httpResponse = sendAndGetResponse(sb
 					.toString());
@@ -207,10 +225,12 @@ public class GraphHopperGPXParserRouteTest {
 		RoutePointTimeParser rPTEP = new RoutePointTimeParser();
 		RoutePointAzimuthParser rPAEP = new RoutePointAzimuthParser();
 		RoutePointDirectionParser rPDIEP = new RoutePointDirectionParser();
+		// RouteExceptionParser rPException= new RouteExceptionParser();
 		gpxParser.addExtensionParser(rPDEP);
 		gpxParser.addExtensionParser(rPTEP);
 		gpxParser.addExtensionParser(rPAEP);
 		gpxParser.addExtensionParser(rPDIEP);
+		// gpxParser.addExtensionParser(rPException);
 	}
 
 	public boolean isWayPointOnRoute(Waypoint aWayPoint, Route aRoute) {
@@ -292,6 +312,20 @@ public class GraphHopperGPXParserRouteTest {
 
 		}
 		return isWayPointOnRoute;
+	}
+
+	public String getErrorMessage() {
+
+		return (String) gpx.getExtensionData("error");
+
+	}
+
+	public void verifyMessage(String responseMessage) {
+		String actualErrorMessage = getErrorMessage();
+		Assert.assertTrue("actual error message: " + actualErrorMessage
+				+ "does not match with: " + responseMessage,
+				responseMessage.equalsIgnoreCase(actualErrorMessage));
+
 	}
 
 }

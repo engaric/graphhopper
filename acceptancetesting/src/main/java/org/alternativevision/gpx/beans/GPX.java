@@ -44,6 +44,7 @@ public class GPX extends Extension{
 	private HashSet<Waypoint> waypoints;
 	private HashSet<Track> tracks;
 	private HashSet<Route> routes;
+	private String errorMessage;
 	
 	/**
 	 * Returns the version of a gpx object
@@ -157,5 +158,11 @@ public class GPX extends Extension{
 			routes = new HashSet<Route>();
 		}
 		routes.add(route);
+	}
+
+	public String getErrorMessage() {
+		
+		return errorMessage;
+		
 	}
 }

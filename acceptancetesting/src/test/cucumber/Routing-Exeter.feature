@@ -645,22 +645,67 @@ Feature: Verify a route from A to B
       | routeOptions | avoidances |
       | car          |            |
 
-  @yogi
-  Scenario Outline: 
-    Given I have route points as
-    | pointA              | pointB              | 
-    | 50.729961,-3.524853 | 50.723364,-3.523895 | 
+  Scenario Outline: Verify  Route using (10 intermediate waypoints)
+    Given I have route point as
+      | pointA              | pointB              | pointC              | pointD              | pointE              | pointF              | pointG              | pointH              | pointI            | pointJ              |
+      | 50.729961,-3.524853 | 50.723364,-3.523895 | 50.719078,-3.541011 | 50.720275,-3.526888 | 50.719826,-3.529631 | 50.729774,-3.519937 | 50.734471,-3.516965 | 50.732477,-3.517843 | 50.727248,-3.5205 | 50.719852,-3.544358 |
     And I have vehicle as "<vehicleType>"
     And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
-    Then I should be able to verify the responseCode as "<responseCode>"
-    Then I should be able to verify the response message as "<errorMessage>"
-    
-    
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                                        | azimuth | direction | time  | distance | avoidance |
+      | 1             | 50.729734,-3.52464  | Continue onto ST SIDWELL'S AVENUE                   | 119.0   | SE        | 9351  | 116.9    |           |
+      | 8             | 50.723365,-3.523902 | Continue onto B3212 (WESTERN WAY)                   | 195.0   | S         | 21140 | 272.8    |           |
+      | 16            | 50.719224,-3.540839 | Continue onto OKEHAMPTON STREET                     | 126.0   | SE        | 17995 | 228.1    |           |
+      | 23            | 50.7203,-3.526902   | Continue onto B3212 (MAGDALEN STREET)               | 250.0   | W         | 58    | 0.7      |           |
+      | 30            | 50.719848,-3.529643 | Continue onto WESTERN WAY (A3015)                   | 68.0    | E         | 1997  | 34.4     |           |
+      | 37            | 50.729774,-3.519937 | Continue onto OLD TIVERTON ROAD                     | 35.0    | NE        | 38268 | 478.4    |           |
+      | 42            | 50.729023,-3.520593 | At roundabout, take exit 2 onto B3212 (WESTERN WAY) | 113.0   | SE        | 15894 | 209.9    |           |
+      | 50            | 50.718282,-3.535898 | Continue onto A377                                  | 207.0   | SW        | 12712 | 216.9    |           |
 
     Examples: 
-      | vehicleType | avoidances | routeType |responseFormat|responseCode|errorMessage|
-      | cars         |            | fastest   |json|200|OK|
+      | vehicleType | avoidances | routeType | responseFormat |
+      | car         |            | fastest   | gpx            |
 
+  @Routing
+  Scenario Outline: Verify  Route using (10 intermediate waypoints)
+    Given I have route point as
+      | pointA              | pointB              | pointC              | pointD              | pointE              | pointF              | pointG              | pointH              | pointI            | pointJ              |
+      | 50.729961,-3.524853 | 50.723364,-3.523895 | 50.719078,-3.541011 | 50.720275,-3.526888 | 50.719826,-3.529631 | 50.729774,-3.519937 | 50.734471,-3.516965 | 50.732477,-3.517843 | 50.727248,-3.5205 | 50.719852,-3.544358 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    When I request for a route
+    Then I should be able to verify the waypoints not on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                                        | azimuth | direction | time  | distance | avoidance |
+      | 1             | 50.729734,-3.52464  | Continue onto ST SIDWELL'S AVENUE                   | 119.0   | SE        | 9351  | 116.9    |           |
+      | 8             | 50.723365,-3.523902 | Continue onto B3212 (WESTERN WAY)                   | 195.0   | S         | 21140 | 272.8    |           |
+      | 16            | 50.719224,-3.540839 | Continue onto OKEHAMPTON STREET                     | 126.0   | SE        | 17995 | 228.1    |           |
+      | 23            | 50.7203,-3.526902   | Continue onto B3212 (MAGDALEN STREET)               | 250.0   | W         | 58    | 0.7      |           |
+      | 30            | 50.719848,-3.529643 | Continue onto WESTERN WAY (A3015)                   | 68.0    | E         | 1997  | 34.4     |           |
+      | 37            | 50.729774,-3.519937 | Continue onto OLD TIVERTON ROAD                     | 35.0    | NE        | 38268 | 478.4    |           |
+      | 42            | 50.729023,-3.520593 | At roundabout, take exit 2 onto B3212 (WESTERN WAY) | 113.0   | SE        | 15894 | 209.9    |           |
+      | 50            | 50.718282,-3.535898 | Continue onto A377                                  | 207.0   | SW        | 12712 | 216.9    |           |
+
+    Examples: 
+      | vehicleType | avoidances | routeType | responseFormat |
+      | car         |            | fastest   | gpx           |
+
+   @yogi
+  Scenario Outline: 
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.729961,-3.524853 | 50.723364,-3.523895 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+
+    Examples: 
+      | vehicleType | avoidances | routeType | responseFormat | responseCode | errorMessage |
+      | cars         |            | fastest   | gpx            | 200          | OK           |

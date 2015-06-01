@@ -1,22 +1,20 @@
 package uk.co.ordnancesurvey.gpx.graphhopper;
 
-import gherkin.JSONParser;
-import gherkin.formatter.JSONPrettyFormatter;
-
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
+
+
+
 
 import org.alternativevision.gpx.beans.Waypoint;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.json.JSONObject;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.ordnancesurvey.gpx.beans.RouteWayPoint;
 import uk.co.ordnancesurvey.gpx.extensions.ExtensionConstants;
-import uk.co.ordnancesurvey.webtests.platforms.BrowserPlatformOptions;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -42,6 +40,8 @@ public class GraphHopperJSONParser {
 	public JSONWayPoints parseJSONFromString(String jsonString) {
 		this.jsonString = jsonString;
 		JsonParser parser = new JsonParser();
+		
+		try{
 		JsonElement je = parser.parse(jsonString);
 		JsonObject jo = je.getAsJsonObject();
 		JsonArray paths = jo.getAsJsonArray("paths");
@@ -94,7 +94,12 @@ public class GraphHopperJSONParser {
 
 			json.addWayPoint(w);
 		}
-
+		}
+		
+		catch(Exception e)
+		{
+			LOG.info(e.getMessage());
+		}
 		return json;
 
 	}
@@ -123,6 +128,22 @@ public class GraphHopperJSONParser {
 		}
 
 		return json;
+
+	}
+	
+	
+	
+	public String parseErrorMessagesFromJson(String jsonString) {
+		this.jsonString = jsonString;
+		JsonParser parser = new JsonParser();
+		JsonElement je = parser.parse(jsonString);
+		JsonObject jo = je.getAsJsonObject();
+		JsonObject info = jo.getAsJsonObject("info");
+
+		JsonArray errors = info.getAsJsonArray("errors");
+		JsonPrimitive errorMessage = errors.get(0).getAsJsonObject()
+				.getAsJsonPrimitive("message");
+		return errorMessage.getAsString();
 
 	}
 
@@ -332,6 +353,34 @@ public class GraphHopperJSONParser {
 		return nearestpoint;
 
 	}
+	
+	
+	
+	
+	
+	public void parse(StringBuffer sb) {
+
+
+		String jsonResponse = "";
+
+		GraphHopperGPXParserRouteTest GPHService = new GraphHopperGPXParserRouteTest();
+		try {
+			CloseableHttpResponse httpResponse = GPHService
+					.sendAndGetResponse(sb.toString());
+			jsonResponse = IOUtils.toString(httpResponse.getEntity()
+					.getContent(), "UTF-8");
+
+		} catch (IOException e) {
+			LOG.info("Exception raised whilst attempting to call graphhopper server "
+					+ e.getMessage());
+		}
+
+		if (jsonResponse != null && jsonResponse.length() > 0) {
+			parseJSONFromString(jsonResponse);
+		}
+
+	}
+	
 
 	public String getNearestPointDistance() {
 		JsonParser jp = new JsonParser();
@@ -349,6 +398,13 @@ public class GraphHopperJSONParser {
 		JsonPrimitive totalTime = paths.get(0).getAsJsonObject()
 				.getAsJsonPrimitive("time");
 		return Long.parseLong(totalTime.toString());
+	}
+
+	public void verifyMessage(String responseMessage) {
+		String actualErrorMessage=parseErrorMessagesFromJson(jsonString);
+		Assert.assertTrue("actual error message: "+actualErrorMessage+"does not match with: "+responseMessage,responseMessage.equalsIgnoreCase(actualErrorMessage));
+		
+		
 	}
 
 }

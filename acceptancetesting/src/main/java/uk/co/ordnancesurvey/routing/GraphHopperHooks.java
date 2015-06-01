@@ -2,19 +2,11 @@ package uk.co.ordnancesurvey.routing;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Assert;
 
-import uk.co.ordnancesurvey.gpx.graphhopper.HttpClientUtils;
 import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
@@ -30,11 +22,11 @@ public class GraphHopperHooks {
 	String nearestPoint = "";
 	String Distance = "";
 
-	private String routeResponse;
+	
 	private String routeResponsecode;
 	private String routeResponseMessage;
 	// private Map<String,String> requestParameters= new HashMap<>();
-	private Map<String, ArrayList<String>> requestParameters = new HashMap<String, ArrayList<String>>();
+
 
 	@Given("^I request a nearest point from  \"([^\"]*)\" from Nearest Point API$")
 	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
@@ -93,8 +85,7 @@ public class GraphHopperHooks {
 		Assert.assertFalse(
 				"Waypoint found on the route where it was not expected",
 				graphUiUtil.isWayPointNotonRouteMap(wayPointList));
-		// graphUiUtil.isWayPointNotonRouteMap(wayPointList);
-
+	
 	}
 
 	@Then("^The total route time should be not more than \"([^\"]*)\"$")
@@ -130,7 +121,7 @@ public class GraphHopperHooks {
 				sc.embed(screeenshot, "image/png");
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -180,36 +171,21 @@ public class GraphHopperHooks {
 	@Given("^I have ([^\"]*) as \"([^\"]*)\"$")
 	public void setParameters_for_RoutingRequest(String paramName,
 			String paramValue) {
-
-		addParameter(paramName, paramValue);
+		
+		graphUiUtil.addParameter(paramName, paramValue);
 	}
 
-	private void addParameter(String key, String value) {
-		ArrayList<String> tempList = null;
-		if (requestParameters.containsKey(key)) {
-			tempList = requestParameters.get(key);
-			if (tempList == null)
-				tempList = new ArrayList<String>();
-			tempList.add(value);
-		} else {
-			tempList = new ArrayList<String>();
-			tempList.add(value);
-		}
-		requestParameters.put(key, tempList);
-	}
+
 
 	@Given("^I have route ([^\"]*) as$")
 	public void setRoutingpoints(String paramName,DataTable dt) {
-		List<List<String>> data = dt.raw();
-
-		String[] points = new String[data.get(1).size()];
-		points = data.get(1).toArray(points);
-
-		for (int i = 0; i < points.length; i++) {
-			addParameter(paramName, points[i]);
-		}
+		graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
+		graphUiUtil.addRoutePointsToParameters(paramName, dt);
 
 	}
+
+
+	
 
 	@Then("^I should be able to verify the responseCode as \"([^\"]*)\"$")
 	public void I_should_be_able_to_verify_the_responseCode_as(
@@ -223,64 +199,43 @@ public class GraphHopperHooks {
 	@Then("^I should be able to verify the response message as \"([^\"]*)\"$")
 	public void I_should_be_able_to_verify_the_response_message_as(
 			String responseMessage) {
-		Assert.assertTrue(routeResponseMessage
-				+ "response code did not match with " + responseMessage,
-				routeResponseMessage.equals(responseMessage));
+		
+		graphUiUtil.verifyErrorMessage(responseMessage);
+	
 	}
 
+	
+	
 	@When("^I request for a route$")
 	public void I_request_for_route() {
+		
 
-		graphUiUtil = new GraphHopperUIUtil(
-				IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
+		String testON = IntegrationTestProperties.getTestProperty("testON");
 
-		StringBuffer sb = new StringBuffer();
+		switch (testON.toUpperCase()) {
+		case "WEB":
 
-		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {
-			sb.append(IntegrationTestProperties
-					.getTestProperty("graphHopperWebUrlViaApigee"));
+			graphUiUtil.getRouteFromUI();
+			break;
+		case "SERVICE":
+			
+			graphUiUtil.getRouteFromServiceWithParameters();
 
-		} else {
-			sb.append(IntegrationTestProperties
-					.getTestProperty("graphHopperWebUrl"));
-		}
-		sb.append("route?");
-		for (Entry<String, ArrayList<String>> entry : requestParameters
-				.entrySet()) {
-			String key = entry.getKey();
-			ArrayList<String> value = entry.getValue();
-			for (String string : value) {
-				sb.append("&" + key + "=" + string);
-			}
+			break;
+		default:
 
-		}
 
-		if (IntegrationTestProperties.getTestProperty("testON")
-				.equalsIgnoreCase("Service")) {
+			graphUiUtil.getRouteFromServiceWithParameters();
+				graphUiUtil.getRouteFromUI();
+			
 
-			try {
-
-				CloseableHttpClient httpClient = HttpClientUtils.createClient();
-				HttpGet httpget = new HttpGet(sb.toString());
-
-				CloseableHttpResponse clientResponse = httpClient
-						.execute(httpget);
-
-				routeResponse = IOUtils.toString(clientResponse.getEntity()
-						.getContent(), "UTF-8");
-
-				routeResponsecode = String.valueOf(clientResponse
-						.getStatusLine().getStatusCode());
-				routeResponseMessage = clientResponse.getStatusLine()
-						.getReasonPhrase();
-
-			} catch (IOException e) {
-
-				System.out.println(e.getMessage());
-			}
+			break;
 
 		}
+		
 
+		
 	}
-
+	
+	
 }

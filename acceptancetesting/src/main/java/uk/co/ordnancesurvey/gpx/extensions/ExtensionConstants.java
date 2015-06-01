@@ -6,4 +6,5 @@ public class ExtensionConstants {
 	public final static String TIME ="time";
 	public final static String DIRECTION ="direction";
 	public final static String AZIMUTH ="azimuth";
+//	public final static String ERROR="error";
 }

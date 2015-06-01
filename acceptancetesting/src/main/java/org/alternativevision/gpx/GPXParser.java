@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -38,6 +37,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.alternativevision.gpx.beans.GPX;
 import org.alternativevision.gpx.beans.Route;
@@ -114,11 +117,26 @@ public class GPXParser {
 				Node attr = attrs.item(idx);
 				if(GPXConstants.VERSION_ATTR.equals(attr.getNodeName())) {
 					gpx.setVersion(attr.getNodeValue());
-				} else if(GPXConstants.CREATOR_ATTR.equals(attr.getNodeName())) {
+				} else if(GPXConstants.CREATOR_ATTR.equals(attr.getNodeName())) 
 					gpx.setCreator(attr.getNodeValue());
+		
+
 				}
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			XPathExpression expr;
+			try {
+				expr = xpath.compile("gpx/metadata/extensions/error/@message");
+	
+				String ErrorMessage = (String)expr.evaluate(doc, XPathConstants.STRING);
+				gpx.addExtensionData("error", ErrorMessage);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			NodeList nodes = firstChild.getChildNodes();
+		
+		
+			
+			 NodeList nodes = firstChild.getChildNodes();
 			logger.debug("Found " +nodes.getLength()+ " child nodes. Start parsing ...");
 			for(int idx = 0; idx < nodes.getLength(); idx++) {
 				Node currentNode = nodes.item(idx);
@@ -152,6 +170,9 @@ public class GPXParser {
 						logger.info("Add route to gpx data. [routeName="+ rte.getName() + "]");
 						gpx.addRoute(rte);
 					}
+					
+
+					
 				}
 			}
 			//TODO: parse route node
