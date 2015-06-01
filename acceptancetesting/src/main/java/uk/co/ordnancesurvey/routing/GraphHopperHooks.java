@@ -23,7 +23,7 @@ public class GraphHopperHooks {
 	String nearestPoint = "";
 	String Distance = "";
 
-	
+	DataTable routePointsTable;
 	private String routeResponsecode;
 	private String routeResponseMessage;
 	// private Map<String,String> requestParameters= new HashMap<>();
@@ -186,6 +186,7 @@ public class GraphHopperHooks {
 	@Given("^I have route ([^\"]*) as$")
 	public void setRoutingpoints(String paramName,DataTable dt) {
 		//graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
+		routePointsTable=dt;
 		graphUiUtil.addRoutePointsToParameters(paramName, dt);
 
 	}
@@ -225,17 +226,29 @@ public class GraphHopperHooks {
 			break;
 		case "SERVICE":
 			
+			
+			
 			graphUiUtil.getRouteFromServiceWithParameters();
 
 			break;
 		default:
 
+			List<List<String>> data = routePointsTable.raw();
 
-			graphUiUtil.getRouteFromServiceWithParameters();
+			String[] points = new String[data.get(1).size()];
+			points = data.get(1).toArray(points);
+
+
+			if (points[0].split(",").length==2) {
+				graphUiUtil.getRouteFromServiceWithParameters();
 				graphUiUtil.getRouteFromUI();
-			
+			} else {
+				
+				graphUiUtil.getRouteFromUI();
+			}
 
 			break;
+
 
 		}
 		
