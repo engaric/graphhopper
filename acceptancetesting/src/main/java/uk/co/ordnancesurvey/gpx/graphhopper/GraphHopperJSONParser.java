@@ -146,6 +146,21 @@ public class GraphHopperJSONParser {
 		return errorMessage.getAsString();
 
 	}
+	
+	
+	public int parseStatusCodeFromJson(String jsonString) {
+		this.jsonString = jsonString;
+		JsonParser parser = new JsonParser();
+		JsonElement je = parser.parse(jsonString);
+		JsonObject jo = je.getAsJsonObject();
+		JsonObject info = jo.getAsJsonObject("info");
+
+		JsonArray errors = info.getAsJsonArray("errors");
+		JsonPrimitive errorMessage = errors.get(0).getAsJsonObject()
+				.getAsJsonPrimitive("statuscode");
+		return errorMessage.getAsInt();
+
+	}
 
 	public HashSet<Waypoint> getJsonCoordinatesAsHashSet() {
 
@@ -402,7 +417,14 @@ public class GraphHopperJSONParser {
 
 	public void verifyMessage(String responseMessage) {
 		String actualErrorMessage=parseErrorMessagesFromJson(jsonString);
-		Assert.assertTrue("actual error message: "+actualErrorMessage+"does not match with: "+responseMessage,responseMessage.equalsIgnoreCase(actualErrorMessage));
+		Assert.assertTrue("actual error message:"+actualErrorMessage+" does not match with: "+responseMessage,responseMessage.equalsIgnoreCase(actualErrorMessage));
+		
+		
+	}
+
+	public void verifyStatusCode(int statusCode) {
+		int actualStatusCode =parseStatusCodeFromJson(jsonString);
+		Assert.assertTrue("actual error message: "+actualStatusCode+" does not match with: "+ statusCode,(actualStatusCode==statusCode));
 		
 		
 	}

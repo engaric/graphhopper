@@ -147,8 +147,21 @@ public class GraphHopperGPXParserRouteTest {
 		sb.append(coordinateString);
 		sb.append("&apikey=");
 		sb.append(apikey);
+		
 		if (!avoidances.equals("")) {
 			sb.append("&avoidances=" + avoidances);
+
+			if (routeOption.isEmpty()) {
+				routeOption = "fastavoid";
+			}
+		}
+
+		else {
+
+			if (routeOption.isEmpty()) {
+				routeOption = "fastest";
+			}
+
 		}
 		try {
 			CloseableHttpResponse httpResponse = sendAndGetResponse(sb
@@ -316,7 +329,13 @@ public class GraphHopperGPXParserRouteTest {
 
 	public String getErrorMessage() {
 
-		return (String) gpx.getExtensionData("error");
+		return (String) gpx.getExtensionData("errorMessage");
+
+	}
+	
+	public int getstatusCode() {
+
+		return  (Integer.parseInt((String)gpx.getExtensionData("statusCode")));
 
 	}
 
@@ -326,6 +345,16 @@ public class GraphHopperGPXParserRouteTest {
 				+ "does not match with: " + responseMessage,
 				responseMessage.equalsIgnoreCase(actualErrorMessage));
 
+	}
+
+	public void verifyStatusCode(int statusCode) {
+	
+		int actualstatusCode = getstatusCode();
+		Assert.assertTrue("actual error message: " + actualstatusCode
+				+ "does not match with: " + statusCode,
+				(statusCode==actualstatusCode));
+
+		
 	}
 
 }

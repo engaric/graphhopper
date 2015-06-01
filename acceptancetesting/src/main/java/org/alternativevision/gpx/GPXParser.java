@@ -128,7 +128,18 @@ public class GPXParser {
 				expr = xpath.compile("gpx/metadata/extensions/error/@message");
 	
 				String ErrorMessage = (String)expr.evaluate(doc, XPathConstants.STRING);
-				gpx.addExtensionData("error", ErrorMessage);
+				gpx.addExtensionData("errorMessage", ErrorMessage);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+
+			try {
+				expr = xpath.compile("gpx/metadata/extensions/error/@statuscode");
+	
+				int statusCode = Integer.parseInt((String)expr.evaluate(doc, XPathConstants.STRING));
+				gpx.addExtensionData("statusCode", statusCode);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

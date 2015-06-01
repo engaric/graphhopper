@@ -11,6 +11,7 @@ import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -27,6 +28,12 @@ public class GraphHopperHooks {
 	private String routeResponseMessage;
 	// private Map<String,String> requestParameters= new HashMap<>();
 
+	
+	@Before
+	public void init()
+	{
+		graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
+	}
 
 	@Given("^I request a nearest point from  \"([^\"]*)\" from Nearest Point API$")
 	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
@@ -176,10 +183,9 @@ public class GraphHopperHooks {
 	}
 
 
-
 	@Given("^I have route ([^\"]*) as$")
 	public void setRoutingpoints(String paramName,DataTable dt) {
-		graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
+		//graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
 		graphUiUtil.addRoutePointsToParameters(paramName, dt);
 
 	}
@@ -187,12 +193,12 @@ public class GraphHopperHooks {
 
 	
 
-	@Then("^I should be able to verify the responseCode as \"([^\"]*)\"$")
+	@Then("^I should be able to verify the statuscode as \"([^\"]*)\"$")
 	public void I_should_be_able_to_verify_the_responseCode_as(
-			String responseCode) {
-		Assert.assertTrue(routeResponsecode
-				+ "response code did not match with " + responseCode,
-				routeResponsecode.equals(responseCode));
+			int  statusCode) {
+		
+		graphUiUtil.verifyStatusCode(statusCode);
+
 
 	}
 

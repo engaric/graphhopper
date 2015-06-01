@@ -727,6 +727,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		requestParameters.put(key, tempList);
 	}
 
+	
+
+
 	protected void addRoutePointsToParameters(String paramName, DataTable dt) {
 		List<List<String>> data = dt.raw();
 
@@ -952,6 +955,14 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			GPHService.verifyMessage(responseMessage);
 		} else {
 			GPHJsonService.verifyMessage(responseMessage);
+		}
+	}
+
+	public void verifyStatusCode(int statusCode) {
+		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
+			GPHService.verifyStatusCode(statusCode);
+		} else {
+			GPHJsonService.verifyStatusCode(statusCode);
 		}
 	}
 
