@@ -385,7 +385,7 @@ public class FootFlagEncoder extends AbstractFlagEncoder {
         if (super.supports(feature))
             return true;
 
-        return PriorityWeighting.class.isAssignableFrom(feature);
+        return PriorityWeighting.class.isAssignableFrom(feature)  && !PriorityWithAvoidancesWeighting.class.isAssignableFrom(feature);
     }
 
     @Override
