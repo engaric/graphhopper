@@ -44,6 +44,12 @@ public final class IntegrationTestProperties {
         String propertyValue = getTestProperty(property);
         return Integer.parseInt(propertyValue);
     }
+    
+    
+	public static void setTestProperty(final String property, final String value) {
+				instance.setProperty(property,value);
+		
+	}
 
     public static boolean getTestPropertyBool(final String property) {
         String testProperty = getTestProperty(property);
@@ -66,6 +72,9 @@ public final class IntegrationTestProperties {
         return testProperties.getProperty(property);
     }
 
+    public void setProperty(String property,String value) {
+         testProperties.setProperty(property,value);
+    }
     private IntegrationTestProperties() {
         testProperties = new Properties();
 

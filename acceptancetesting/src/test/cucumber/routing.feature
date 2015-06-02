@@ -354,7 +354,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing @WebOnly
+   @WebOnly
   Scenario Outline: Verify  Route using Full UK Address (Southampton to London)
     Given I have route point as
       | pointA                                                            | pointB                                 |
@@ -372,7 +372,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing @WebOnly
+   @WebOnly
   Scenario Outline: Verify  Route using Full UK Address (Hounslow to Slough)
     Given I have route point as
       | pointA                              | pointB                                      |
@@ -390,7 +390,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing @WebOnly
+  @WebOnly
   Scenario Outline: Verify  Route using Full UK Address (Southampton to London)
     Given I have route point as
       | pointA                                                     | pointB                                              |
@@ -408,7 +408,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing @WebOnly
+   @WebOnly
   Scenario Outline: Verify  Route using Full UK Address (Birmingham to reading)
     Given I have route point as
       | pointA                                                      | pointB                                                                                |
@@ -426,7 +426,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing @WebOnly
+   @WebOnly
   Scenario Outline: Verify  Route using Full UK Address (Southhampton to London)
     Given I have route point as
       | pointA                                               | pointB                           |
@@ -444,7 +444,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing @WebOnly
+   @WebOnly
   Scenario Outline: Verify  Route using Full UK Address (Coventry)
     Given I have route point as
       | pointA                                                         | pointB                              |
@@ -463,7 +463,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing @WebOnly
+  @WebOnly
   Scenario Outline: Verify  Route using Full UK Address (Kington to London )
     Given I have route point as
       | pointA                           | pointB                                |
