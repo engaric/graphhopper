@@ -98,9 +98,11 @@ public class PriorityWithAvoidancesWeightingTest {
 		when(encoder.getDouble(anyLong(), eq(101))).thenReturn(10D);
 	}
 	
+	/**
+	* Confirms flags are retrieved from extension and then decoded to expected value.
+	*/
 	private OngoingStubbing<Long> expectStoredAvoidance() {
-		return when(avoidanceExtension.getAvoidanceFlags(anyLong()));
+		when(avoidanceExtension.getAvoidanceFlags(anyLong())).thenReturn(88L);
+		return when(encoder.getLong(eq(88L), eq(AbstractAvoidanceDecorator.KEY)));
 	}
-	
-
 }
