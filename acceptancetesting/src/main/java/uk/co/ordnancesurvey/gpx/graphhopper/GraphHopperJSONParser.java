@@ -333,8 +333,8 @@ public class GraphHopperJSONParser {
 
 		String nearestpoint = "";
 		StringBuffer sb = new StringBuffer();
-		if (Boolean.parseBoolean(IntegrationTestProperties
-				.getTestProperty("viaApagee"))) {
+		if (IntegrationTestProperties
+				.getTestPropertyBool("viaApagee")) {
 			sb.append(IntegrationTestProperties
 					.getTestProperty("graphHopperWebUrlViaApigee"));
 		} else {

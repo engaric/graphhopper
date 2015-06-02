@@ -24,6 +24,7 @@ public class GraphHopperHooks {
 	String instruction;
 	String nearestPoint = "";
 	String Distance = "";
+	String pointA;
 
 	DataTable routePointsTable;
 	private String routeResponsecode;
@@ -61,13 +62,15 @@ public class GraphHopperHooks {
 	}
 
 	
-	@Given("^I request a nearest point from  \"([^\"]*)\" from Nearest Point API$")
-	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
+	
+	@Given("^I have route point for nearestPoint API as \"([^\"]*)\"$")
+	public void I_have_route_point_for_Nearest_Point_API(
 			String pointA) {
-
-		
-
-
+		this.pointA=pointA;
+	}
+	@When("^I request a nearest point from from Nearest Point API$")
+	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
+			) {
 		nearestPoint = graphUiUtil.nearestPointService(pointA);
 		Distance = graphUiUtil.nearestPointDistance();
 
