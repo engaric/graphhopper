@@ -25,6 +25,7 @@ public class FastestWithAvoidancesWeighting extends FastestWeighting {
 		try {
 			long extensionPointer = edge.getAdditionalField();
 			long wayType = extension.getAvoidanceFlags(extensionPointer);
+			wayType = encoder.getLong(wayType, AbstractAvoidanceDecorator.KEY);
 			if(bitMask!=0 && ((wayType & bitMask) > 0)) {
 				return Double.POSITIVE_INFINITY;
 			}
