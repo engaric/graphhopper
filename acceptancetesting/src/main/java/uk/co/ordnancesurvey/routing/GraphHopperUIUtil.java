@@ -105,8 +105,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		if (!testOn.equalsIgnoreCase("SERVICE"))
 		{
-			driver.close();
-			driver.quit();
+			LOG.info("Closing Web browser!!!");
+			shutDownWebDrivers();
 		}
 		
 	}

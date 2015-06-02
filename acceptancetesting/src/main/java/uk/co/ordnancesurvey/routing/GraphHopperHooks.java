@@ -34,7 +34,13 @@ public class GraphHopperHooks {
 	@Before
 	public void init()
 	{
-		graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
+		graphUiUtil = (IntegrationTestProperties
+				.getTestPropertyBool("viaApigee") == true) ? new GraphHopperUIUtil(
+				IntegrationTestProperties
+						.getTestProperty("graphHopperWebUrlViaApigee"))
+				: new GraphHopperUIUtil(
+						IntegrationTestProperties
+								.getTestProperty("graphHopperWebUrl"));
 	}
 
 	
@@ -59,13 +65,8 @@ public class GraphHopperHooks {
 	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
 			String pointA) {
 
-		graphUiUtil = (IntegrationTestProperties
-				.getTestPropertyBool("viaApigee") == true) ? new GraphHopperUIUtil(
-				IntegrationTestProperties
-						.getTestProperty("graphHopperWebUrlViaApigee"))
-				: new GraphHopperUIUtil(
-						IntegrationTestProperties
-								.getTestProperty("graphHopperWebUrl"));
+		
+
 
 		nearestPoint = graphUiUtil.nearestPointService(pointA);
 		Distance = graphUiUtil.nearestPointDistance();
