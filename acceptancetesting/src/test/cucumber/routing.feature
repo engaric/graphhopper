@@ -651,7 +651,7 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  nearest point of point using NearestPoint API
-    Given I have route point for nearestPoint API as "<pointA>"
+    Given My routing point for nearestPoint API as "<pointA>"
     When I request a nearest point from from Nearest Point API
     Then I should be able to verify the nearest point to be "<pointB>" at a distance of "<distance>"
 

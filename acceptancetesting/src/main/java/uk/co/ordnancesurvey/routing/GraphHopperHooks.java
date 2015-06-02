@@ -36,7 +36,7 @@ public class GraphHopperHooks {
 	public void init()
 	{
 		graphUiUtil = (IntegrationTestProperties
-				.getTestPropertyBool("viaApigee") == true) ? new GraphHopperUIUtil(
+				.getTestPropertyBool("viaApigee") == true) ?  new GraphHopperUIUtil(
 				IntegrationTestProperties
 						.getTestProperty("graphHopperWebUrlViaApigee"))
 				: new GraphHopperUIUtil(
@@ -48,6 +48,7 @@ public class GraphHopperHooks {
 	@Before({"@WebOnly"})
 	public void overrideTestONProperty()
 	{
+
 		testON=IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "Web");
 	}
@@ -63,7 +64,7 @@ public class GraphHopperHooks {
 
 	
 	
-	@Given("^I have route point for nearestPoint API as \"([^\"]*)\"$")
+	@Given("^My routing point for nearestPoint API as \"([^\"]*)\"$")
 	public void I_have_route_point_for_Nearest_Point_API(
 			String pointA) {
 		this.pointA=pointA;
