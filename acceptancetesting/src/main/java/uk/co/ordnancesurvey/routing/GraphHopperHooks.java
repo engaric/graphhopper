@@ -12,12 +12,14 @@ import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 public class GraphHopperHooks {
 	GraphHopperUIUtil graphUiUtil;
+	String testON="";
 
 	String instruction;
 	String nearestPoint = "";
@@ -32,9 +34,27 @@ public class GraphHopperHooks {
 	@Before
 	public void init()
 	{
+		testON=IntegrationTestProperties.getTestProperty("testON");
 		graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
 	}
 
+	
+	@Before({"@WebOnly"})
+	public void overrideTestONProperty()
+	{
+		
+		testON=IntegrationTestProperties.getTestProperty("testON");
+		IntegrationTestProperties.setTestProperty("testON", "Web");
+	}
+
+	
+	@After({"@WebOnly"})
+	public void rollBackTestONProperty()
+	{
+		IntegrationTestProperties.setTestProperty("testON", testON);
+	}
+
+	
 	@Given("^I request a nearest point from  \"([^\"]*)\" from Nearest Point API$")
 	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
 			String pointA) {
