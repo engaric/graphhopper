@@ -21,7 +21,6 @@ import static com.graphhopper.routing.util.PriorityCode.*;
 
 import com.graphhopper.reader.Relation;
 import com.graphhopper.reader.Way;
-
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.InstructionAnnotation;
 import com.graphhopper.util.Translation;
@@ -688,6 +687,6 @@ public class BikeCommonFlagEncoder extends AbstractFlagEncoder
         if (super.supports(feature))
             return true;
 
-        return PriorityWeighting.class.isAssignableFrom(feature);
+        return PriorityWeighting.class.isAssignableFrom(feature)  && !PriorityWithAvoidancesWeighting.class.isAssignableFrom(feature);
     }
 }

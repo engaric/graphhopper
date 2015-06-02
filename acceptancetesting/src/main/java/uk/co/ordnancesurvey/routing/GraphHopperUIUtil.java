@@ -343,6 +343,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					wayPointDescription, avoidance);
 			break;
 		case "SERVICE":
+			
+			
+	
 			if (requestParameters.get("type").get(0).equals(
 					"gpx")) {
 				wp = buildWayPoint(wayPoint_Coordinates, wayPointDescription,
@@ -834,6 +837,25 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		String vehicle = requestParameters.get("vehicle").get(0);
 
 		ArrayList<String> points = requestParameters.get("point");
+		
+		if (!requestParameters.containsKey("type") )
+		{			
+			ArrayList<String> responseType = new ArrayList<String>();
+			responseType.add(IntegrationTestProperties
+					.getTestProperty("routeType"));
+			requestParameters.put("type",responseType);
+		
+		}
+		else
+			if (requestParameters.get("type").get(0).isEmpty()){
+		
+			requestParameters.remove("type");
+			ArrayList<String> responseType = new ArrayList<String>();
+			responseType.add(IntegrationTestProperties
+					.getTestProperty("routeType"));
+			requestParameters.put("type", responseType);
+			}
+		
 		switch (vehicle) {
 		case "car":
 			clickElement(ROUTE_TYPE_CAR);
@@ -947,6 +969,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		clickElement(ROUTE_SEARCH);
 
 		waitFor(INSTRUCTIONS);
+		
+		
 
 	}
 
