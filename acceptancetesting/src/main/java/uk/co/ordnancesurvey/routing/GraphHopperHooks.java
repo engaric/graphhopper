@@ -7,12 +7,12 @@ import java.util.Map;
 
 import org.junit.Assert;
 
+
 import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -34,7 +34,6 @@ public class GraphHopperHooks {
 	@Before
 	public void init()
 	{
-		testON=IntegrationTestProperties.getTestProperty("testON");
 		graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
 	}
 
@@ -42,7 +41,6 @@ public class GraphHopperHooks {
 	@Before({"@WebOnly"})
 	public void overrideTestONProperty()
 	{
-		
 		testON=IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "Web");
 	}
@@ -52,6 +50,8 @@ public class GraphHopperHooks {
 	public void rollBackTestONProperty()
 	{
 		IntegrationTestProperties.setTestProperty("testON", testON);
+		
+		
 	}
 
 	
@@ -152,8 +152,9 @@ public class GraphHopperHooks {
 				e.printStackTrace();
 			}
 		}
+		
 		graphUiUtil.logout();
-		System.out.println("closed");
+
 
 	}
 
