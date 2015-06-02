@@ -7,12 +7,12 @@ import java.util.Map;
 
 import org.junit.Assert;
 
+
 import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -24,6 +24,7 @@ public class GraphHopperHooks {
 	String instruction;
 	String nearestPoint = "";
 	String Distance = "";
+	String pointA;
 
 	DataTable routePointsTable;
 	private String routeResponsecode;
@@ -34,15 +35,20 @@ public class GraphHopperHooks {
 	@Before
 	public void init()
 	{
-		testON=IntegrationTestProperties.getTestProperty("testON");
-		graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
+		graphUiUtil = (IntegrationTestProperties
+				.getTestPropertyBool("viaApigee") == true) ?  new GraphHopperUIUtil(
+				IntegrationTestProperties
+						.getTestProperty("graphHopperWebUrlViaApigee"))
+				: new GraphHopperUIUtil(
+						IntegrationTestProperties
+								.getTestProperty("graphHopperWebUrl"));
 	}
 
 	
 	@Before({"@WebOnly"})
 	public void overrideTestONProperty()
 	{
-		
+
 		testON=IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "Web");
 	}
@@ -52,21 +58,20 @@ public class GraphHopperHooks {
 	public void rollBackTestONProperty()
 	{
 		IntegrationTestProperties.setTestProperty("testON", testON);
+		
+		
 	}
 
 	
-	@Given("^I request a nearest point from  \"([^\"]*)\" from Nearest Point API$")
-	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
+	
+	@Given("^My routing point for nearestPoint API as \"([^\"]*)\"$")
+	public void I_have_route_point_for_Nearest_Point_API(
 			String pointA) {
-
-		graphUiUtil = (IntegrationTestProperties
-				.getTestPropertyBool("viaApigee") == true) ? new GraphHopperUIUtil(
-				IntegrationTestProperties
-						.getTestProperty("graphHopperWebUrlViaApigee"))
-				: new GraphHopperUIUtil(
-						IntegrationTestProperties
-								.getTestProperty("graphHopperWebUrl"));
-
+		this.pointA=pointA;
+	}
+	@When("^I request a nearest point from from Nearest Point API$")
+	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
+			) {
 		nearestPoint = graphUiUtil.nearestPointService(pointA);
 		Distance = graphUiUtil.nearestPointDistance();
 
@@ -152,8 +157,9 @@ public class GraphHopperHooks {
 				e.printStackTrace();
 			}
 		}
+		
 		graphUiUtil.logout();
-		System.out.println("closed");
+
 
 	}
 

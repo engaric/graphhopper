@@ -46,6 +46,7 @@ import javax.imageio.ImageIO;
 
 import org.alternativevision.gpx.beans.Route;
 import org.alternativevision.gpx.beans.Waypoint;
+import org.junit.After;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -101,8 +102,13 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	@Override
 	public void logout() {
+
 		if (!testOn.equalsIgnoreCase("SERVICE"))
-			driver.close();
+		{
+			LOG.info("Closing Web browser!!!");
+			shutDownWebDrivers();
+		}
+		
 	}
 
 	/**

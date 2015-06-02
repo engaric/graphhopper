@@ -141,8 +141,7 @@ public class GPXParser {
 				int statusCode = Integer.parseInt((String)expr.evaluate(doc, XPathConstants.STRING));
 				gpx.addExtensionData("statusCode", statusCode);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
 			}
 		
 		
