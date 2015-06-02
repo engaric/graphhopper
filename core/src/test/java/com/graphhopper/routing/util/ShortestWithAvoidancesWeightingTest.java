@@ -97,8 +97,11 @@ public class ShortestWithAvoidancesWeightingTest {
 		when(encoder.getSpeed(anyLong())).thenReturn(50D);
 	}
 	
+	/**
+	* Confirms flags are retrieved from extension and then decoded to expected value.
+	*/
 	private OngoingStubbing<Long> expectStoredAvoidance() {
-		return when(avoidanceExtension.getAvoidanceFlags(anyLong()));
+		when(avoidanceExtension.getAvoidanceFlags(anyLong())).thenReturn(88L);
+		return when(encoder.getLong(eq(88L), eq(AbstractAvoidanceDecorator.KEY)));
 	}
-
 }
