@@ -202,8 +202,8 @@ public class GHResponse
     @Override
     public String toString()
     {
-        String str = "nodes:" + list.getSize() + ": " + list.toString();
-        if (!instructions.isEmpty())
+        String str = "nodes:" + list.getSize() + "; " + list.toString();
+        if (instructions != null && !instructions.isEmpty())
             str += ", " + instructions.toString();
 
         if (hasErrors())

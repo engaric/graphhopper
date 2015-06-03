@@ -30,25 +30,25 @@ var defaultTranslationMap = null;
 var enTranslationMap = null;
 var routeSegmentPopup = null;
 var elevationControl = null;
-var activeLayer = 'Lyrk';
+var activeLayer = '';
 var i18nIsInitialized;
 
 var iconFrom = L.icon({
-    iconUrl: 'img/marker-icon-green.png',
+    iconUrl: './img/marker-icon-green.png',
     shadowSize: [50, 64],
     shadowAnchor: [4, 62],
     iconAnchor: [12, 40]
 });
 
 var iconTo = L.icon({
-    iconUrl: 'img/marker-icon-red.png',
+    iconUrl: './img/marker-icon-red.png',
     shadowSize: [50, 64],
     shadowAnchor: [4, 62],
     iconAnchor: [12, 40]
 });
 
 var iconInt = L.icon({
-    iconUrl: 'img/marker-icon-blue.png',
+    iconUrl: './img/marker-icon-blue.png',
     shadowSize: [50, 64],
     shadowAnchor: [4, 62],
     iconAnchor: [12, 40]
@@ -65,7 +65,7 @@ $(document).ready(function (e) {
     if (History.enabled) {
         History.Adapter.bind(window, 'statechange', function () {
             // No need for workaround?
-            // Chrome and Safari always emit a popstate event on page load, but Firefox doesnt
+            // Chrome and Safari always emit a popstate event on page load, but Firefox doesn’t
             // https://github.com/defunkt/jquery-pjax/issues/143#issuecomment-6194330
 
             var state = History.getState();
@@ -244,13 +244,15 @@ function checkInput() {
     // properly unbind previously click handlers
     $("#locationpoints .pointDelete").off();
 
-    // console.log("#### new checkInput #### ");
+    // console.log("## new checkInput");
     for (var i = 0; i < len; i++) {
         var div = $('#locationpoints > div.pointDiv').eq(i);
+        // console.log(div.length + ", index:" + i + ", len:" + len);
         if (div.length === 0) {
             $('#locationpoints > div.pointAdd').before(nanoTemplate(template, {id: i}));
             div = $('#locationpoints > div.pointDiv').eq(i);
         }
+
         var toFrom = getToFrom(i);
         div.data("index", i);
         div.find(".pointFlag").attr("src",
@@ -436,8 +438,17 @@ function getTopLeftCorners() {
         subdomains: ['otile1', 'otile2', 'otile3', 'otile4']
     });
 
-    var openMapsSurfer = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roads/x={x}&y={y}&z={z}', {
+    var openMapSurfer = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roads/x={x}&y={y}&z={z}', {
         attribution: osmAttr + ', <a href="http://openmapsurfer.uni-hd.de/contact.html">GIScience Heidelberg</a>'
+    });
+
+    // not an option as too fast over limit
+//    var mapbox= L.tileLayer('https://{s}.tiles.mapbox.com/v4/peterk.map-vkt0kusv/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicGV0ZXJrIiwiYSI6IkdFc2FJd2MifQ.YUd7dS_gOpT3xrQnB8_K-w', {
+//        attribution: osmAttr + ', <a href="https://www.mapbox.com/about/maps/">&copy; MapBox</a>'
+//    });
+
+    var sorbianLang = L.tileLayer('http://map.dgpsonline.eu/osmsb/{z}/{x}/{y}.png', {
+        attribution: osmAttr + ', <a href="http://www.alberding.eu/">&copy; Alberding GmbH, CC-BY-SA</a>'
     });
 
     var thunderTransport = L.tileLayer('http://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
@@ -491,7 +502,7 @@ function getTopLeftCorners() {
     	crs: crs,
         layers: [defaultLayer],
         contextmenu: true,
-        contextmenuWidth: 140,
+        contextmenuWidth: 145,
         contextmenuItems: [{
                 separator: true,
                 index: 3,
@@ -559,8 +570,12 @@ function getTopLeftCorners() {
     L.control.layers(baseMaps/*, overlays*/).addTo(map);
 
     map.on('baselayerchange', function (a) {
-        if (a.name)
+        if (a.name) {
             activeLayer = a.name;
+            $("#export-link a").attr('href', function (i, v) {
+                return v.replace(/(layer=)([\w\s]+)/, '$1' + activeLayer);
+            });
+        }
     });
 
     L.control.scale().addTo(map);
@@ -1015,12 +1030,13 @@ function routeLatLng(request, doQuery) {
     descriptionDiv.html('<img src="img/indicator.gif"/> Search Route ...');
     request.doRequest(urlForAPI, function (json) {
         descriptionDiv.html("");
-        if (json.info.errors) {
-            var tmpErrors = json.info.errors;
+        if (json.message) {
+            var tmpErrors = json.message;
             log(tmpErrors);
-            for (var m = 0; m < tmpErrors.length; m++) {
-                descriptionDiv.append("<div class='error'>" + tmpErrors[m].message + "</div>");
-            }
+            if (json.hints)
+                for (var m = 0; m < json.hints.length; m++) {
+                    descriptionDiv.append("<div class='error'>" + json.hints[m].message + "</div>");
+                }
             return;
         }
         var path = json.paths[0];
@@ -1531,8 +1547,8 @@ function setAutoCompleteList(index) {
             return val === undefined;
         },
         serviceUrl: function () {
-            // see http://graphhopper.com/#enterprise
-            return ghRequest.createGeocodeURL(host, index -1);
+            // see https://graphhopper.com/#directions-api
+            return ghRequest.createGeocodeURL(host, index - 1);
         },
         transformResult: function (response, originalQuery) {
             response.suggestions = [];
