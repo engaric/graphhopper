@@ -46,7 +46,6 @@ import javax.imageio.ImageIO;
 
 import org.alternativevision.gpx.beans.Route;
 import org.alternativevision.gpx.beans.Waypoint;
-import org.junit.After;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -103,12 +102,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	@Override
 	public void logout() {
 
-		if (!testOn.equalsIgnoreCase("SERVICE"))
-		{
+		if (!testOn.equalsIgnoreCase("SERVICE")) {
 			LOG.info("Closing Web browser!!!");
 			shutDownWebDrivers();
 		}
-		
+
 	}
 
 	/**
@@ -284,35 +282,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	}
 
-	public void getRouteFromServiceWithAvoidance(String routeOptions,
-			String avoidances, String... points) {
-
-		if (IntegrationTestProperties.getTestProperty("routeType")
-				.equalsIgnoreCase("gpx")) {
-			GPHService.parseRoute("gpx", avoidances, routeOptions, points);
-		}
-
-		else {
-
-			GPHJsonService.parse("json", avoidances, routeOptions, points);
-		}
-
-	}
-
-	public void getRouteFromService(String routeType, String... points) {
-
-		if (IntegrationTestProperties.getTestProperty("routeType")
-				.equals("gpx")) {
-			GPHService.parseRoute("gpx", "", routeType, points);
-		}
-
-		else {
-
-			GPHJsonService.parse("json", "", routeType, points);
-		}
-
-	}
-
 	public void verifyInstructionThroughService(String stepInstruction) {
 		HashSet<Route> routeInstruction = GPHService.getRoutes();
 
@@ -349,11 +318,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					wayPointDescription, avoidance);
 			break;
 		case "SERVICE":
-			
-			
-	
-			if (requestParameters.get("type").get(0).equals(
-					"gpx")) {
+
+			if (requestParameters.get("type").get(0).equals("gpx")) {
 				wp = buildWayPoint(wayPoint_Coordinates, wayPointDescription,
 						azimuth, direction, time, distance);
 				isWayPointonRouteMap = GPHService.isWayPointOnGPXRoutes(wp);
@@ -372,8 +338,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			isWayPointonRouteMapUI = verifyInstructionThroughUI(wayPointIndex,
 					wayPointDescription, avoidance);
 
-			if (requestParameters.get("type").get(0).equals(
-					"gpx")) {
+			if (requestParameters.get("type").get(0).equals("gpx")) {
 				wp = buildWayPoint(wayPoint_Coordinates, wayPointDescription,
 						azimuth, direction, time, distance);
 
@@ -626,8 +591,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			// String time = (String) trackPointsList.get(i).get("time");
 
 			Waypoint trackPoint = buildWayPoint(waypointco);
-			if (requestParameters.get("type").get(0).equals(
-					"gpx")) {
+			if (requestParameters.get("type").get(0).equals("gpx")) {
 				assertTrue(!GPHService.isWayPointOnTrack(trackPoint, GPHService
 						.getTracks().iterator().next()));
 			}
@@ -710,17 +674,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	}
 
-	public String nearestPointService(String pointA) {
-
-		return GPHJsonService.getNearestPoint(pointA);
-
-	}
-
-	public String nearestPointDistance() {
-
-		return GPHJsonService.getNearestPointDistance();
-
-	}
 
 	protected void addParameter(String key, String value) {
 		ArrayList<String> tempList = null;
@@ -736,9 +689,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		requestParameters.put(key, tempList);
 	}
 
-	
-
-
 	protected void addRoutePointsToParameters(String paramName, DataTable dt) {
 		List<List<String>> data = dt.raw();
 
@@ -753,8 +703,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	public void getRouteFromServiceWithParameters(StringBuffer sb) {
 
-		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx"))
-				 {
+		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
 			GPHService.parseRoute(sb);
 		}
 
@@ -778,24 +727,21 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					.getTestProperty("graphHopperWebUrl"));
 		}
 		sb.append("route?");
-		
-		if (!requestParameters.containsKey("type") )
-		{			
+
+		if (!requestParameters.containsKey("type")) {
 			ArrayList<String> responseType = new ArrayList<String>();
 			responseType.add(IntegrationTestProperties
 					.getTestProperty("routeType"));
-			requestParameters.put("type",responseType);
-		
-		}
-		else
-			if (requestParameters.get("type").get(0).isEmpty()){
-		
+			requestParameters.put("type", responseType);
+
+		} else if (requestParameters.get("type").get(0).isEmpty()) {
+
 			requestParameters.remove("type");
 			ArrayList<String> responseType = new ArrayList<String>();
 			responseType.add(IntegrationTestProperties
 					.getTestProperty("routeType"));
 			requestParameters.put("type", responseType);
-			}
+		}
 		ArrayList<String> pointscoding = new ArrayList<String>();
 		pointscoding.add("false");
 		requestParameters.put("points_encoded", pointscoding);
@@ -843,25 +789,22 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		String vehicle = requestParameters.get("vehicle").get(0);
 
 		ArrayList<String> points = requestParameters.get("point");
-		
-		if (!requestParameters.containsKey("type") )
-		{			
+
+		if (!requestParameters.containsKey("type")) {
 			ArrayList<String> responseType = new ArrayList<String>();
 			responseType.add(IntegrationTestProperties
 					.getTestProperty("routeType"));
-			requestParameters.put("type",responseType);
-		
-		}
-		else
-			if (requestParameters.get("type").get(0).isEmpty()){
-		
+			requestParameters.put("type", responseType);
+
+		} else if (requestParameters.get("type").get(0).isEmpty()) {
+
 			requestParameters.remove("type");
 			ArrayList<String> responseType = new ArrayList<String>();
 			responseType.add(IntegrationTestProperties
 					.getTestProperty("routeType"));
 			requestParameters.put("type", responseType);
-			}
-		
+		}
+
 		switch (vehicle) {
 		case "car":
 			clickElement(ROUTE_TYPE_CAR);
@@ -975,8 +918,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		clickElement(ROUTE_SEARCH);
 
 		waitFor(INSTRUCTIONS);
-		
-		
 
 	}
 

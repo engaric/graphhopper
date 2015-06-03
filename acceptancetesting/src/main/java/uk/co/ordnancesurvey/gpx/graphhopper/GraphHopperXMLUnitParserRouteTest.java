@@ -9,15 +9,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 public class GraphHopperXMLUnitParserRouteTest extends XMLTestCase {
 
 	private DocumentBuilder builder;
-	private static final Logger LOG = LoggerFactory
-			.getLogger(GraphHopperXMLUnitParserRouteTest.class);
+	
 
 	public GraphHopperXMLUnitParserRouteTest(String gpxFileName) {
 		try {

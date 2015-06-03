@@ -300,7 +300,7 @@ public class GraphHopperGPXParserRouteTest {
 		return routeContainsTurn;
 	}
 
-	CloseableHttpResponse sendAndGetResponse(String requestUrl)
+	public CloseableHttpResponse sendAndGetResponse(String requestUrl)
 			throws IOException {
 		String serviceUrl = requestUrl;
 		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {

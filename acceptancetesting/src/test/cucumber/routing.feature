@@ -908,3 +908,16 @@ Feature: Verify a route from A to B
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
+
+  @SampleScenario
+  Scenario Outline: Verify  Route using 2 intermediate waypoints (Perth to Edinburgh via Stirling and Glasgow )
+    Given I have route point as
+      | pointA              | pointB              | pointC             | pointD              |
+      | 51.746075,-1.263972 | 52.289962,-1.604752 | 52.202814,0.051429 | 51.491412,-0.610276 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Examples: 
+      | vehicleType | avoidances | routeType |
+      | car         |            | fastest   |

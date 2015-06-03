@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.junit.Assert;
 
-
 import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
+import uk.co.ordnancesurvey.gpx.graphhopper.NearestPointServiceUtil;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
@@ -19,7 +19,8 @@ import cucumber.api.java.en.When;
 
 public class GraphHopperHooks {
 	GraphHopperUIUtil graphUiUtil;
-	String testON="";
+
+	String testON = "";
 
 	String instruction;
 	String nearestPoint = "";
@@ -27,53 +28,44 @@ public class GraphHopperHooks {
 	String pointA;
 
 	DataTable routePointsTable;
-	private String routeResponsecode;
-	private String routeResponseMessage;
-	// private Map<String,String> requestParameters= new HashMap<>();
 
-	
+	NearestPointServiceUtil nearestPointUtil= new NearestPointServiceUtil();
+
 	@Before
-	public void init()
-	{
+	public void init() {
+		
 		graphUiUtil = (IntegrationTestProperties
-				.getTestPropertyBool("viaApigee") == true) ?  new GraphHopperUIUtil(
+				.getTestPropertyBool("viaApigee") == true) ? new GraphHopperUIUtil(
 				IntegrationTestProperties
 						.getTestProperty("graphHopperWebUrlViaApigee"))
 				: new GraphHopperUIUtil(
 						IntegrationTestProperties
 								.getTestProperty("graphHopperWebUrl"));
+
 	}
 
-	
-	@Before({"@WebOnly"})
-	public void overrideTestONProperty()
-	{
+	@Before("@WebOnly,@SampleScenario")
+	public void overrideTestONProperty() {
 
-		testON=IntegrationTestProperties.getTestProperty("testON");
+		testON = IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "Web");
 	}
 
-	
-	@After({"@WebOnly"})
-	public void rollBackTestONProperty()
-	{
+	@After("@WebOnly,@SampleScenario")
+	public void rollBackTestONProperty() {
 		IntegrationTestProperties.setTestProperty("testON", testON);
-		
-		
+
 	}
 
-	
-	
 	@Given("^My routing point for nearestPoint API as \"([^\"]*)\"$")
-	public void I_have_route_point_for_Nearest_Point_API(
-			String pointA) {
-		this.pointA=pointA;
+	public void I_have_route_point_for_Nearest_Point_API(String pointA) {
+		this.pointA = pointA;
 	}
+
 	@When("^I request a nearest point from from Nearest Point API$")
-	public void I_request_a_nearest_point_from_from_Nearest_Point_API(
-			) {
-		nearestPoint = graphUiUtil.nearestPointService(pointA);
-		Distance = graphUiUtil.nearestPointDistance();
+	public void I_request_a_nearest_point_from_from_Nearest_Point_API() {
+		nearestPoint=nearestPointUtil.getNearestPoint(pointA);
+		Distance = nearestPointUtil.getNearestPointDistance();
 
 	}
 
@@ -87,17 +79,6 @@ public class GraphHopperHooks {
 		Assert.assertTrue("******Expected nearest Point distance " + distance
 				+ " is not matcching with " + Distance,
 				Distance.equals(distance));
-
-	}
-
-	@Then("^I should be able to verify the \"([^\"]*)\" waypoint \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" on the route map$")
-	public void I_should_be_able_to_verify_the_waypoint_on_the_route_map(
-			String wayPointIndex, String wayPoint_Coordinates,
-			String wayPointDescription, String azimuth, String direction,
-			String time, String distance) {
-
-		graphUiUtil.isWayPointonRouteMap(wayPointIndex, wayPoint_Coordinates,
-				wayPointDescription, azimuth, direction, time, distance, "");
 
 	}
 
@@ -117,7 +98,7 @@ public class GraphHopperHooks {
 		Assert.assertFalse(
 				"Waypoint found on the route where it was not expected",
 				graphUiUtil.isWayPointNotonRouteMap(wayPointList));
-	
+
 	}
 
 	@Then("^The total route time should be not more than \"([^\"]*)\"$")
@@ -143,105 +124,38 @@ public class GraphHopperHooks {
 
 	}
 
-	@After
-	public void closeBrowser(Scenario sc) {
-
-		if (sc.isFailed()) {
-
-			try {
-				byte[] screeenshot = graphUiUtil.takescreenAsBiteArray();
-				sc.embed(screeenshot, "image/png");
-
-			} catch (IOException e) {
-				
-				e.printStackTrace();
-			}
-		}
-		
-		graphUiUtil.logout();
-
-
-	}
-
-	@Given("^I request a route between points with \"([^\"]*)\" from RoutingAPI and avoid \"([^\"]*)\"$")
-	public void getRouteWithAvoidancesintermediatepoints(String routeOptions,
-			String avoidances, DataTable dt) throws InterruptedException {
-
-		List<List<String>> data = dt.raw();
-
-		String[] points = new String[data.get(1).size()];
-		points = data.get(1).toArray(points);
-
-		graphUiUtil = new GraphHopperUIUtil(
-				IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
-
-		String testON = IntegrationTestProperties.getTestProperty("testON");
-
-		switch (testON.toUpperCase()) {
-		case "WEB":
-
-			graphUiUtil.getRouteFromUI(routeOptions, avoidances, points);
-			break;
-		case "SERVICE":
-			graphUiUtil.getRouteFromServiceWithAvoidance(routeOptions,
-					avoidances, points);
-			break;
-		default:
-
-			if (points[0].split(",").length == 2) {
-				graphUiUtil.getRouteFromServiceWithAvoidance(routeOptions,
-						avoidances, points);
-				graphUiUtil.getRouteFromUI(routeOptions, avoidances, points);
-			} else {
-				graphUiUtil.getRouteFromUI(routeOptions, avoidances, points);
-			}
-
-			break;
-
-		}
-	}
-
 	@Given("^I have ([^\"]*) as \"([^\"]*)\"$")
 	public void setParameters_for_RoutingRequest(String paramName,
 			String paramValue) {
-		
+
 		graphUiUtil.addParameter(paramName, paramValue);
 	}
 
-
 	@Given("^I have route ([^\"]*) as$")
-	public void setRoutingpoints(String paramName,DataTable dt) {
-		//graphUiUtil=new GraphHopperUIUtil(IntegrationTestProperties.getTestProperty("graphHopperWebUrl"));
-		routePointsTable=dt;
+	public void setRoutingpoints(String paramName, DataTable dt) {
+
+		routePointsTable = dt;
 		graphUiUtil.addRoutePointsToParameters(paramName, dt);
 
 	}
 
-
-	
-
 	@Then("^I should be able to verify the statuscode as \"([^\"]*)\"$")
-	public void I_should_be_able_to_verify_the_responseCode_as(
-			int  statusCode) {
-		
-		graphUiUtil.verifyStatusCode(statusCode);
+	public void I_should_be_able_to_verify_the_responseCode_as(int statusCode) {
 
+		graphUiUtil.verifyStatusCode(statusCode);
 
 	}
 
 	@Then("^I should be able to verify the response message as \"([^\"]*)\"$")
 	public void I_should_be_able_to_verify_the_response_message_as(
 			String responseMessage) {
-		
+
 		graphUiUtil.verifyErrorMessage(responseMessage);
-	
+
 	}
 
-	
-	
 	@When("^I request for a route$")
 	public void I_request_for_route() {
-		
 
 		String testON = IntegrationTestProperties.getTestProperty("testON");
 
@@ -251,9 +165,7 @@ public class GraphHopperHooks {
 			graphUiUtil.getRouteFromUI();
 			break;
 		case "SERVICE":
-			
-			
-			
+
 			graphUiUtil.getRouteFromServiceWithParameters();
 
 			break;
@@ -264,23 +176,52 @@ public class GraphHopperHooks {
 			String[] points = new String[data.get(1).size()];
 			points = data.get(1).toArray(points);
 
-
-			if (points[0].split(",").length==2) {
+			if (points[0].split(",").length == 2) {
 				graphUiUtil.getRouteFromServiceWithParameters();
 				graphUiUtil.getRouteFromUI();
 			} else {
-				
+
 				graphUiUtil.getRouteFromUI();
 			}
 
 			break;
 
-
 		}
-		
 
-		
 	}
-	
-	
+
+	@After("@Current")
+	public void I_should_be_able_to_capture_a_screenshot(Scenario sc)
+			throws ParseException {
+
+		try {
+			byte[] screeenshot = graphUiUtil.takescreenAsBiteArray();
+			sc.embed(screeenshot, "image/png");
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
+	@After
+	public void closeBrowser(Scenario sc) {
+
+		if (sc.isFailed()) {
+
+			try {
+				byte[] screeenshot = graphUiUtil.takescreenAsBiteArray();
+				sc.embed(screeenshot, "image/png");
+
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+
+		graphUiUtil.logout();
+
+	}
+
 }

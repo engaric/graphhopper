@@ -3,9 +3,6 @@ package uk.co.ordnancesurvey.gpx.graphhopper;
 import java.io.IOException;
 import java.util.HashSet;
 
-
-
-
 import org.alternativevision.gpx.beans.Waypoint;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -40,64 +37,68 @@ public class GraphHopperJSONParser {
 	public JSONWayPoints parseJSONFromString(String jsonString) {
 		this.jsonString = jsonString;
 		JsonParser parser = new JsonParser();
-		
-		try{
-		JsonElement je = parser.parse(jsonString);
-		JsonObject jo = je.getAsJsonObject();
-		JsonArray paths = jo.getAsJsonArray("paths");
 
-		JsonArray instructions = paths.get(0).getAsJsonObject()
-				.getAsJsonArray("instructions");
+		try {
+			JsonElement je = parser.parse(jsonString);
+			JsonObject jo = je.getAsJsonObject();
+			JsonArray paths = jo.getAsJsonArray("paths");
 
-		for (int i = 0; i < instructions.size(); i++) {
-			Waypoint w = new Waypoint();
+			JsonArray instructions = paths.get(0).getAsJsonObject()
+					.getAsJsonArray("instructions");
 
-			JsonObject instruction = instructions.get(i).getAsJsonObject();
+			for (int i = 0; i < instructions.size(); i++) {
+				Waypoint w = new Waypoint();
 
-			JsonPrimitive description = instruction.getAsJsonPrimitive("text");
-			JsonPrimitive time = instruction.getAsJsonPrimitive("time");
-			JsonPrimitive distance = instruction.getAsJsonPrimitive("distance");
+				JsonObject instruction = instructions.get(i).getAsJsonObject();
 
-			double distance_rounding = Double.parseDouble(distance.toString());
+				JsonPrimitive description = instruction
+						.getAsJsonPrimitive("text");
+				JsonPrimitive time = instruction.getAsJsonPrimitive("time");
+				JsonPrimitive distance = instruction
+						.getAsJsonPrimitive("distance");
 
-			distance_rounding = Math.round(distance_rounding * 10) / 10.0;
+				double distance_rounding = Double.parseDouble(distance
+						.toString());
 
-			JsonPrimitive azimuth = instruction.getAsJsonPrimitive("azimuth");
-			JsonPrimitive annotation_text = instruction
-					.getAsJsonPrimitive("annotation_text");
-			JsonArray interval = instruction.getAsJsonArray("interval");
-			int coordinateIndex = Integer.parseInt(interval.get(0).toString());
-			JsonElement s = getJSONCoordinates(paths, coordinateIndex);
-			Double longitude = Double.parseDouble(s.getAsJsonArray().get(0)
-					.toString());
-			Double latitude = Double.parseDouble(s.getAsJsonArray().get(1)
-					.toString());
-			w.setLongitude(longitude);
-			w.setLatitude(latitude);
-			w.setDescription(description.toString());
-			w.addExtensionData(ExtensionConstants.DISTANCE,
-					String.valueOf(distance_rounding));
-			w.addExtensionData(ExtensionConstants.TIME, time.toString());
+				distance_rounding = Math.round(distance_rounding * 10) / 10.0;
 
-			LOG.info("azimuth :" + azimuth);
-			LOG.info("descritption: " + description);
-			LOG.info("time :" + time);
-			LOG.info("distance :" + distance);
-			if (null != annotation_text) {
-				w.addExtensionData("Annotation_text", annotation_text
-						.getAsString().trim());
-				LOG.info("annotation_text: "
-						+ annotation_text.getAsString().trim());
+				JsonPrimitive azimuth = instruction
+						.getAsJsonPrimitive("azimuth");
+				JsonPrimitive annotation_text = instruction
+						.getAsJsonPrimitive("annotation_text");
+				JsonArray interval = instruction.getAsJsonArray("interval");
+				int coordinateIndex = Integer.parseInt(interval.get(0)
+						.toString());
+				JsonElement s = getJSONCoordinates(paths, coordinateIndex);
+				Double longitude = Double.parseDouble(s.getAsJsonArray().get(0)
+						.toString());
+				Double latitude = Double.parseDouble(s.getAsJsonArray().get(1)
+						.toString());
+				w.setLongitude(longitude);
+				w.setLatitude(latitude);
+				w.setDescription(description.toString());
+				w.addExtensionData(ExtensionConstants.DISTANCE,
+						String.valueOf(distance_rounding));
+				w.addExtensionData(ExtensionConstants.TIME, time.toString());
+
+				LOG.info("azimuth :" + azimuth);
+				LOG.info("descritption: " + description);
+				LOG.info("time :" + time);
+				LOG.info("distance :" + distance);
+				if (null != annotation_text) {
+					w.addExtensionData("Annotation_text", annotation_text
+							.getAsString().trim());
+					LOG.info("annotation_text: "
+							+ annotation_text.getAsString().trim());
+				}
+				LOG.info("Coordinates : " + w.getLatitude() + ","
+						+ w.getLongitude());
+
+				json.addWayPoint(w);
 			}
-			LOG.info("Coordinates : " + w.getLatitude() + ","
-					+ w.getLongitude());
+		}
 
-			json.addWayPoint(w);
-		}
-		}
-		
-		catch(Exception e)
-		{
+		catch (Exception e) {
 			LOG.info(e.getMessage());
 		}
 		return json;
@@ -130,9 +131,7 @@ public class GraphHopperJSONParser {
 		return json;
 
 	}
-	
-	
-	
+
 	public String parseErrorMessagesFromJson(String jsonString) {
 		this.jsonString = jsonString;
 		JsonParser parser = new JsonParser();
@@ -146,8 +145,7 @@ public class GraphHopperJSONParser {
 		return errorMessage.getAsString();
 
 	}
-	
-	
+
 	public int parseStatusCodeFromJson(String jsonString) {
 		this.jsonString = jsonString;
 		JsonParser parser = new JsonParser();
@@ -176,93 +174,6 @@ public class GraphHopperJSONParser {
 				"coordinates");
 
 		return coordinates.get(coordinateIndex);
-	}
-
-	public void parse(String routeType, String avoidances, String routeOptions,
-			String[] string) {
-
-		String vehicle = "";
-		String routeOption = "";
-
-		if (routeOptions.split(",").length > 1) {
-			vehicle = routeOptions.split(",")[0];
-			routeOption = routeOptions.split(",")[1];
-		} else {
-			vehicle = routeOptions;
-		}
-		// Set up the URL
-		String jsonResponse = "";
-		String coordinateString = "";
-		String graphHopperUrl;
-
-		for (int i = 0; i < string.length; i++) {
-
-			coordinateString = coordinateString + "&point=" + string[i];
-
-		}
-
-		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {
-			graphHopperUrl = IntegrationTestProperties
-					.getTestProperty("graphHopperWebUrlViaApigee");
-		} else {
-			graphHopperUrl = IntegrationTestProperties
-					.getTestProperty("graphHopperWebUrl");
-		}
-
-		String apikey = IntegrationTestProperties.getTestProperty("apiKey");
-		if (vehicle.equalsIgnoreCase("mountainbike")) {
-			vehicle = "mtb";
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append(graphHopperUrl);
-		sb.append("route?");
-		if (routeType != null) {
-			sb.append("type=");
-			sb.append(routeType);
-		}
-		sb.append("&vehicle=");
-		sb.append(vehicle);
-
-		sb.append(coordinateString);
-		sb.append("&apikey=");
-		sb.append(apikey);
-		sb.append("&points_encoded=false");
-
-		if (!avoidances.equals("")) {
-			sb.append("&avoidances=" + avoidances);
-
-			if (routeOption.isEmpty()) {
-				routeOption = "fastavoid";
-			}
-		}
-
-		else {
-
-			if (routeOption.isEmpty()) {
-				routeOption = "fastest";
-			}
-
-		}
-
-		sb.append("&weighting=");
-
-		sb.append(routeOption);
-		GraphHopperGPXParserRouteTest GPHService = new GraphHopperGPXParserRouteTest();
-		try {
-			CloseableHttpResponse httpResponse = GPHService
-					.sendAndGetResponse(sb.toString());
-			jsonResponse = IOUtils.toString(httpResponse.getEntity()
-					.getContent(), "UTF-8");
-
-		} catch (IOException e) {
-			LOG.info("Exception raised whilst attempting to call graphhopper server "
-					+ e.getMessage());
-		}
-
-		if (jsonResponse != null && jsonResponse.length() > 0) {
-			parseJSONFromString(jsonResponse);
-		}
-
 	}
 
 	/**
@@ -328,53 +239,23 @@ public class GraphHopperJSONParser {
 
 	}
 
-	// nearest point
-	public String getNearestPoint(String pointA) {
+	public String nearestPointJSONParser(String jsoString) {
+		this.jsonString = jsoString;
 
-		String nearestpoint = "";
-		StringBuffer sb = new StringBuffer();
-		if (IntegrationTestProperties
-				.getTestPropertyBool("viaApigee")) {
-			sb.append(IntegrationTestProperties
-					.getTestProperty("graphHopperWebUrlViaApigee"));
-		} else {
-			sb.append(IntegrationTestProperties
-					.getTestProperty("graphHopperWebUrl"));
-		}
+		JsonParser jp = new JsonParser();
+		JsonElement je = jp.parse(jsonString);
+		JsonArray jo = je.getAsJsonObject().getAsJsonArray("coordinates");
 
-		sb.append("nearest?point=");
-		sb.append(pointA);
-		GraphHopperGPXParserRouteTest GPHService = new GraphHopperGPXParserRouteTest();
-
-		try {
-			CloseableHttpResponse httpResponse = GPHService
-					.sendAndGetResponse(sb.toString());
-
-			jsonString = IOUtils.toString(
-					httpResponse.getEntity().getContent(), "UTF-8");
-
-			JsonParser jp = new JsonParser();
-			JsonElement je = jp.parse(jsonString);
-			JsonArray jo = je.getAsJsonObject().getAsJsonArray("coordinates");
-
-			nearestpoint = jo.get(1).getAsString() + ","
-					+ jo.get(0).getAsString();
-
-		} catch (IOException e) {
-			LOG.info("Exception raised whilst attempting to call graphhopper server "
-					+ e.getMessage());
-		}
-
-		return nearestpoint;
+		return jo.get(1).getAsString() + "," + jo.get(0).getAsString();
 
 	}
 	
-	
-	
-	
-	
-	public void parse(StringBuffer sb) {
+	public String getJSONString()
+	{
+		return jsonString;
+	}
 
+	public void parse(StringBuffer sb) {
 
 		String jsonResponse = "";
 
@@ -395,15 +276,6 @@ public class GraphHopperJSONParser {
 		}
 
 	}
-	
-
-	public String getNearestPointDistance() {
-		JsonParser jp = new JsonParser();
-		JsonElement je = jp.parse(jsonString);
-		JsonPrimitive distance = je.getAsJsonObject().getAsJsonPrimitive(
-				"distance");
-		return distance.toString();
-	}
 
 	public long getTotalRouteTime() {
 		JsonParser parser = new JsonParser();
@@ -416,17 +288,19 @@ public class GraphHopperJSONParser {
 	}
 
 	public void verifyMessage(String responseMessage) {
-		String actualErrorMessage=parseErrorMessagesFromJson(jsonString);
-		Assert.assertTrue("actual error message:"+actualErrorMessage+" does not match with: "+responseMessage,responseMessage.equalsIgnoreCase(actualErrorMessage));
-		
-		
+		String actualErrorMessage = parseErrorMessagesFromJson(jsonString);
+		Assert.assertTrue("actual error message:" + actualErrorMessage
+				+ " does not match with: " + responseMessage,
+				responseMessage.equalsIgnoreCase(actualErrorMessage));
+
 	}
 
 	public void verifyStatusCode(int statusCode) {
-		int actualStatusCode =parseStatusCodeFromJson(jsonString);
-		Assert.assertTrue("actual error message: "+actualStatusCode+" does not match with: "+ statusCode,(actualStatusCode==statusCode));
-		
-		
+		int actualStatusCode = parseStatusCodeFromJson(jsonString);
+		Assert.assertTrue("actual error message: " + actualStatusCode
+				+ " does not match with: " + statusCode,
+				(actualStatusCode == statusCode));
+
 	}
 
 }
