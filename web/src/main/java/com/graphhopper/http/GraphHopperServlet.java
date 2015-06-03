@@ -84,7 +84,7 @@ public class GraphHopperServlet extends GHBaseServlet
         if (!hopper.getEncodingManager().supports(vehicleStr))
         {
         	String supported = hopper.getGraph().getEncodingManager().toString();
-        	String errMesg = String.format("Vehicle %1 is not a valid vehicle. Valid vehicles are %2", vehicleStr, supported);
+        	String errMesg = String.format("Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr, supported);
             ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
         } else if (enableElevation && !hopper.hasElevation())
         {
