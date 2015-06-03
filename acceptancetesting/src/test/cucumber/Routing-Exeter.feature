@@ -868,13 +868,12 @@ Feature: Verify a route from A to B
 
     Examples: 
       | vehicleType | avoidances | routeType | responseFormat | errorMessage | statusCode |
-      | car         |            | fastest   | json           |              | 404        |
-
+      | car         |            | fastest   | json           |              | 400        |
 
   @Routing @ErrorMessages
   Scenario Outline: Incorrect Parameter Value "point"
     Given I have route point as
-      | pointA              | pointB              |
+      | pointA           | pointB              |
       | 50.729961,string | 50.723364,-3.523895 |
     And I have vehicles as "<vehicleType>"
     And I have avoidances as "<avoidances>"
@@ -886,8 +885,7 @@ Feature: Verify a route from A to B
 
     Examples: 
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
-      | car         |            | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 404        |
-
+      | car         |            | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
 
   @Routing @ErrorMessages
   Scenario Outline: Incorrect Parameter Name "points"
@@ -903,8 +901,8 @@ Feature: Verify a route from A to B
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
-      | car         |            | fastest   | json           | Parameter points is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 404        |
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                       | statusCode |
+      | car         |            | fastest   | json           | Parameter points is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
 
   @Routing @ErrorMessages
   Scenario Outline: Missing Parameter "point"
@@ -917,12 +915,12 @@ Feature: Verify a route from A to B
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
-      | car         |            | fastest   | json           |No point parameter provided| 404        |
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                | statusCode |
+      | car         |            | fastest   | json           | No point parameter provided | 400        |
 
   @Routing @ErrorMessages
   Scenario Outline: Invalid Parameter Value for "avoidances"
-      Given I have route point as
+    Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     Given I have vehicle as "<vehicleType>"
@@ -935,4 +933,4 @@ Feature: Verify a route from A to B
 
     Examples: 
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
-      | car         | trees      | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 404        |
+      | car         | trees      | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
