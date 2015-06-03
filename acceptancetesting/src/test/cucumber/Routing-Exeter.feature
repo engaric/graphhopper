@@ -847,11 +847,11 @@ Feature: Verify a route from A to B
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | errorMessage                                                                      | statusCode |
-      | 123         |            | fastest   | Vehicle requested_vehicle is not a valid on road vehicle. Valid vehicles are car. | 400        |
-      | foot        |            | fastest   | Vehicle requested_vehicle is not a valid on road vehicle. Valid vehicles are car. | 400        |
-      | cycle       |            | fastest   | Vehicle requested_vehicle is not a valid on road vehicle. Valid vehicles are car. | 400        |
-      | Bike        |            | fastest   | Vehicle requested_vehicle is not a valid on road vehicle. Valid vehicles are car. | 400        |
+      | vehicleType | avoidances | routeType | errorMessage                                                 | statusCode |
+      | 123         |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are car. 	| 400        |
+      | foot        |            | fastest   | Vehicle foot is not a valid vehicle. Valid vehicles are car. | 400        |
+      | cycle       |            | fastest   | Vehicle cycle is not a valid vehicle. Valid vehicles are car.| 400        |
+      | Bike        |            | fastest   | Vehicle Bike is not a valid vehicle. Valid vehicles are car. | 400        |
 
   @Routing @ErrorMessages
   Scenario Outline: Incorrect Parameter Name "vehicles"
