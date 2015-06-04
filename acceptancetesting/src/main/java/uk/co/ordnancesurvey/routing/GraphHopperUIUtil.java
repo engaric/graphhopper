@@ -2,29 +2,7 @@ package uk.co.ordnancesurvey.routing;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ADD_WAYPOINT;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.INSTRUCTIONS;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_SEARCH;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_BIKE;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_CAR;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_WALK;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.TOTAL_ROUTE_TIME;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_ARoad;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Boulders;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Cliff;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_InlandWater;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Marsh;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Mud;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_QuarryOrPit;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Rock;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Sand;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Scree;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Shingle;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.dropDown;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.fastest_RButton;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.settingsButton;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.shortest_RButton;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.waypoint;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.*;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -74,12 +52,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	private String baseUrl;
 	private String routeStepNumber;
 	String testOn = IntegrationTestProperties.getTestProperty("testON");
-	//GraphHopperGPXParserRouteTest GPHServiceUtil = new GraphHopperGPXParserRouteTest();
+
 	GraphHopperGPXUtil GPHServiceUtil = new GraphHopperGPXUtil();
-	
+
 	private final Map<String, String> customHeaders = new HashMap<>();
-	// GraphHopperJSONParser GPHJsonService = new GraphHopperJSONParser();
-	// static JSONParser parser= new JSONParser();
+
 	private Map<String, ArrayList<String>> requestParameters = new HashMap<String, ArrayList<String>>();
 	GraphHopperJSONUtil GPHJSONUtil = new GraphHopperJSONUtil();
 
@@ -97,7 +74,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			baseUrl = url;
 			init();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}
@@ -107,6 +84,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		super(BrowserPlatformOptions.getEnabledOptionsArrayList().get(0)[0]);
 
 	}
+
 	private void init() throws InterruptedException {
 
 		if (!testOn.equalsIgnoreCase("SERVICE")) {
@@ -344,11 +322,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 				wp = GPHJSONUtil.buildWayPointForJson(wayPoint_Coordinates,
 						wayPointDescription, time, distance, avoidance);
-				// wp =
-				// GPHJsonService.buildWayPointForJson(wayPoint_Coordinates,
-				// wayPointDescription, time, distance, avoidance);
+
 				isWayPointonRouteMap = GPHJSONUtil.isWayPointinpath(wp);
-				// isWayPointonRouteMap = GPHJsonService.isWayPointinPath(wp);
 
 			}
 
@@ -368,19 +343,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			} else {
 
-				// wp =
-				// GPHJsonService.buildWayPointForJson(wayPoint_Coordinates,
-				// wayPointDescription, time, distance, avoidance);
-				// isWayPointonRouteMapService = GPHJsonService
-				// .isWayPointinPath(wp);
-
 				wp = GPHJSONUtil.buildWayPointForJson(wayPoint_Coordinates,
 						wayPointDescription, time, distance, avoidance);
-				// wp =
-				// GPHJsonService.buildWayPointForJson(wayPoint_Coordinates,
-				// wayPointDescription, time, distance, avoidance);
 				isWayPointonRouteMapService = GPHJSONUtil.isWayPointinpath(wp);
-				// isWayPointonRouteMap = GPHJsonService.isWayPointinPath(wp);
+
 			}
 			isWayPointonRouteMap = (isWayPointonRouteMapUI)
 					&& (isWayPointonRouteMapService);
@@ -564,7 +530,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					.equalsIgnoreCase("GPX")) {
 				aTime.setTime(GPHServiceUtil.getTotalRouteTime());
 			} else {
-				// aTime.setTime(GPHJsonService.getTotalRouteTime());
+
 				aTime.setTime(GPHJSONUtil.getTotalRouteTime());
 			}
 			actualTime = getValue(TOTAL_ROUTE_TIME).split("take ")[1].trim()
@@ -594,13 +560,12 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			String waypointco = (String) trackPointsList.get(i).get(
 					"trackPointco");
-			// String time = (String) trackPointsList.get(i).get("time");
 
 			Waypoint trackPoint = buildWayPoint(waypointco);
 			if (IntegrationTestProperties.getTestProperty("routeType").equals(
 					"gpx")) {
-				assertTrue(GPHServiceUtil.isWayPointOnTrack(trackPoint, GPHServiceUtil
-						.getTracks().iterator().next()));
+				assertTrue(GPHServiceUtil.isWayPointOnTrack(trackPoint,
+						GPHServiceUtil.getTracks().iterator().next()));
 			}
 
 			else {
@@ -620,12 +585,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			String waypointco = (String) trackPointsList.get(i).get(
 					"trackPointco");
-			// String time = (String) trackPointsList.get(i).get("time");
 
 			Waypoint trackPoint = buildWayPoint(waypointco);
 			if (requestParameters.get("type").get(0).equals("gpx")) {
-				assertTrue(!GPHServiceUtil.isWayPointOnTrack(trackPoint, GPHServiceUtil
-						.getTracks().iterator().next()));
+				assertTrue(!GPHServiceUtil.isWayPointOnTrack(trackPoint,
+						GPHServiceUtil.getTracks().iterator().next()));
 			}
 
 			else {
@@ -644,7 +608,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		File screenshot = takeScreenShot();
 		actualMap = resize(ImageIO.read(screenshot), 1000, 800);
-		// actualMap = ImageIO.read(screenshot);
 
 		ImageIO.write(actualMap, "png", file);
 		return actualMap;
@@ -665,7 +628,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		File file = new File(expectedMap);
 		BufferedImage expactedImage = resize(ImageIO.read(file), 1000, 800);
-		// BufferedImage expactedImage = ImageIO.read(file);
+
 		System.out.println(" width" + expactedImage.getWidth());
 		System.out.println(" Height" + expactedImage.getHeight());
 		System.out.println(" width" + actualMap.getWidth());
@@ -741,7 +704,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	void sendAndGetResponse(StringBuffer sb) {
 		String serviceResponse = "";
 		try {
-			CloseableHttpResponse httpResponse = dispatchServiceRequest(sb.toString());
+			CloseableHttpResponse httpResponse = dispatchServiceRequest(sb
+					.toString());
 			serviceResponse = IOUtils.toString(httpResponse.getEntity()
 					.getContent(), "UTF-8");
 
@@ -762,8 +726,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		}
 
 	}
-	
-	
+
 	public CloseableHttpResponse dispatchServiceRequest(String requestUrl)
 			throws IOException {
 		String serviceUrl = requestUrl;
@@ -775,7 +738,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		return doSendAndGetResponse(serviceUrl);
 	}
-	
+
 	private void addCustomHeaders(HttpGet httpget) {
 		for (Entry<String, String> header : customHeaders.entrySet()) {
 			httpget.addHeader(header.getKey(), header.getValue());
@@ -790,8 +753,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		return httpClient.execute(httpget);
 	}
-
-	
 
 	protected void getRouteFromServiceWithParameters() {
 
@@ -836,29 +797,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		getRouteFromServiceWithParameters(sb);
 	}
-
-	/*
-	 * try {
-	 * 
-	 * CloseableHttpClient httpClient = HttpClientUtils.createClient(); HttpGet
-	 * httpget = new HttpGet(sb.toString());
-	 * 
-	 * CloseableHttpResponse clientResponse = httpClient .execute(httpget);
-	 * 
-	 * getRouteFromServiceWithParameters(sb);
-	 * 
-	 * String routeResponse = IOUtils.toString(clientResponse.getEntity()
-	 * .getContent(), "UTF-8");
-	 * 
-	 * String routeResponsecode = String.valueOf(clientResponse
-	 * .getStatusLine().getStatusCode()); String routeResponseMessage =
-	 * clientResponse.getStatusLine() .getReasonPhrase();
-	 * 
-	 * 
-	 * } catch (IOException e) {
-	 * 
-	 * System.out.println(e.getMessage()); }
-	 */
 
 	public void getRouteFromUI() {
 
@@ -1017,16 +955,14 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	}
 
 	public String getNearestPoint() {
-		
+
 		return GPHJSONUtil.getNearestPoint();
-		
+
 	}
 
 	public String getNearestPointDistance() {
-		// TODO Auto-generated method stub
+
 		return GPHJSONUtil.getNearestPointDistance();
 	}
-
-
 
 }

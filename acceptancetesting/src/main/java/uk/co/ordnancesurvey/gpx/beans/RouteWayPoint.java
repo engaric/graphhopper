@@ -52,6 +52,7 @@ public class RouteWayPoint {
 						// special char "'"
 
 						try {
+							
 							String thisValueAsString = ((String) thisValue)
 									.replaceAll("[^\\w]", "");
 							String thatValueAsString = ((String) thatValue)
@@ -66,7 +67,7 @@ public class RouteWayPoint {
 						}
 
 						catch (Exception e) {
-							e.printStackTrace();
+							LOG.info("Route Point Description is Null");
 						}
 					}
 					if (thisValue instanceof String) {
