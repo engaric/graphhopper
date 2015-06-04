@@ -468,6 +468,12 @@ public class EncodingManager {
 		}
 		decorators = new ArrayList<EncoderDecorator>();
 		decorators.addAll(decoratorMap.values());
+		int shift=0;
+		if (null != decorators) {
+			for (EncoderDecorator decorator : decorators) {
+				shift = decorator.defineWayBits(shift);
+			}
+		}
 	}
 
 	public List<EncoderDecorator> getDecorators() {

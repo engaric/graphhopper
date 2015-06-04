@@ -206,12 +206,7 @@ public abstract class AbstractFlagEncoder implements FlagEncoder, TurnCostEncode
 		acceptBit = 1L << index;
 		ferryBit = 2L << index;
 
-		//TODO handle these at the reader or manager level
-		if (null != encoderDecorators) {
-			for (EncoderDecorator decorator : encoderDecorators) {
-				shift = decorator.defineWayBits(shift);
-			}
-		}
+		
 		return shift;
 	}
 
