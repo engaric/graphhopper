@@ -3,7 +3,6 @@ package uk.co.ordnancesurvey.gpx.graphhopper;
 import java.util.HashSet;
 
 import org.alternativevision.gpx.beans.Waypoint;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +23,28 @@ public class JSONParser {
 	private JsonArray instructions;
 	private JsonObject info;
 
-	public JSONWayPoints jsonWayPoints = new JSONWayPoints();
-
 	private static final Logger LOG = LoggerFactory.getLogger(JSONParser.class);
+
+	String JSONString;
+	HashSet<Waypoint> wayPoints = new HashSet<Waypoint>();
+
+	/**
+	 * Adds a WayPoint to the Instructions ArrayList(WayPoint List)
+	 * 
+	 * @param waypoint
+	 * 
+	 */
+	public void addWayPoint(Waypoint w) {
+
+		wayPoints.add(w);
+	}
+
+	/**
+	 * @return List of WayPoints in a JSON Route String
+	 */
+	public HashSet<Waypoint> getWayPoints() {
+		return wayPoints;
+	}
 
 	public void parse(String jsonString) {
 
@@ -59,7 +77,7 @@ public class JSONParser {
 	}
 
 	public HashSet<Waypoint> getJsonWayPoints() {
-		return jsonWayPoints.getInstructions();
+		return getWayPoints();
 	}
 
 	public void extractWayPoints() {
@@ -106,7 +124,7 @@ public class JSONParser {
 			LOG.info("Coordinates : " + w.getLatitude() + ","
 					+ w.getLongitude());
 
-			jsonWayPoints.addWayPoint(w);
+			addWayPoint(w);
 		}
 
 	}
@@ -124,7 +142,7 @@ public class JSONParser {
 	public boolean isWayPointinPath(Waypoint w) {
 		boolean iswaypointinPath = false;
 
-		for (Waypoint wp : jsonWayPoints.getInstructions()) {
+		for (Waypoint wp : getWayPoints()) {
 
 			RouteWayPoint k = new RouteWayPoint(wp);
 			iswaypointinPath = k.equals(new RouteWayPoint(w));
@@ -176,7 +194,7 @@ public class JSONParser {
 		return distance.toString();
 	}
 
-	public JSONWayPoints parseCoordinatesFromJson() {
+	public void parseCoordinatesFromJson() {
 
 		JsonObject points = paths.get(0).getAsJsonObject()
 				.getAsJsonObject("points");
@@ -191,11 +209,9 @@ public class JSONParser {
 					.get(1).toString());
 			w.setLongitude(longitude);
 			w.setLatitude(latitude);
-			jsonWayPoints.addWayPoint(w);
+			addWayPoint(w);
 
 		}
-
-		return jsonWayPoints;
 
 	}
 }

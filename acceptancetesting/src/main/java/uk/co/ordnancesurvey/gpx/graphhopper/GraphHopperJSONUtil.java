@@ -12,10 +12,8 @@ import uk.co.ordnancesurvey.gpx.extensions.ExtensionConstants;
 
 public class GraphHopperJSONUtil {
 
-	JSONWayPoints wayPoints = new JSONWayPoints();
 	JSONParser parser = new JSONParser();
-	
-	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(GraphHopperJSONUtil.class);
 
@@ -53,6 +51,7 @@ public class GraphHopperJSONUtil {
 
 		return iswaypointinPath;
 	}
+
 	public void parse(String jsonResponse) {
 
 		parser.parse(jsonResponse);
@@ -74,9 +73,8 @@ public class GraphHopperJSONUtil {
 	}
 
 	public String nearestPointJSONParser(String jsoString) {
-		
-		return parser.getNearestPoint();
 
+		return parser.getNearestPoint();
 
 	}
 
@@ -107,9 +105,9 @@ public class GraphHopperJSONUtil {
 	}
 
 	public String getNearestPoint() {
-		
+
 		return parser.getNearestPoint();
-		
+
 	}
 
 	public String getNearestPointDistance() {

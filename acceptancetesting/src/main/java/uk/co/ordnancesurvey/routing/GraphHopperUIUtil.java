@@ -716,7 +716,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		if (serviceResponse != null && serviceResponse.length() > 0) {
 
-			if (IntegrationTestProperties.getTestProperty("routeType")
+			if (requestParameters.get("type").get(0)
 					.equalsIgnoreCase("gpx")) {
 				GPHServiceUtil.parseGPXFromString(serviceResponse);
 			} else {
@@ -954,6 +954,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		}
 	}
 
+	public Map<String, ArrayList<String>> getrequestParameters()
+	{
+		return requestParameters;
+	}
 	public String getNearestPoint() {
 
 		return GPHJSONUtil.getNearestPoint();
