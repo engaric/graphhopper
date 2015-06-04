@@ -7,6 +7,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.ordnancesurvey.routing.GraphHopperUIUtil;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -15,10 +17,11 @@ public class NearestPointServiceUtil {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(NearestPointServiceUtil.class);
-	
-	 String jsonString;
 
-	public  String getNearestPoint(String pointA) {
+	String jsonString;
+	GraphHopperUIUtil GPHopperUIUtil = new GraphHopperUIUtil();
+
+	public String getNearestPoint(String pointA) {
 
 		String nearestpoint = "";
 		StringBuffer sb = new StringBuffer();
@@ -32,32 +35,17 @@ public class NearestPointServiceUtil {
 
 		sb.append("nearest?point=");
 		sb.append(pointA);
-		GraphHopperGPXParserRouteTest GPHService = new GraphHopperGPXParserRouteTest();
 
-		try {
-			CloseableHttpResponse httpResponse = GPHService
-					.sendAndGetResponse(sb.toString());
+		GPHopperUIUtil.getRouteFromServiceWithParameters(sb);
 
-			jsonString= IOUtils.toString(httpResponse.getEntity()
-					.getContent(), "UTF-8");
+		nearestpoint = GPHopperUIUtil.getNearestPoint();
 
-			GraphHopperJSONParser jsonParser = new GraphHopperJSONParser();
-			nearestpoint = jsonParser.nearestPointJSONParser(jsonString);
-
-		} catch (IOException e) {
-			LOG.info("Exception raised whilst attempting to call graphhopper server "
-					+ e.getMessage());
-		}
 		return nearestpoint;
 
 	}
-	
-	
+
 	public String getNearestPointDistance() {
-		JsonParser jp = new JsonParser();
-		JsonElement je = jp.parse(jsonString);
-		JsonPrimitive distance = je.getAsJsonObject().getAsJsonPrimitive(
-				"distance");
+String distance= GPHopperUIUtil.getNearestPointDistance();
 		return distance.toString();
 	}
 

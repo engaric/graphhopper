@@ -46,6 +46,11 @@ import javax.imageio.ImageIO;
 
 import org.alternativevision.gpx.beans.Route;
 import org.alternativevision.gpx.beans.Waypoint;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -54,8 +59,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.ordnancesurvey.gpx.extensions.ExtensionConstants;
-import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXParserRouteTest;
-import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperJSONParser;
+import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXUtil;
+import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperJSONUtil;
+import uk.co.ordnancesurvey.gpx.graphhopper.HttpClientUtils;
 import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
 import uk.co.ordnancesurvey.webtests.base.ComponentID;
 import uk.co.ordnancesurvey.webtests.base.ImageComparison;
@@ -68,9 +74,14 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	private String baseUrl;
 	private String routeStepNumber;
 	String testOn = IntegrationTestProperties.getTestProperty("testON");
-	GraphHopperGPXParserRouteTest GPHService = new GraphHopperGPXParserRouteTest();
-	GraphHopperJSONParser GPHJsonService = new GraphHopperJSONParser();
+	//GraphHopperGPXParserRouteTest GPHServiceUtil = new GraphHopperGPXParserRouteTest();
+	GraphHopperGPXUtil GPHServiceUtil = new GraphHopperGPXUtil();
+	
+	private final Map<String, String> customHeaders = new HashMap<>();
+	// GraphHopperJSONParser GPHJsonService = new GraphHopperJSONParser();
+	// static JSONParser parser= new JSONParser();
 	private Map<String, ArrayList<String>> requestParameters = new HashMap<String, ArrayList<String>>();
+	GraphHopperJSONUtil GPHJSONUtil = new GraphHopperJSONUtil();
 
 	JavascriptExecutor js = (JavascriptExecutor) driver;
 	WebElement we;
@@ -91,6 +102,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		}
 	}
 
+	public GraphHopperUIUtil() {
+
+		super(BrowserPlatformOptions.getEnabledOptionsArrayList().get(0)[0]);
+
+	}
 	private void init() throws InterruptedException {
 
 		if (!testOn.equalsIgnoreCase("SERVICE")) {
@@ -283,11 +299,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	}
 
 	public void verifyInstructionThroughService(String stepInstruction) {
-		HashSet<Route> routeInstruction = GPHService.getRoutes();
+		HashSet<Route> routeInstruction = GPHServiceUtil.getRoutes();
 
 		Assert.assertTrue(
 				"The Route instruction is not found in the gpx response",
-				GPHService.routeContainsTurn(stepInstruction.toUpperCase(),
+				GPHServiceUtil.routeContainsTurn(stepInstruction.toUpperCase(),
 						routeInstruction.iterator().next()));
 
 	}
@@ -322,12 +338,17 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			if (requestParameters.get("type").get(0).equals("gpx")) {
 				wp = buildWayPoint(wayPoint_Coordinates, wayPointDescription,
 						azimuth, direction, time, distance);
-				isWayPointonRouteMap = GPHService.isWayPointOnGPXRoutes(wp);
+				isWayPointonRouteMap = GPHServiceUtil.isWayPointOnGPXRoutes(wp);
 
 			} else {
-				wp = GPHJsonService.buildWayPointForJson(wayPoint_Coordinates,
+
+				wp = GPHJSONUtil.buildWayPointForJson(wayPoint_Coordinates,
 						wayPointDescription, time, distance, avoidance);
-				isWayPointonRouteMap = GPHJsonService.isWayPointinPath(wp);
+				// wp =
+				// GPHJsonService.buildWayPointForJson(wayPoint_Coordinates,
+				// wayPointDescription, time, distance, avoidance);
+				isWayPointonRouteMap = GPHJSONUtil.isWayPointinpath(wp);
+				// isWayPointonRouteMap = GPHJsonService.isWayPointinPath(wp);
 
 			}
 
@@ -342,15 +363,24 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				wp = buildWayPoint(wayPoint_Coordinates, wayPointDescription,
 						azimuth, direction, time, distance);
 
-				isWayPointonRouteMapService = GPHService
+				isWayPointonRouteMapService = GPHServiceUtil
 						.isWayPointOnGPXRoutes(wp);
 
 			} else {
 
-				wp = GPHJsonService.buildWayPointForJson(wayPoint_Coordinates,
+				// wp =
+				// GPHJsonService.buildWayPointForJson(wayPoint_Coordinates,
+				// wayPointDescription, time, distance, avoidance);
+				// isWayPointonRouteMapService = GPHJsonService
+				// .isWayPointinPath(wp);
+
+				wp = GPHJSONUtil.buildWayPointForJson(wayPoint_Coordinates,
 						wayPointDescription, time, distance, avoidance);
-				isWayPointonRouteMapService = GPHJsonService
-						.isWayPointinPath(wp);
+				// wp =
+				// GPHJsonService.buildWayPointForJson(wayPoint_Coordinates,
+				// wayPointDescription, time, distance, avoidance);
+				isWayPointonRouteMapService = GPHJSONUtil.isWayPointinpath(wp);
+				// isWayPointonRouteMap = GPHJsonService.isWayPointinPath(wp);
 			}
 			isWayPointonRouteMap = (isWayPointonRouteMapUI)
 					&& (isWayPointonRouteMapService);
@@ -516,9 +546,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			if (IntegrationTestProperties.getTestProperty("routeType")
 					.equalsIgnoreCase("GPX")) {
-				aTime.setTime(GPHService.getTotalRouteTime());
+				aTime.setTime(GPHServiceUtil.getTotalRouteTime());
 			} else {
-				aTime.setTime(GPHJsonService.getTotalRouteTime());
+				// aTime.setTime(GPHJsonService.getTotalRouteTime());
+				aTime.setTime(GPHJSONUtil.getTotalRouteTime());
 			}
 			LOG.info("The total route time expected is " + eTime.getTime()
 					+ " and actual is " + aTime.getTime());
@@ -531,9 +562,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			if (IntegrationTestProperties.getTestProperty("routeType")
 					.equalsIgnoreCase("GPX")) {
-				aTime.setTime(GPHService.getTotalRouteTime());
+				aTime.setTime(GPHServiceUtil.getTotalRouteTime());
 			} else {
-				aTime.setTime(GPHJsonService.getTotalRouteTime());
+				// aTime.setTime(GPHJsonService.getTotalRouteTime());
+				aTime.setTime(GPHJSONUtil.getTotalRouteTime());
 			}
 			actualTime = getValue(TOTAL_ROUTE_TIME).split("take ")[1].trim()
 					.replaceAll(" ", "");
@@ -567,13 +599,13 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			Waypoint trackPoint = buildWayPoint(waypointco);
 			if (IntegrationTestProperties.getTestProperty("routeType").equals(
 					"gpx")) {
-				assertTrue(GPHService.isWayPointOnTrack(trackPoint, GPHService
+				assertTrue(GPHServiceUtil.isWayPointOnTrack(trackPoint, GPHServiceUtil
 						.getTracks().iterator().next()));
 			}
 
 			else {
-				assertTrue(GPHJsonService.isWayPointinPath(trackPoint,
-						GPHJsonService.getJsonCoordinatesAsHashSet()));
+				assertTrue(GPHJSONUtil.isWayPointinPath(trackPoint,
+						GPHJSONUtil.getJsonCoordinatesAsHashSet()));
 
 			}
 
@@ -592,13 +624,13 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			Waypoint trackPoint = buildWayPoint(waypointco);
 			if (requestParameters.get("type").get(0).equals("gpx")) {
-				assertTrue(!GPHService.isWayPointOnTrack(trackPoint, GPHService
+				assertTrue(!GPHServiceUtil.isWayPointOnTrack(trackPoint, GPHServiceUtil
 						.getTracks().iterator().next()));
 			}
 
 			else {
-				assertTrue(!GPHJsonService.isWayPointinPath(trackPoint,
-						GPHJsonService.getJsonCoordinatesAsHashSet()));
+				assertTrue(!GPHJSONUtil.isWayPointinPath(trackPoint,
+						GPHJSONUtil.getJsonCoordinatesAsHashSet()));
 
 			}
 
@@ -674,7 +706,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	}
 
-
 	protected void addParameter(String key, String value) {
 		ArrayList<String> tempList = null;
 		if (requestParameters.containsKey(key)) {
@@ -703,16 +734,64 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	public void getRouteFromServiceWithParameters(StringBuffer sb) {
 
-		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
-			GPHService.parseRoute(sb);
+		sendAndGetResponse(sb);
+
+	}
+
+	void sendAndGetResponse(StringBuffer sb) {
+		String serviceResponse = "";
+		try {
+			CloseableHttpResponse httpResponse = dispatchServiceRequest(sb.toString());
+			serviceResponse = IOUtils.toString(httpResponse.getEntity()
+					.getContent(), "UTF-8");
+
+		} catch (IOException e) {
+			LOG.info("Exception raised whilst attempting to call graphhopper server "
+					+ e.getMessage());
 		}
 
-		else {
+		if (serviceResponse != null && serviceResponse.length() > 0) {
 
-			GPHJsonService.parse(sb);
+			if (IntegrationTestProperties.getTestProperty("routeType")
+					.equalsIgnoreCase("gpx")) {
+				GPHServiceUtil.parseGPXFromString(serviceResponse);
+			} else {
+				GPHJSONUtil.parse(serviceResponse);
+
+			}
 		}
 
 	}
+	
+	
+	public CloseableHttpResponse dispatchServiceRequest(String requestUrl)
+			throws IOException {
+		String serviceUrl = requestUrl;
+		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {
+			serviceUrl += "&apikey="
+					+ IntegrationTestProperties.getTestProperty("apiKey");
+			LOG.debug("APPLYING KEY:");
+		}
+
+		return doSendAndGetResponse(serviceUrl);
+	}
+	
+	private void addCustomHeaders(HttpGet httpget) {
+		for (Entry<String, String> header : customHeaders.entrySet()) {
+			httpget.addHeader(header.getKey(), header.getValue());
+		}
+	}
+
+	CloseableHttpResponse doSendAndGetResponse(String serviceUrl)
+			throws IOException, ClientProtocolException {
+		CloseableHttpClient httpClient = HttpClientUtils.createClient();
+		HttpGet httpget = new HttpGet(serviceUrl);
+		addCustomHeaders(httpget);
+
+		return httpClient.execute(httpget);
+	}
+
+	
 
 	protected void getRouteFromServiceWithParameters() {
 
@@ -923,18 +1002,31 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	public void verifyErrorMessage(String responseMessage) {
 		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
-			GPHService.verifyMessage(responseMessage);
+			GPHServiceUtil.verifyMessage(responseMessage);
 		} else {
-			GPHJsonService.verifyMessage(responseMessage);
+			GPHJSONUtil.verifyMessage(responseMessage);
 		}
 	}
 
 	public void verifyStatusCode(int statusCode) {
 		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
-			GPHService.verifyStatusCode(statusCode);
+			GPHServiceUtil.verifyStatusCode(statusCode);
 		} else {
-			GPHJsonService.verifyStatusCode(statusCode);
+			GPHJSONUtil.verifyStatusCode(statusCode);
 		}
 	}
+
+	public String getNearestPoint() {
+		
+		return GPHJSONUtil.getNearestPoint();
+		
+	}
+
+	public String getNearestPointDistance() {
+		// TODO Auto-generated method stub
+		return GPHJSONUtil.getNearestPointDistance();
+	}
+
+
 
 }

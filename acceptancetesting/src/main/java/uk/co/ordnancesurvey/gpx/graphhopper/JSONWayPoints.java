@@ -1,6 +1,5 @@
 package uk.co.ordnancesurvey.gpx.graphhopper;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.alternativevision.gpx.beans.Waypoint;

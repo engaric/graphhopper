@@ -12,10 +12,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.co.ordnancesurvey.gpx.extensions.ExtensionConstants;
-import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXParserRouteTest;
+import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXParser;
+import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXUtil;
+import uk.co.ordnancesurvey.routing.GraphHopperUIUtil;
 
 public class GPHRouteTest {
-
+	String path = getClass().getResource("sampleGraphHopper.gpx").getPath();
+	GraphHopperGPXParser ghrt = GraphHopperGPXParser.getParserForgpxFileName(path);
+	GraphHopperGPXUtil GPHGPXUtil= new GraphHopperGPXUtil();
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -34,44 +38,40 @@ public class GPHRouteTest {
 	
 	@Test
 	public void testrouteContainsTurn() {
-		String path = getClass().getResource("sampleGraphHopper.gpx").getPath();
-		GraphHopperGPXParserRouteTest ghrt = GraphHopperGPXParserRouteTest.getParserForgpxFileName(path);
+		
 		HashSet<Route> hs = ghrt.getRoutes();
 		String turn = "turn sharp right onto Bellemoor Road";
 		
-		assertTrue(ghrt.routeContainsTurn(turn, hs.iterator().next()));
+		assertTrue(GPHGPXUtil.routeContainsTurn(turn, hs.iterator().next()));
 	}
 	
 	
 	@Test
 	public void testWayPointIsOnRoute() {
 
-				
-		String path = getClass().getResource("sampleGraphHopper.gpx").getPath();
-		GraphHopperGPXParserRouteTest ghrt = GraphHopperGPXParserRouteTest.getParserForgpxFileName(path);
 		Waypoint wayPoint = getTestWayPoint("50.927146","-1.416787","339","N","2515","13.974","turn  right onto Wellington Road");
 		
 
 		HashSet<Route> hs = ghrt.getRoutes();
 		
-		assertTrue(ghrt.isWayPointOnRoute(wayPoint,hs.iterator().next()));
+		assertTrue(GPHGPXUtil.isWayPointOnRoute(wayPoint,hs.iterator().next()));
 	}
 	
 	@Test
 	public void testTotalRouteTime() {
 		String path = getClass().getResource("sampleGraphHopper.gpx").getPath();
-		GraphHopperGPXParserRouteTest ghrt = GraphHopperGPXParserRouteTest.getParserForgpxFileName(path);
+		GraphHopperGPXParser ghrt = GraphHopperGPXParser.getParserForgpxFileName(path);
 		assertEquals(269000, ghrt.getTotalRouteTime());
 	}
 	
 	@Test
 	public void testGetRouteAsGPX() {
 		String path = getClass().getResource("sampleGraphHopper.gpx").getPath();
-		GraphHopperGPXParserRouteTest ghrt = GraphHopperGPXParserRouteTest.getParserForgpxFileName(path);
+		GraphHopperGPXParser ghrt = GraphHopperGPXParser.getParserForgpxFileName(path);
 		HashSet<Route> hs = ghrt.getRoutes();
 		
 		Route next = hs.iterator().next();
-		assertTrue(ghrt.routeContainsTurn("turn sharp right onto Bellemoor Road",next));
+		assertTrue(GPHGPXUtil.routeContainsTurn("turn sharp right onto Bellemoor Road",next));
 	}
 
 	private Waypoint getTestWayPoint(String lat, String lon,String azimuth,String direction,String time,String distance,String description) {

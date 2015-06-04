@@ -31,7 +31,7 @@ public class GraphHopperHooks {
 
 	NearestPointServiceUtil nearestPointUtil= new NearestPointServiceUtil();
 
-	@Before
+	@Before({"~@WebOnly","~@SampleScenario"})
 	public void init() {
 		
 		graphUiUtil = (IntegrationTestProperties
@@ -45,17 +45,30 @@ public class GraphHopperHooks {
 	}
 
 	@Before("@WebOnly,@SampleScenario")
-	public void overrideTestONProperty() {
+	public void overrideTestONPropertyToWeb() {
 
 		testON = IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "Web");
+		init();
+
 	}
 
-	@After("@WebOnly,@SampleScenario")
+	@After("@WebOnly,@SampleScenario,@ErrorMessages")
 	public void rollBackTestONProperty() {
 		IntegrationTestProperties.setTestProperty("testON", testON);
 
 	}
+
+	
+	
+	@Before("@ErrorMessages")
+	public void overrideTestONProperty() {
+
+		testON = IntegrationTestProperties.getTestProperty("testON");
+		IntegrationTestProperties.setTestProperty("testON", "Service");
+	}
+
+
 
 	@Given("^My routing point for nearestPoint API as \"([^\"]*)\"$")
 	public void I_have_route_point_for_Nearest_Point_API(String pointA) {
@@ -64,21 +77,25 @@ public class GraphHopperHooks {
 
 	@When("^I request a nearest point from from Nearest Point API$")
 	public void I_request_a_nearest_point_from_from_Nearest_Point_API() {
+		if (IntegrationTestProperties.getTestProperty("testON").equalsIgnoreCase("json")){
 		nearestPoint=nearestPointUtil.getNearestPoint(pointA);
 		Distance = nearestPointUtil.getNearestPointDistance();
+		}
 
 	}
 
 	@Then("^I should be able to verify the nearest point to be \"([^\"]*)\" at a distance of \"([^\"]*)\"$")
 	public void I_should_be_able_to_verify_the_nearest_point_to_be(
 			String pointB, String distance) {
-
+		if (IntegrationTestProperties.getTestProperty("testON").equalsIgnoreCase("json")){
+		
 		Assert.assertTrue("******Expected nearest Point " + pointB
 				+ " is not matching with " + nearestPoint + "********",
 				pointB.equals(nearestPoint));
 		Assert.assertTrue("******Expected nearest Point distance " + distance
 				+ " is not matcching with " + Distance,
 				Distance.equals(distance));
+		}
 
 	}
 
@@ -190,7 +207,7 @@ public class GraphHopperHooks {
 
 	}
 
-	@After("@Current")
+	@After("@SampleScenario")
 	public void I_should_be_able_to_capture_a_screenshot(Scenario sc)
 			throws ParseException {
 
