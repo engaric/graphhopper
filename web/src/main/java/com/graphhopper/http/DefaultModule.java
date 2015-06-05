@@ -75,8 +75,12 @@ public class DefaultModule extends AbstractModule
             boolean jsonpAllowed = args.getBool("web.jsonpAllowed", false);
             if (!jsonpAllowed)
                 logger.info("jsonp disabled");
+            boolean internalErrorsAllowed = args.getBool("web.detailedErrors", false);
+            if (!internalErrorsAllowed)
+                logger.info("detailed errors disabled");
 
             bind(Boolean.class).annotatedWith(Names.named("jsonpAllowed")).toInstance(jsonpAllowed);
+            bind(Boolean.class).annotatedWith(Names.named("internalErrorsAllowed")).toInstance(internalErrorsAllowed);
         } catch (Exception ex)
         {
             throw new IllegalStateException("Couldn't load graph", ex);
