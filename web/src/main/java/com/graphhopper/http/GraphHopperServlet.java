@@ -28,11 +28,13 @@ import com.graphhopper.util.PointList;
 import com.graphhopper.util.StopWatch;
 import com.graphhopper.util.shapes.BBox;
 import com.graphhopper.util.shapes.GHPoint;
+
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +44,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
@@ -60,6 +63,10 @@ public class GraphHopperServlet extends GHBaseServlet
 {
     @Inject
     private GraphHopper hopper;
+    
+    @Inject
+    @Named("internalErrorsAllowed")
+    protected boolean internalErrorsAllowed;
 
     @Override
     public void doGet( HttpServletRequest httpReq, HttpServletResponse httpRes ) throws ServletException, IOException
@@ -187,7 +194,9 @@ public class GraphHopperServlet extends GHBaseServlet
                 Element error = doc.createElement("error");
                 hintsElement.appendChild(error);
                 error.setAttribute("message", t.getMessage());
-                error.setAttribute("details", t.getClass().getName());
+                if(internalErrorsAllowed) {
+                	error.setAttribute("details", t.getClass().getName());
+                }
             }
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
@@ -208,21 +217,21 @@ public class GraphHopperServlet extends GHBaseServlet
 
         if (rsp.hasErrors())
         {
-            json.put("message", rsp.getErrors().get(0).getMessage());
-            List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        	Map<String, String> map = new HashMap<String, String>();
+            json.put("error",map);
             for (Throwable t : rsp.getErrors())
             {
-                Map<String, String> map = new HashMap<String, String>();
                 map.put("message", t.getMessage());
-                map.put("details", t.getClass().getName());
-                list.add(map);
+                map.put("statuscode", "404");
+                if(internalErrorsAllowed) {
+                	map.put("details", t.getClass().getName());
+                }
             }
-            json.put("hints", list);
         } else
         {
             Map<String, Object> jsonInfo = new HashMap<String, Object>();
             json.put("info", jsonInfo);
-            jsonInfo.put("copyrights", Arrays.asList("GraphHopper", "OpenStreetMap contributors"));
+//            jsonInfo.put("copyrights", Arrays.asList("GraphHopper", "OpenStreetMap contributors"));
             Map<String, Object> jsonPath = new HashMap<String, Object>();
             jsonPath.put("distance", Helper.round(rsp.getDistance(), 3));
             jsonPath.put("weight", Helper.round6(rsp.getDistance()));
