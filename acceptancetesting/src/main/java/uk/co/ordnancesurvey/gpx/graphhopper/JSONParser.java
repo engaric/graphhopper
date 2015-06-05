@@ -63,7 +63,7 @@ public class JSONParser {
 		}
 
 		catch (Exception e) {
-			e.printStackTrace();
+			LOG.info("Invalid JSON String :"+ e.getMessage());
 		}
 
 	}
