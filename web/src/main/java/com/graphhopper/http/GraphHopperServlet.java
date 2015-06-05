@@ -187,7 +187,9 @@ public class GraphHopperServlet extends GHBaseServlet
                 Element error = doc.createElement("error");
                 hintsElement.appendChild(error);
                 error.setAttribute("message", t.getMessage());
-                error.setAttribute("details", t.getClass().getName());
+                if(internalErrorsAllowed) {
+                	error.setAttribute("details", t.getClass().getName());
+                }
             }
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
@@ -208,21 +210,21 @@ public class GraphHopperServlet extends GHBaseServlet
 
         if (rsp.hasErrors())
         {
-            json.put("message", rsp.getErrors().get(0).getMessage());
-            List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        	Map<String, String> map = new HashMap<String, String>();
+            json.put("error",map);
             for (Throwable t : rsp.getErrors())
             {
-                Map<String, String> map = new HashMap<String, String>();
                 map.put("message", t.getMessage());
-                map.put("details", t.getClass().getName());
-                list.add(map);
+                map.put("statuscode", "404");
+                if(internalErrorsAllowed) {
+                	map.put("details", t.getClass().getName());
+                }
             }
-            json.put("hints", list);
         } else
         {
             Map<String, Object> jsonInfo = new HashMap<String, Object>();
             json.put("info", jsonInfo);
-            jsonInfo.put("copyrights", Arrays.asList("GraphHopper", "OpenStreetMap contributors"));
+//            jsonInfo.put("copyrights", Arrays.asList("GraphHopper", "OpenStreetMap contributors"));
             Map<String, Object> jsonPath = new HashMap<String, Object>();
             jsonPath.put("distance", Helper.round(rsp.getDistance(), 3));
             jsonPath.put("weight", Helper.round6(rsp.getDistance()));
