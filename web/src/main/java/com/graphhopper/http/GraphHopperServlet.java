@@ -64,9 +64,8 @@ public class GraphHopperServlet extends GHBaseServlet
     @Inject
     private GraphHopper hopper;
     
-    @Inject
     @Named("internalErrorsAllowed")
-    protected boolean internalErrorsAllowed;
+    private boolean internalErrorsAllowed;
 
     @Override
     public void doGet( HttpServletRequest httpReq, HttpServletResponse httpRes ) throws ServletException, IOException
@@ -219,14 +218,20 @@ public class GraphHopperServlet extends GHBaseServlet
         {
         	Map<String, String> map = new HashMap<String, String>();
             json.put("error",map);
+            Throwable throwable = rsp.getErrors().get(0);
+            map.put("message", throwable.getMessage());
+            map.put("statuscode", "404");
+            List<Map<String, String>> list = new ArrayList<Map<String, String>>();
             for (Throwable t : rsp.getErrors())
             {
-                map.put("message", t.getMessage());
-                map.put("statuscode", "404");
-                if(internalErrorsAllowed) {
-                	map.put("details", t.getClass().getName());
-                }
+                Map<String, String> hintMap = new HashMap<String, String>();
+                hintMap.put("message", t.getMessage());
+//                if(internalErrorsAllowed) {
+                hintMap.put("details", t.getClass().getName());
+//                }
+                list.add(hintMap);
             }
+            json.put("hints", list);
         } else
         {
             Map<String, Object> jsonInfo = new HashMap<String, Object>();
