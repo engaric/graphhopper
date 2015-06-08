@@ -24,9 +24,9 @@ public class GraphHopperGPXUtil {
 	}
 
 	public boolean isWayPointOnRoute(Waypoint aWayPoint, Route aRoute) {
-		System.out.println(aWayPoint.getExtensionData().toString());
+		LOG.debug(aWayPoint.getExtensionData().toString());
 		boolean isWayPointOnRoute = false;
-		System.out.println(aRoute.getRoutePoints());
+		LOG.debug(aRoute.getRoutePoints().toString());
 		for (Waypoint aWaypointInaRoute : aRoute.getRoutePoints()) {
 			if (new RouteWayPoint(aWaypointInaRoute).equals(new RouteWayPoint(
 					aWayPoint))) {
@@ -42,13 +42,13 @@ public class GraphHopperGPXUtil {
 	public boolean isWayPointOnTrack(Waypoint aWayPoint, Track aTrack) {
 
 		boolean isWayPointOnTrack = false;
-		System.out.println(aTrack.getTrackPoints());
+		LOG.debug(aTrack.getTrackPoints().toString());
 		for (Waypoint aWaypointInaTrack : aTrack.getTrackPoints()) {
 			if (new RouteWayPoint(aWaypointInaTrack).equals(new RouteWayPoint(
 					aWayPoint))) {
 
 				isWayPointOnTrack = true;
-				LOG.info("WayPoint " + aWayPoint + " Found In a Track" + aTrack);
+				LOG.debug("WayPoint " + aWayPoint + " Found In a Track" + aTrack);
 				break;
 			}
 
@@ -58,7 +58,7 @@ public class GraphHopperGPXUtil {
 	}
 
 	public boolean routeContainsTurn(String turnDescription, Route aRoute) {
-		System.out.println(aRoute);
+		LOG.debug(aRoute.toString());
 		boolean routeContainsTurn = false;
 		turnDescription = turnDescription.toUpperCase();
 

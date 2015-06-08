@@ -890,7 +890,7 @@ Feature: Verify a route from A to B
       | car         |            | shortest  |
 
   @Routing
-  Scenario Outline: Verify  Route using 2 intermediate waypoints (Perth to Edinburgh via Stirling and Glasgow )
+  Scenario Outline: Verify  Route using 2 intermediate waypoints (Oxford to LONDON )
     Given I have route point as
       | pointA              | pointB              | pointC             | pointD              |
       | 51.746075,-1.263972 | 52.289962,-1.604752 | 52.202814,0.051429 | 51.491412,-0.610276 |
@@ -909,6 +909,62 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
+  @Routing @Current
+  Scenario Outline: Verify  Route using 2 intermediate waypoints (Oxford to LONDON )
+    Given I have route point as
+      | pointA              | pointB              | pointC             | pointD              |
+      | 51.746075,-1.263972 | 52.289962,-1.604752 | 52.202814,0.051429 | 51.491412,-0.610276 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                              | azimuth | direction | time   | distance | avoidance |
+      | 5             | 51.748432,-1.261457 | Turn left onto THAMES STREET (A420)       | 275.0   | W         | 5517   | 145.6    |           |
+      | 21            | 51.922501,-1.324913 | Turn slight left onto OXFORD ROAD (A4260) | 342.0   | N         | 243586 | 6342.0   |           |
+      | 32            | 52.056919,-1.341208 | Turn right onto BEARGARDEN ROAD           | 324.0   | NW        | 24343  | 304.3    |           |
+      | 67            | 52.288814,-1.607721 | Turn left onto BIRMINGHAM ROAD (A425)     | 130.0   | SE        | 26878  | 396.7    |           |
+
+    Examples: 
+      | vehicleType | avoidances | routeType |
+      | car         |            | shortest  |
+
+  @Routing
+  Scenario Outline: Verify  Route using 2 intermediate waypoints (Route-120 :Perth to Edinburgh via Stirling and Glasgow )
+    Given I have route point as
+      | pointA             | pointB              | pointC              | pointD              |
+      | 56.38721,-3.466273 | 56.136656,-3.970408 | 55.871665,-4.195067 | 55.950467,-3.208924 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                | azimuth | direction | time   | distance | avoidance |
+      | 5             | 56.204647,-3.952177 | Turn slight left onto B8033 | 225.0   | SW        | 42144  | 585.4    |           |
+      | 22            | 55.871622,-4.198356 | Turn slight right onto M8   | 43.0    | NE        | 278576 | 7738.5   |           |
+
+    Examples: 
+      | vehicleType | avoidances | routeType |
+      | car         |            | shortest  |
+
+  @Routing
+  Scenario Outline: Verify  Route using 2 intermediate waypoints (Route-120 :Perth to Edinburgh via Stirling and Glasgow )
+    Given I have route point as
+      | pointA             | pointB              | pointC              | pointD              |
+      | 56.38721,-3.466273 | 56.136656,-3.970408 | 55.871665,-4.195067 | 55.950467,-3.208924 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                       | azimuth | direction | time   | distance | avoidance |
+      | 5             | 56.170837,-3.970499 | At roundabout, take exit 3 onto M9 | 91.0    | E         | 142970 | 3961.4   |           |
+      | 15            | 55.871772,-4.195164 | Continue onto M8                   | 243.0   | SW        | 10568  | 293.6    |           |
+
+    Examples: 
+      | vehicleType | avoidances | routeType |
+      | car         |            | fastest   |
+
   @SampleScenario
   Scenario Outline: Verify  Route using 2 intermediate waypoints (Perth to Edinburgh via Stirling and Glasgow )
     Given I have route point as
@@ -918,6 +974,7 @@ Feature: Verify a route from A to B
     And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     When I request for a route
+
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
