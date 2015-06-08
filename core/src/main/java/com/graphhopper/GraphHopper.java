@@ -556,7 +556,7 @@ public class GraphHopper implements GraphHopperAPI {
 
 		sortGraph = args.getBool("graph.doSort", sortGraph);
 		removeZipped = args.getBool("graph.removeZipped", removeZipped);
-		int bytesForFlags = args.getInt("graph.bytesForFlags", 8);
+		int bytesForFlags = args.getInt("graph.bytesForFlags", 4);
 		if (args.get("graph.locktype", "native").equals("simple"))
 			lockFactory = new SimpleFSLockFactory();
 		else
