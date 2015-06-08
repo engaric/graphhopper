@@ -12,4 +12,5 @@ public interface EncoderDecorator {
 	double getDouble(long flags);
 	long getLong(long flags);
 	boolean supports(int key);
+	int getOriginalShift();
 }
