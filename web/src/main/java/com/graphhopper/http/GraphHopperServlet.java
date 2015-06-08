@@ -70,83 +70,89 @@ public class GraphHopperServlet extends GHBaseServlet
     @Override
     public void doGet( HttpServletRequest httpReq, HttpServletResponse httpRes ) throws ServletException, IOException
     {
-        List<GHPoint> infoPoints = getPoints(httpReq, "point");
-
-        // we can reduce the path length based on the maximum differences to the original coordinates
-        double minPathPrecision = getDoubleParam(httpReq, "way_point_max_distance", 1d);
+        
+        GHResponse ghRsp;
+        StopWatch sw = new StopWatch().start();
         boolean writeGPX = "gpx".equalsIgnoreCase(getParam(httpReq, "type", "json"));
-        boolean enableInstructions = writeGPX || getBooleanParam(httpReq, "instructions", true);
-        boolean calcPoints = getBooleanParam(httpReq, "calc_points", true);
-        boolean enableElevation = getBooleanParam(httpReq, "elevation", false);
-        boolean pointsEncoded = getBooleanParam(httpReq, "points_encoded", true);
-
         String vehicleStr = getParam(httpReq, "vehicle", "car");
         String weighting = getParam(httpReq, "weighting", "fastest");
         String algoStr = getParam(httpReq, "algorithm", "");
         String localeStr = getParam(httpReq, "locale", "en");
-
-        StopWatch sw = new StopWatch().start();
-        GHResponse ghRsp;
-        if (!hopper.getEncodingManager().supports(vehicleStr))
-        {
-        	String supported = hopper.getGraph().getEncodingManager().toString();
-        	String errMesg = String.format("Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr, supported);
-            ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-        } else if (enableElevation && !hopper.hasElevation())
-        {
-            ghRsp = new GHResponse().addError(new IllegalArgumentException("Elevation not supported!"));
-        } else
-        {
-            FlagEncoder algoVehicle = hopper.getEncodingManager().getEncoder(vehicleStr);
-            GHRequest request = new GHRequest(infoPoints);
-
-            initHints(request, httpReq.getParameterMap());
-            request.setVehicle(algoVehicle.toString()).
-                    setWeighting(weighting).
-                    setAlgorithm(algoStr).
-                    setLocale(localeStr).
-                    getHints().
-                    put("calcPoints", calcPoints).
-                    put("instructions", enableInstructions).
-                    put("wayPointMaxDistance", minPathPrecision);
-
-            ghRsp = hopper.route(request);
+        List<GHPoint> infoPoints = getPoints(httpReq, "point");
+        double minPathPrecision = getDoubleParam(httpReq, "way_point_max_distance", 1d);
+        boolean enableInstructions = writeGPX || getBooleanParam(httpReq, "instructions", true);
+        boolean calcPoints = getBooleanParam(httpReq, "calc_points", true);
+        boolean enableElevation = getBooleanParam(httpReq, "elevation", false);
+        boolean pointsEncoded = getBooleanParam(httpReq, "points_encoded", true);
+        try {
+            ApiResource.ROUTE.checkAllRequestParameters(httpReq);
+            
+            // we can reduce the path length based on the maximum differences to the original coordinates
+            
+            
+            if (!hopper.getEncodingManager().supports(vehicleStr))
+            {
+                String supported = hopper.getGraph().getEncodingManager().toString();
+                String errMesg = String.format("Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr, supported);
+                ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
+            } else if (enableElevation && !hopper.hasElevation())
+            {
+            	ghRsp = new GHResponse().addError(new InvalidParameterException("Elevation not supported!"));
+            } else
+            {
+                FlagEncoder algoVehicle = hopper.getEncodingManager().getEncoder(vehicleStr);
+                GHRequest request = new GHRequest(infoPoints);
+                
+                initHints(request, httpReq.getParameterMap());
+                request.setVehicle(algoVehicle.toString()).
+                setWeighting(weighting).
+                setAlgorithm(algoStr).
+                setLocale(localeStr).
+                getHints().
+                put("calcPoints", calcPoints).
+                put("instructions", enableInstructions).
+                put("wayPointMaxDistance", minPathPrecision);
+                
+                ghRsp = hopper.route(request);
+            }
+        } catch (NoSuchParameterException | MissingParameterException e) {
+            ghRsp = new GHResponse().addError(e);
         }
-
         float took = sw.stop().getSeconds();
         String infoStr = httpReq.getRemoteAddr() + " " + httpReq.getLocale() + " " + httpReq.getHeader("User-Agent");
         String logStr = httpReq.getQueryString() + " " + infoStr + " " + infoPoints + ", took:"
-                + took + ", " + algoStr + ", " + weighting + ", " + vehicleStr;
-
+        		+ took + ", " + algoStr + ", " + weighting + ", " + vehicleStr;
+        
         if (ghRsp.hasErrors())
-            logger.error(logStr + ", errors:" + ghRsp.getErrors());
+        	logger.error(logStr + ", errors:" + ghRsp.getErrors());
         else
-            logger.info(logStr + ", distance: " + ghRsp.getDistance()
-                    + ", time:" + Math.round(ghRsp.getTime() / 60000f)
-                    + "min, points:" + ghRsp.getPoints().getSize() + ", debug - " + ghRsp.getDebugInfo());
-
+        	logger.info(logStr + ", distance: " + ghRsp.getDistance()
+        			+ ", time:" + Math.round(ghRsp.getTime() / 60000f)
+        			+ "min, points:" + ghRsp.getPoints().getSize() + ", debug - " + ghRsp.getDebugInfo());
+        
         if (writeGPX)
         {
-            String xml = createGPXString(httpReq, httpRes, ghRsp);
-            if (ghRsp.hasErrors())
-            {
-                httpRes.setStatus(SC_BAD_REQUEST);
-                httpRes.getWriter().append(xml);
-            } else
-                writeResponse(httpRes, xml);
+        	String xml = createGPXString(httpReq, httpRes, ghRsp);
+        	if (ghRsp.hasErrors())
+        	{
+        		httpRes.setStatus(SC_BAD_REQUEST);
+        		httpRes.getWriter().append(xml);
+        	} else
+        		writeResponse(httpRes, xml);
         } else
         {
-            Map<String, Object> map = createJson(ghRsp, calcPoints, pointsEncoded, enableElevation, enableInstructions);
-            Object infoMap = map.get("info");
-            if (infoMap != null)
-                ((Map) infoMap).put("took", Math.round(took * 1000));
-
-            if (ghRsp.hasErrors())
-            {
-                writeJsonError(httpRes, SC_BAD_REQUEST, new JSONObject(map));
-            } else
-                writeJson(httpReq, httpRes, new JSONObject(map));
+        	Map<String, Object> map = createJson(ghRsp, calcPoints, pointsEncoded, enableElevation, enableInstructions);
+        	Object infoMap = map.get("info");
+        	if (infoMap != null)
+        		((Map) infoMap).put("took", Math.round(took * 1000));
+        	
+        	if (ghRsp.hasErrors())
+        	{
+        		writeJsonError(httpRes, SC_BAD_REQUEST, new JSONObject(map));
+        	} else
+        		writeJson(httpReq, httpRes, new JSONObject(map));
         }
+      
     }
 
     protected String createGPXString( HttpServletRequest req, HttpServletResponse res, GHResponse rsp )
@@ -220,7 +226,7 @@ public class GraphHopperServlet extends GHBaseServlet
             json.put("error",map);
             Throwable throwable = rsp.getErrors().get(0);
             map.put("message", throwable.getMessage());
-            map.put("statuscode", "404");
+            map.put("statuscode", ((APIException) throwable).getStatusCode().toString());
             List<Map<String, String>> list = new ArrayList<Map<String, String>>();
             for (Throwable t : rsp.getErrors())
             {

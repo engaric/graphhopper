@@ -470,7 +470,8 @@ public class EncodingManager
 	}
 
 	/**
-	 * Each encoder decorator should be used only once and in a defined order
+	 * Each encoder decorator should be used only once for storage and in a defined order.
+	 * However each encoder needs its decorator list to be configured the same way.
 	 */
 	private void configureDecoratorSet()
 	{
@@ -492,6 +493,20 @@ public class EncodingManager
 		for (EncoderDecorator decorator : decorators)
 		{
 			shift = decorator.defineWayBits(shift);
+		}
+		for (AbstractFlagEncoder encoder : edgeEncoders)
+		{
+			List<EncoderDecorator> decoratorList = encoder.getEncoderDecorators();
+			if (null != decoratorList)
+			{
+				for (EncoderDecorator encoderDecorator : decoratorList)
+				{
+					EncoderDecorator configuredDecorator = decoratorMap.get(encoderDecorator.getClass());
+					if(configuredDecorator != encoderDecorator) {
+						encoderDecorator.defineWayBits(configuredDecorator.getOriginalShift());
+					}
+				}
+			}
 		}
 	}
 
