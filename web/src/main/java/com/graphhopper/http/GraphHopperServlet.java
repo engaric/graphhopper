@@ -92,7 +92,14 @@ public class GraphHopperServlet extends GHBaseServlet {
 
         StopWatch sw = new StopWatch().start();
         GHResponse ghRsp;
-        if (!hopper.getEncodingManager().supports(vehicleStr)) {
+
+        String instructionsString = getParam(httpReq, "instructions", "true");
+        if (!"true".equalsIgnoreCase(instructionsString) && !"false".equalsIgnoreCase(instructionsString)) {
+            String errMesg = String.format(
+                    "%s is not a valid value for parameter instructions. Valid vehicles are true or false",
+                    instructionsString);
+            ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+        } else if (!hopper.getEncodingManager().supports(vehicleStr)) {
             String supported = hopper.getGraph().getEncodingManager().toString();
             String errMesg = String.format("Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr,
                     supported);
@@ -105,8 +112,8 @@ public class GraphHopperServlet extends GHBaseServlet {
 
             initHints(request, httpReq.getParameterMap());
             request.setVehicle(algoVehicle.toString()).setWeighting(weighting).setAlgorithm(algoStr)
-            .setLocale(localeStr).getHints().put("calcPoints", calcPoints)
-            .put("instructions", enableInstructions).put("wayPointMaxDistance", minPathPrecision);
+                    .setLocale(localeStr).getHints().put("calcPoints", calcPoints)
+                    .put("instructions", enableInstructions).put("wayPointMaxDistance", minPathPrecision);
 
             ghRsp = hopper.route(request);
         }
