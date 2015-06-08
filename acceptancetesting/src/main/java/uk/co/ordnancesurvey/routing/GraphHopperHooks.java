@@ -13,6 +13,7 @@ import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -170,6 +171,23 @@ public class GraphHopperHooks {
 		graphUiUtil.verifyErrorMessage(responseMessage);
 
 	}
+	
+	@Then("^I should be able to verify the http statuscode as \"([^\"]*)\"$")
+	public void I_should_be_able_to_verify_the_http_responseCode_as(int statusCode) {
+
+		graphUiUtil.verifyHttpStatusCode(statusCode);
+
+	}
+
+	@Then("^I should be able to verify the http response message as \"([^\"]*)\"$")
+	public void I_should_be_able_to_verify_the_http_response_message_as(
+			String responseMessage) {
+
+		graphUiUtil.verifyHttpErrorMessage(responseMessage);
+
+	}
+
+	
 
 	@When("^I request for a route$")
 	public void I_request_for_route() {
@@ -206,6 +224,14 @@ public class GraphHopperHooks {
 		}
 
 	}
+	
+	@And("^I request for HTTP \"([^\"]*)\" method$")
+	public void I_request_for_http_mehtod(String httpMethod)
+	{
+		graphUiUtil.setHTTPMethod(httpMethod);
+	}
+	
+	
 
 	@After("@SampleScenario")
 	public void I_should_be_able_to_capture_a_screenshot(Scenario sc)
