@@ -7,15 +7,21 @@ import com.graphhopper.util.Translation;
 public abstract class AbstractAvoidanceDecorator implements EncoderDecorator {
 
 	protected EncodedValue wayTypeEncoder;
+	protected int originalShift;
 	public static final int KEY = 303;
 
 	protected abstract void defineEncoder(int shift);
 	protected abstract EdgeAttribute[] getEdgeAttributesOfInterest();
 
 	public int defineWayBits(int shift) {
+		originalShift = shift;
 		defineEncoder(shift);
 		shift += wayTypeEncoder.getBits();
 		return shift;
+	}
+	
+	public int getOriginalShift() {
+		return originalShift;
 	}
 
 	public InstructionAnnotation getAnnotation( long flags, Translation tr )
