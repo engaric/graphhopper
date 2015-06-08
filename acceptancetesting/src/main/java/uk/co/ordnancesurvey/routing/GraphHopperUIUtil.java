@@ -681,6 +681,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	protected void addParameter(String key, String value) {
 		ArrayList<String> tempList = null;
+		if (value.equals("mountainbike"))
+		{	value="mtb";}
 		if (requestParameters.containsKey(key)) {
 			tempList = requestParameters.get(key);
 			if (tempList == null)
@@ -690,6 +692,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			tempList = new ArrayList<String>();
 			tempList.add(value);
 		}
+
 		requestParameters.put(key, tempList);
 	}
 
@@ -849,6 +852,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		String avoidances = requestParameters.get("avoidances").get(0);
 		String vehicle = requestParameters.get("vehicle").get(0);
+		if (vehicle.equalsIgnoreCase("mountainbike"))
+		{
+			vehicle="mtb";
+		}
 
 		ArrayList<String> points = requestParameters.get("point");
 
@@ -874,6 +881,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			break;
 		case "bike":
 			clickElement(ROUTE_TYPE_BIKE);
+			break;
+		case "mtb":
+			clickElement(ROUTE_TYPE_MOUNTAINBIKE);
 			break;
 		case "foot":
 			clickElement(ROUTE_TYPE_WALK);
