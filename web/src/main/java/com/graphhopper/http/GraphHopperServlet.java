@@ -132,9 +132,9 @@ public class GraphHopperServlet extends GHBaseServlet {
                 writeResponse(httpRes, xml);
         } else {
             String type = getParam(httpReq, "type", "json");
-            if (!"json".equals(type) || (!"jsonp".equals(type) && jsonpAllowed)) {
-                String errorMessage = "Invalid type specified. Can be one of ";
-                errorMessage += jsonpAllowed ? "gpx, json or jsonp." : "gpx or json.";
+            if (!"json".equalsIgnoreCase(type) || (!"jsonp".equalsIgnoreCase(type) && jsonpAllowed)) {
+                String errorMessage = type + " is not a valid value for parameter type. Valid values are ";
+                errorMessage += jsonpAllowed ? "JSON, GPX or JSONP." : "GPX or JSON.";
                 ghRsp.addError(new IllegalArgumentException(errorMessage));
             }
             Map<String, Object> map = createJson(ghRsp, calcPoints, pointsEncoded, enableElevation, enableInstructions);
