@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletRequest;
  
  
 public enum ApiResource {
- 
-    FIND("find", new String[]{"query"}, new String[] { "query", "format", "dataset", "maxresults", "offset", "minmatch", "lr", "matchprecision", "fq" });
-   
+	ROUTE("route", new String[]{"point","vehicle"}, new String[] { "point", "locale", "instructions", "vehicle", "weighting", "algorithm", "points_encoded", "debug", "calc_points","tye","avoidances" }),
+    NEAREST("nearest", new String[]{"point"}, new String[] { "point"}),
+	INFO("info", new String[]{}, new String[] { });
+	   
+	
     public String[] getMandatoryValues() {
         return mandatoryValues;
     }
