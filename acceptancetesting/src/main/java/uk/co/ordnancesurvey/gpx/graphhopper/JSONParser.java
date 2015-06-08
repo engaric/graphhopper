@@ -162,18 +162,27 @@ public class JSONParser {
 	}
 
 	public String getErrorMessage() {
-		JsonArray errors = info.getAsJsonArray("errors");
-		JsonPrimitive errorMessage = errors.get(0).getAsJsonObject()
+		
+		JsonObject error= jObject.getAsJsonObject("error");
+	//	JsonArray errors = info.getAsJsonArray("errors");
+		//JsonPrimitive errorMessage = errors.get(0).getAsJsonObject()
+		//		.getAsJsonPrimitive("message");
+		JsonPrimitive errorMessage = error.getAsJsonObject()
 				.getAsJsonPrimitive("message");
 		return errorMessage.getAsString();
 
 	}
 
 	public int getStatusCode() {
-		JsonArray errors = info.getAsJsonArray("errors");
-		JsonPrimitive errorMessage = errors.get(0).getAsJsonObject()
-				.getAsJsonPrimitive("statuscode");
-		return errorMessage.getAsInt();
+	//	JsonArray errors = info.getAsJsonArray("errors");
+		
+		JsonObject error= jObject.getAsJsonObject("error");
+	//	JsonArray errors = info.getAsJsonArray("errors");
+
+		JsonPrimitive statusCode = error.getAsJsonPrimitive("statuscode");
+		//JsonPrimitive errorMessage = errors.get(0).getAsJsonObject()
+		//		.getAsJsonPrimitive("statuscode");
+		return statusCode.getAsInt();
 
 	}
 

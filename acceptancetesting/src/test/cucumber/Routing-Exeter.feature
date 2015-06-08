@@ -834,7 +834,7 @@ Feature: Verify a route from A to B
       | car         |            | fastest   |
 
   #Error Messages
-  @Routing @ErrorMessages
+  @Routing @ErrorMessages  @Current
   Scenario Outline: Incorrect Parameter Value for "Vehicle"
     Given I have route point as
       | pointA              | pointB              |
@@ -843,15 +843,17 @@ Feature: Verify a route from A to B
     And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     When I request for a route
+    Then I should be able to verify the http response message as "<httpErrorMessage>"
+    Then I should be able to verify the http statuscode as "<statusCode>"
     Then I should be able to verify the response message as "<errorMessage>"
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | errorMessage                                                 | statusCode |
-      | 123         |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are car. 	| 400        |
-      | foot        |            | fastest   | Vehicle foot is not a valid vehicle. Valid vehicles are car. | 400        |
-      | cycle       |            | fastest   | Vehicle cycle is not a valid vehicle. Valid vehicles are car.| 400        |
-      | Bike        |            | fastest   | Vehicle Bike is not a valid vehicle. Valid vehicles are car. | 400        |
+      | vehicleType | avoidances | routeType | errorMessage                                                 | statusCode |httpErrorMessage|
+      | 123         |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are car. 	| 400        |e|
+      | foot        |            | fastest   | Vehicle foot is not a valid vehicle. Valid vehicles are car. | 400        |e|
+      | cycle       |            | fastest   | Vehicle cycle is not a valid vehicle. Valid vehicles are car.| 400        |e|
+      | Bike        |            | fastest   | Vehicle Bike is not a valid vehicle. Valid vehicles are car. | 400        |e|
 
   @Routing @ErrorMessages
   Scenario Outline: Incorrect Parameter Name "vehicles"
@@ -934,3 +936,23 @@ Feature: Verify a route from A to B
     Examples: 
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
       | car         | trees      | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
+
+      
+        @Routing @ErrorMessages @Current
+  Scenario Outline: Invalid Parameter Value for "avoidances"
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.729961,-3.524853 | 50.723364,-3.523895 |
+    Given I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    And I request for HTTP "PUT" method
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
+      | car         | trees      | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
+      
