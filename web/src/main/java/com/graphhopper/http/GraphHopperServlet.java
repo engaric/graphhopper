@@ -99,6 +99,9 @@ public class GraphHopperServlet extends GHBaseServlet
 
 		String instructionsString = getParam(httpReq, "instructions", "true");
 		String pointsEncodedString = getParam(httpReq, "points_encoded", "true");
+		String calcPointsString = getParam(httpReq, "calc_points", "true");
+		String debugString = getParam(httpReq, "debug", "true");
+		String prettyString = getParam(httpReq, "pretty", "true");
 
 		boolean validLocale = false;
 		for (String validLocaleStr : TranslationMap.LOCALES)
@@ -153,6 +156,26 @@ public class GraphHopperServlet extends GHBaseServlet
 			String errMesg = String
 			        .format("%s is not a valid value for parameter pointsEncodedString. Valid values are true or false",
 			                pointsEncodedString);
+			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+		} else if (!"true".equalsIgnoreCase(calcPointsString)
+				&& !"false".equalsIgnoreCase(calcPointsString))
+		{
+			String errMesg = String
+					.format("%s is not a valid value for parameter calc_points. Valid values are true or false",
+							calcPointsString);
+			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+		} else if (!"true".equalsIgnoreCase(debugString) && !"false".equalsIgnoreCase(debugString))
+		{
+			String errMesg = String.format(
+			        "%s is not a valid value for parameter debug. Valid values are true or false",
+			        debugString);
+			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+		} else if (!"true".equalsIgnoreCase(prettyString)
+		        && !"false".equalsIgnoreCase(prettyString))
+		{
+			String errMesg = String.format(
+			        "%s is not a valid value for parameter pretty. Valid values are true or false",
+			        prettyString);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
 		} else if (!hopper.getEncodingManager().supports(vehicleStr))
 		{
