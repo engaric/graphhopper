@@ -683,6 +683,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		ArrayList<String> tempList = null;
 		if (value.equals("mountainbike"))
 		{	value="mtb";}
+		
+
+			value= value.toLowerCase().replaceAll(" ", "");
+		
 		if (requestParameters.containsKey(key)) {
 			tempList = requestParameters.get(key);
 			if (tempList == null)
