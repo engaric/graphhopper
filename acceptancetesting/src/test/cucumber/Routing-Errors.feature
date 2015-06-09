@@ -475,8 +475,9 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType | calc_points | responseFormat | errorMessage                                                                                                              | statusCode |
       | car         |            | fastest   | true        | json           | Parameter calc_pointSSS is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
 
+# http method
   @Routing @ErrorMessages
-  Scenario Outline: Invalid http method "PUT"
+  Scenario Outline: http methods "PUT/POST/DEL/GET"
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
@@ -484,11 +485,15 @@ Feature: Verify a route from A to B
     And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
-    And I request for HTTP "PUT" method
+    And I request for HTTP "<httpMethod>" method
     When I request for a route
     Then I should be able to verify the response message as "<errorMessage>"
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
-      | car         |            | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 405        |
+      | vehicleType | avoidances | routeType | httpMethod|responseFormat | errorMessage                                                                                                     | statusCode |
+      | car         |            | fastest   | PUT|json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 405        |
+      | car         |            | fastest   | DEL|json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 405        |
+      | car         |            | fastest   | POST|json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 405        |
+      | car         |            | fastest   | GET|json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 405        |
+      
