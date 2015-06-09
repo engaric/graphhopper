@@ -40,6 +40,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,6 +48,8 @@ import org.w3c.dom.Element;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
+import com.graphhopper.http.validation.BooleanValidator;
+import com.graphhopper.http.validation.CaseInsensitiveStringListValidator;
 import com.graphhopper.routing.AlgorithmOptions;
 import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.routing.util.WeightingMap;
@@ -103,17 +106,7 @@ public class GraphHopperServlet extends GHBaseServlet
 		String debugString = getParam(httpReq, "debug", "true");
 		String prettyString = getParam(httpReq, "pretty", "true");
 
-		boolean validLocale = false;
-		for (String validLocaleStr : TranslationMap.LOCALES)
-		{
-			if (validLocaleStr.equalsIgnoreCase(localeStr))
-			{
-				validLocale = true;
-				break;
-			}
-		}
-
-		if (!validLocale)
+		if (!new CaseInsensitiveStringListValidator().isValid(localeStr, TranslationMap.LOCALES))
 		{
 			StringBuilder errMesg = new StringBuilder(localeStr)
 			        .append(" is not a valid value for parameter locale. Valid values are ");
@@ -131,11 +124,9 @@ public class GraphHopperServlet extends GHBaseServlet
 				}
 			}
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg.toString()));
-		} else if (!AlgorithmOptions.ASTAR.equalsIgnoreCase(algoStr)
-		        && !AlgorithmOptions.ASTAR_BI.equalsIgnoreCase(algoStr)
-		        && !AlgorithmOptions.DIJKSTRA.equalsIgnoreCase(algoStr)
-		        && !AlgorithmOptions.DIJKSTRA_BI.equalsIgnoreCase(algoStr)
-		        && !AlgorithmOptions.DIJKSTRA_ONE_TO_MANY.equalsIgnoreCase(algoStr))
+		} else if (!new CaseInsensitiveStringListValidator().isValid(algoStr,
+				AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI, AlgorithmOptions.DIJKSTRA,
+				AlgorithmOptions.DIJKSTRA_BI, AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
 		{
 			String errMesg = String
 			        .format("%s is not a valid value for parameter algorithm. Valid values are %s, %s, %s, %s or %s",
@@ -143,35 +134,31 @@ public class GraphHopperServlet extends GHBaseServlet
 			                AlgorithmOptions.DIJKSTRA, AlgorithmOptions.DIJKSTRA_BI,
 			                AlgorithmOptions.DIJKSTRA_ONE_TO_MANY);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(instructionsString)
-		        && !"false".equalsIgnoreCase(instructionsString))
+		} else if (!new BooleanValidator().isValid(instructionsString))
 		{
 			String errMesg = String
 			        .format("%s is not a valid value for parameter instructions. Valid values are true or false",
 			                instructionsString);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(pointsEncodedString)
-		        && !"false".equalsIgnoreCase(pointsEncodedString))
+		} else if (!new BooleanValidator().isValid(pointsEncodedString))
 		{
 			String errMesg = String
 			        .format("%s is not a valid value for parameter pointsEncodedString. Valid values are true or false",
 			                pointsEncodedString);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(calcPointsString)
-				&& !"false".equalsIgnoreCase(calcPointsString))
+		} else if (!new BooleanValidator().isValid(calcPointsString))
 		{
 			String errMesg = String
-					.format("%s is not a valid value for parameter calc_points. Valid values are true or false",
-							calcPointsString);
+			        .format("%s is not a valid value for parameter calc_points. Valid values are true or false",
+			                calcPointsString);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(debugString) && !"false".equalsIgnoreCase(debugString))
+		} else if (!new BooleanValidator().isValid(debugString))
 		{
 			String errMesg = String.format(
 			        "%s is not a valid value for parameter debug. Valid values are true or false",
 			        debugString);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(prettyString)
-		        && !"false".equalsIgnoreCase(prettyString))
+		} else if (!new BooleanValidator().isValid(prettyString))
 		{
 			String errMesg = String.format(
 			        "%s is not a valid value for parameter pretty. Valid values are true or false",
@@ -320,7 +307,7 @@ public class GraphHopperServlet extends GHBaseServlet
 			json.put("error", map);
 			Throwable throwable = rsp.getErrors().get(0);
 			map.put("message", throwable.getMessage());
-			map.put("statuscode", "404");
+			map.put("statuscode", "" + HttpStatus.BAD_REQUEST_400);
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (Throwable t : rsp.getErrors())
 			{
