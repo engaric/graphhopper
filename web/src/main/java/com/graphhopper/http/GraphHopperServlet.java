@@ -363,9 +363,9 @@ public class GraphHopperServlet extends GHBaseServlet
 			{
 				Map<String, String> hintMap = new HashMap<String, String>();
 				hintMap.put("message", t.getMessage());
-				// if(internalErrorsAllowed) {
-				hintMap.put("details", t.getClass().getName());
-				// }
+				if(internalErrorsAllowed) {
+					hintMap.put("details", t.getClass().getName());
+				}
 				list.add(hintMap);
 			}
 			json.put("hints", list);
