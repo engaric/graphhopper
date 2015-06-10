@@ -22,6 +22,7 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,12 @@ import org.w3c.dom.Element;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
+import com.graphhopper.http.validation.BooleanValidator;
+import com.graphhopper.http.validation.CaseInsensitiveStringListValidator;
 import com.graphhopper.routing.AlgorithmOptions;
+import com.graphhopper.routing.util.AbstractAvoidanceDecorator;
+import com.graphhopper.routing.util.AbstractFlagEncoder;
+import com.graphhopper.routing.util.EncoderDecorator;
 import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.routing.util.WeightingMap;
 import com.graphhopper.util.Helper;
@@ -77,7 +83,7 @@ public class GraphHopperServlet extends GHBaseServlet
 
 	@Override
 	public void doGet( HttpServletRequest httpReq, HttpServletResponse httpRes )
-			throws ServletException, IOException
+	        throws ServletException, IOException
 	{
 		List<GHPoint> infoPoints = getPoints(httpReq, "point");
 
@@ -96,125 +102,121 @@ public class GraphHopperServlet extends GHBaseServlet
 		String localeStr = getParam(httpReq, "locale", "en_US");
 
 		StopWatch sw = new StopWatch().start();
-		GHResponse ghRsp;
+		GHResponse ghRsp = null;
 
 		String instructionsString = getParam(httpReq, "instructions", "true");
 		String pointsEncodedString = getParam(httpReq, "points_encoded", "true");
 		String calcPointsString = getParam(httpReq, "calc_points", "true");
 		String debugString = getParam(httpReq, "debug", "true");
 		String prettyString = getParam(httpReq, "pretty", "true");
+		String avoidancesString = getParam(httpReq, "avoidances", null);
 
-		boolean validLocale = false;
-		for (String validLocaleStr : TranslationMap.LOCALES)
+		if (!new CaseInsensitiveStringListValidator().isValid(localeStr, TranslationMap.LOCALES))
 		{
-			if (validLocaleStr.equalsIgnoreCase(localeStr))
-			{
-				validLocale = true;
-				break;
-			}
-		}
-
-		if (!validLocale)
-		{
-			StringBuilder errMesg = new StringBuilder(localeStr)
-			.append(" is not a valid value for parameter locale. Valid values are ");
-			for (int i = 0; i < TranslationMap.LOCALES.size(); i++)
-			{
-				String validLocaleStr = TranslationMap.LOCALES.get(i);
-				if (i == TranslationMap.LOCALES.size() - 1)
-				{
-					errMesg.append(" or ");
-				}
-				errMesg.append(validLocaleStr);
-				if (i < TranslationMap.LOCALES.size() - 2)
-				{
-					errMesg.append(", ");
-				}
-			}
+			String errMesg = buildErrorMessageString(localeStr, "locale", TranslationMap.LOCALES);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg.toString()));
-		} else if (!AlgorithmOptions.ASTAR.equalsIgnoreCase(algoStr)
-				&& !AlgorithmOptions.ASTAR_BI.equalsIgnoreCase(algoStr)
-				&& !AlgorithmOptions.DIJKSTRA.equalsIgnoreCase(algoStr)
-				&& !AlgorithmOptions.DIJKSTRA_BI.equalsIgnoreCase(algoStr)
-				&& !AlgorithmOptions.DIJKSTRA_ONE_TO_MANY.equalsIgnoreCase(algoStr))
+		} else if (!new CaseInsensitiveStringListValidator().isValid(algoStr,
+		        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI, AlgorithmOptions.DIJKSTRA,
+		        AlgorithmOptions.DIJKSTRA_BI, AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
 		{
-			String errMesg = String
-					.format("%s is not a valid value for parameter algorithm. Valid values are %s, %s, %s, %s or %s",
-							algoStr, AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
-							AlgorithmOptions.DIJKSTRA, AlgorithmOptions.DIJKSTRA_BI,
-							AlgorithmOptions.DIJKSTRA_ONE_TO_MANY);
+			String errMesg = buildErrorMessageString(algoStr, "algorithm", AlgorithmOptions.ASTAR,
+			        AlgorithmOptions.ASTAR_BI, AlgorithmOptions.DIJKSTRA,
+			        AlgorithmOptions.DIJKSTRA_BI, AlgorithmOptions.DIJKSTRA_ONE_TO_MANY);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(instructionsString)
-				&& !"false".equalsIgnoreCase(instructionsString))
+		} else if (!new BooleanValidator().isValid(instructionsString))
 		{
-			String errMesg = String
-					.format("%s is not a valid value for parameter instructions. Valid values are true or false",
-							instructionsString);
+			String errMesg = buildBooleanErrorMessageString(instructionsString, "instructions");
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(pointsEncodedString)
-				&& !"false".equalsIgnoreCase(pointsEncodedString))
+		} else if (!new BooleanValidator().isValid(pointsEncodedString))
 		{
-			String errMesg = String
-					.format("%s is not a valid value for parameter pointsEncodedString. Valid values are true or false",
-							pointsEncodedString);
+			String errMesg = buildBooleanErrorMessageString(pointsEncodedString, "points_encoded");
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(calcPointsString)
-		        && !"false".equalsIgnoreCase(calcPointsString))
+		} else if (!new BooleanValidator().isValid(calcPointsString))
 		{
-			String errMesg = String
-			        .format("%s is not a valid value for parameter calc_points. Valid values are true or false",
-			                calcPointsString);
+			String errMesg = buildBooleanErrorMessageString(calcPointsString, "calc_points");
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(debugString) && !"false".equalsIgnoreCase(debugString))
+		} else if (!new BooleanValidator().isValid(debugString))
 		{
-			String errMesg = String.format(
-					"%s is not a valid value for parameter debug. Valid values are true or false",
-					debugString);
+			String errMesg = buildBooleanErrorMessageString(debugString, "debug");
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!"true".equalsIgnoreCase(prettyString)
-				&& !"false".equalsIgnoreCase(prettyString))
+		} else if (!new BooleanValidator().isValid(prettyString))
 		{
-			String errMesg = String.format(
-					"%s is not a valid value for parameter pretty. Valid values are true or false",
-					prettyString);
+			String errMesg = buildBooleanErrorMessageString(prettyString, "pretty");
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
 		} else if (!hopper.getEncodingManager().supports(vehicleStr))
 		{
 			String supported = hopper.getGraph().getEncodingManager().toString();
 			String errMesg = String.format(
-					"Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr,
-					supported);
+			        "Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr,
+			        supported);
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
 		} else if (enableElevation && !hopper.hasElevation())
 		{
 			ghRsp = new GHResponse().addError(new IllegalArgumentException(
-					"Elevation not supported!"));
+			        "Elevation not supported!"));
 		} else
 		{
 			FlagEncoder algoVehicle = hopper.getEncodingManager().getEncoder(vehicleStr);
-			GHRequest request = new GHRequest(infoPoints);
 
-			initHints(request, httpReq.getParameterMap());
-			request.setVehicle(algoVehicle.toString()).setWeighting(weighting)
-			.setAlgorithm(algoStr).setLocale(localeStr).getHints()
-			.put("calcPoints", calcPoints).put("instructions", enableInstructions)
-			.put("wayPointMaxDistance", minPathPrecision);
+			// Lots of lovely braces. I will tidy this up next week... promise!
+			if (avoidancesString != null)
+			{
+				System.out.println("Avoidances for " + algoVehicle);
+				List<String> allowedAvoidances = new ArrayList<>();
+				// Check Avoidances
+				if (algoVehicle instanceof AbstractFlagEncoder)
+				{
+					AbstractFlagEncoder abstractFlagEncoder = (AbstractFlagEncoder) algoVehicle;
+					List<EncoderDecorator> encoderDecorators = abstractFlagEncoder
+					        .getEncoderDecorators();
+					if (encoderDecorators != null)
+					{
+						for (EncoderDecorator encoderDecorator : encoderDecorators)
+						{
+							if (encoderDecorator instanceof AbstractAvoidanceDecorator)
+							{
+								AbstractAvoidanceDecorator abstractAvoidanceDecorator = (AbstractAvoidanceDecorator) encoderDecorator;
+								allowedAvoidances.addAll(Arrays.asList(abstractAvoidanceDecorator
+								        .getEdgeAttributesOfInterestNames()));
+							}
+						}
+					}
+				}
+				if (!allowedAvoidances.contains(avoidancesString))
+				{
+					String errMesg = buildErrorMessageString(avoidancesString, "avoidances",
+					        allowedAvoidances);
+					ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg
+					        .toString()));
+				}
+			}
 
-			ghRsp = hopper.route(request);
+			if (ghRsp == null)
+			{
+				GHRequest request = new GHRequest(infoPoints);
+
+				initHints(request, httpReq.getParameterMap());
+				request.setVehicle(algoVehicle.toString()).setWeighting(weighting)
+				        .setAlgorithm(algoStr).setLocale(localeStr).getHints()
+				        .put("calcPoints", calcPoints).put("instructions", enableInstructions)
+				        .put("wayPointMaxDistance", minPathPrecision);
+
+				ghRsp = hopper.route(request);
+			}
 		}
 
 		float took = sw.stop().getSeconds();
 		String infoStr = httpReq.getRemoteAddr() + " " + httpReq.getLocale() + " "
-				+ httpReq.getHeader("User-Agent");
+		        + httpReq.getHeader("User-Agent");
 		String logStr = httpReq.getQueryString() + " " + infoStr + " " + infoPoints + ", took:"
-				+ took + ", " + algoStr + ", " + weighting + ", " + vehicleStr;
+		        + took + ", " + algoStr + ", " + weighting + ", " + vehicleStr;
 
 		if (ghRsp.hasErrors())
 			logger.error(logStr + ", errors:" + ghRsp.getErrors());
 		else
 			logger.info(logStr + ", distance: " + ghRsp.getDistance() + ", time:"
-					+ Math.round(ghRsp.getTime() / 60000f) + "min, points:"
-					+ ghRsp.getPoints().getSize() + ", debug - " + ghRsp.getDebugInfo());
+			        + Math.round(ghRsp.getTime() / 60000f) + "min, points:"
+			        + ghRsp.getPoints().getSize() + ", debug - " + ghRsp.getDebugInfo());
 
 		if (writeGPX)
 		{
@@ -231,12 +233,12 @@ public class GraphHopperServlet extends GHBaseServlet
 			if (!"json".equalsIgnoreCase(type) || (!"jsonp".equalsIgnoreCase(type) && jsonpAllowed))
 			{
 				String errorMessage = type
-						+ " is not a valid value for parameter type. Valid values are ";
+				        + " is not a valid value for parameter type. Valid values are ";
 				errorMessage += jsonpAllowed ? "JSON, GPX or JSONP." : "GPX or JSON.";
 				ghRsp.addError(new IllegalArgumentException(errorMessage));
 			}
 			Map<String, Object> map = createJson(ghRsp, calcPoints, pointsEncoded, enableElevation,
-					enableInstructions);
+			        enableInstructions);
 			Object infoMap = map.get("info");
 			if (infoMap != null)
 				((Map) infoMap).put("took", Math.round(took * 1000));
@@ -249,8 +251,42 @@ public class GraphHopperServlet extends GHBaseServlet
 		}
 	}
 
+	private String buildBooleanErrorMessageString( String paramValue, String paramName )
+	{
+		return buildErrorMessageString(paramValue, paramName,
+		        Arrays.asList(new String[] { Boolean.TRUE.toString(), Boolean.FALSE.toString() }));
+	}
+
+	private String buildErrorMessageString( String paramValue, String paramName,
+	        String... validValues )
+	{
+		return buildErrorMessageString(paramValue, paramName, Arrays.asList(validValues));
+	}
+
+	private String buildErrorMessageString( String paramValue, String paramName,
+	        List<String> validValues )
+	{
+		StringBuilder errMesg = new StringBuilder(paramValue)
+		        .append(" is not a valid value for parameter ").append(paramName)
+		        .append(". Valid values are ");
+		for (int i = 0; i < validValues.size(); i++)
+		{
+			String validStr = validValues.get(i);
+			if (i == validValues.size() - 1)
+			{
+				errMesg.append(" or ");
+			}
+			errMesg.append(validStr);
+			if (i < validValues.size() - 2)
+			{
+				errMesg.append(", ");
+			}
+		}
+		return errMesg.toString();
+	}
+
 	protected String createGPXString( HttpServletRequest req, HttpServletResponse res,
-			GHResponse rsp )
+	        GHResponse rsp )
 	{
 		boolean includeElevation = getBooleanParam(req, "elevation", false);
 		res.setCharacterEncoding("UTF-8");
@@ -311,8 +347,8 @@ public class GraphHopperServlet extends GHBaseServlet
 	}
 
 	protected Map<String, Object> createJson( GHResponse rsp, boolean calcPoints,
-			boolean pointsEncoded, boolean includeElevation, boolean enableInstructions )
-			{
+	        boolean pointsEncoded, boolean includeElevation, boolean enableInstructions )
+	{
 		Map<String, Object> json = new HashMap<String, Object>();
 
 		if (rsp.hasErrors())
@@ -327,9 +363,9 @@ public class GraphHopperServlet extends GHBaseServlet
 			{
 				Map<String, String> hintMap = new HashMap<String, String>();
 				hintMap.put("message", t.getMessage());
-				// if(internalErrorsAllowed) {
-				hintMap.put("details", t.getClass().getName());
-				// }
+				if(internalErrorsAllowed) {
+					hintMap.put("details", t.getClass().getName());
+				}
 				list.add(hintMap);
 			}
 			json.put("hints", list);
@@ -353,7 +389,7 @@ public class GraphHopperServlet extends GHBaseServlet
 				{
 					BBox maxBounds = hopper.getGraph().getBounds();
 					BBox maxBounds2D = new BBox(maxBounds.minLon, maxBounds.maxLon,
-							maxBounds.minLat, maxBounds.maxLat);
+					        maxBounds.minLat, maxBounds.maxLat);
 					jsonPath.put("bbox", rsp.calcRouteBBox(maxBounds2D).toGeoJson());
 				}
 
@@ -368,7 +404,7 @@ public class GraphHopperServlet extends GHBaseServlet
 			json.put("paths", Collections.singletonList(jsonPath));
 		}
 		return json;
-			}
+	}
 
 	protected Object createPoints( PointList points, boolean pointsEncoded, boolean includeElevation )
 	{
