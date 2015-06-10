@@ -112,7 +112,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType | totalRouteTime |
       | car         |            | fastest   | 0h30min        |
 
-  @Routing
+  @Routing @ServiceOnly
   Scenario Outline: Verify  waypoints on a Route from Southampton to Glasgow
     Given I have route point as
       | pointA              | pointB             |
@@ -132,7 +132,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing
+  @Routing @ServiceOnly
   Scenario Outline: Verify  oneway Restrictions on a Route (Burmingham Route with one way restriction-WSPIP-74)
     Given I have route point as
       | pointA              | pointB              |
@@ -149,7 +149,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @KnownIssues @Routing
+  @KnownIssues @Routing @ServiceOnly
   Scenario Outline: Verify  No Turn Restrictions  on a Route (Birmingham WSPIP-77)
     Given I have route point as
       | pointA              | pointB              |
@@ -166,7 +166,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @KnownIssues
+  @KnownIssues @ServiceOnly
   Scenario Outline: Verify  No Turn Restrictions  on a Route (Birmingham Bristol Road WSPIP-83)
     Given I have route point as
       | pointA              | pointB              |
@@ -183,7 +183,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing
+  @Routing  @ServiceOnly
   Scenario Outline: Verify  under pass still finds route  from top road (Southampton- Charle WattsWay)
     Given I have route point as
       | pointA              | pointB              |
@@ -200,7 +200,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing
+  @Routing  @ServiceOnly
   Scenario Outline: Verify  under pass still finds route from bottom road  (Southampton- Charle WattsWay)
     Given I have route point as
       | pointA             | pointB             |
@@ -268,7 +268,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @KnownIssues
+  @KnownIssues @ServiceOnly
   Scenario Outline: Verify  No Turns with Exceptions(Vehicle Type:Bus)   (High Street-Hounslow)
     Given I have route point as
       | pointA              | pointB              |
@@ -303,7 +303,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing
+  @Routing @ServiceOnly
   Scenario Outline: Verify  Private Road Restricted Access (Warwick Road-Carlisle)
     Given I have route point as
       | pointA              | pointB            |

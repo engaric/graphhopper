@@ -50,13 +50,13 @@ public class GraphHopperHooks {
 
 	}
 
-	@After("@WebOnly,@SampleScenario,@ErrorMessages")
+	@After("@WebOnly,@SampleScenario,@ErrorMessages,@ServiceOnly")
 	public void rollBackTestONProperty() {
 		IntegrationTestProperties.setTestProperty("testON", testON);
 
 	}
 
-	@Before("@ErrorMessages")
+	@Before("@ErrorMessages,@ServiceOnly")
 	public void overrideTestONProperty() {
 
 		testON = IntegrationTestProperties.getTestProperty("testON");
