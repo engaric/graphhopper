@@ -168,7 +168,7 @@ public class CarFlagEncoderTest
         way.setTag("maxspeed", "500");
         long allowed = encoder.acceptWay(way);
         long encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(110, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(100, encoder.getSpeed(encoded), 1e-1);
 
         way = new OSMWay(1);
         way.setTag("highway", "primary");
@@ -239,21 +239,21 @@ public class CarFlagEncoderTest
         way.setTag("maxspeed:type", "GB:nsl_dual");
         long allowed = encoder.acceptWay(way);
         long encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(Math.round(CarFlagEncoder.SEVENTY_MPH_IN_KPH/5)*5, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(truncateSpeedToMax(), encoder.getSpeed(encoded), 1e-1);
 
         way.clearTags();
         way.setTag("highway", "secondary");
         way.setTag("maxspeed:type", "GB:nsl_single");
         allowed = encoder.acceptWay(way);
         encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(Math.round(CarFlagEncoder.SIXTY_MPH_IN_KPH/5)*5, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(factorSpeed(CarFlagEncoder.SIXTY_MPH_IN_KPH), encoder.getSpeed(encoded), 1e-1);
 
         way.clearTags();
         way.setTag("highway", "motorway");
         way.setTag("maxspeed:type", "GB:motorway");
         allowed = encoder.acceptWay(way);
         encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(Math.round(CarFlagEncoder.SEVENTY_MPH_IN_KPH/5)*5, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(truncateSpeedToMax(), encoder.getSpeed(encoded), 1e-1);
 
         way.clearTags();
         way.setTag("highway", "secondary");
@@ -261,7 +261,7 @@ public class CarFlagEncoderTest
         way.setTag("maxspeed:type", "GB:nsl_single");
         allowed = encoder.acceptWay(way);
         encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(Math.round(CarFlagEncoder.THIRTY_MPH_IN_KPH/5)*5, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(factorSpeed(CarFlagEncoder.THIRTY_MPH_IN_KPH), encoder.getSpeed(encoded), 1e-1);
 
         try
         {
@@ -270,6 +270,17 @@ public class CarFlagEncoderTest
         } catch (IllegalArgumentException ex)
         {
         }
+    }
+
+	private int truncateSpeedToMax()
+    {
+	    int factorSpeed = factorSpeed(CarFlagEncoder.SEVENTY_MPH_IN_KPH);
+		return factorSpeed>encoder.maxPossibleSpeed?encoder.maxPossibleSpeed:factorSpeed;
+    }
+
+	private int factorSpeed(int speed )
+    {
+	    return Math.round(speed/5)*5;
     }
 
     @Test
@@ -483,7 +494,7 @@ public class CarFlagEncoderTest
         way.setTag("highway", "motorway_link");
         way.setTag("maxspeed", "70 mph");
         flags = instance.handleWayTags(way, 1, 0);
-        assertEquals(101.5, instance.getSpeed(flags), 1e-1);
+        assertEquals(100, instance.getSpeed(flags), 1e-1);
     }
 
     @Test

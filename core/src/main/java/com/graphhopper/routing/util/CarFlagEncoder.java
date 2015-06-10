@@ -112,7 +112,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
         badSurfaceSpeedMap.add("ground");
         badSurfaceSpeedMap.add("grass");
 
-        maxPossibleSpeed = SEVENTY_MPH_IN_KPH;
+        maxPossibleSpeed = 100;
         
         // autobahn
         defaultSpeedMap.put("motorway", 100);
