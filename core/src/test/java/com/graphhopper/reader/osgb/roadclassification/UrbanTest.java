@@ -1,8 +1,8 @@
 package com.graphhopper.reader.osgb.roadclassification;
 
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -12,11 +12,10 @@ import org.mockito.MockitoAnnotations;
 
 import com.graphhopper.reader.Way;
 import com.graphhopper.reader.osgb.OsToOsmAttributeMappingVisitor;
-import com.graphhopper.routing.util.CarFlagEncoder;
 
 public class UrbanTest
 {
-	private static final String _30_MPH = Integer.toString(CarFlagEncoder.THIRTY_MPH_IN_KPH);
+	private static final String _30_MPH = "30 mph";
 	static OsToOsmAttributeMappingVisitor visitor;
 	@Mock
 	Way way;

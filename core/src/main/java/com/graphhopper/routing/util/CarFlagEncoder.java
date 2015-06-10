@@ -49,9 +49,9 @@ public class CarFlagEncoder extends AbstractFlagEncoder
     /**
      * 1mph = 1.60934kph
      */
-    public static final int SEVENTY_MPH_IN_KPH = 112;
-    public static final int SIXTY_MPH_IN_KPH = 96;
-    public static final int THIRTY_MPH_IN_KPH = 48;
+    public static final int SEVENTY_MPH_IN_KPH = (int)parseSpeed("70mph");
+    public static final int SIXTY_MPH_IN_KPH = (int)parseSpeed("60mph");;
+    public static final int THIRTY_MPH_IN_KPH = (int)parseSpeed("30mph");;
 
     /**
      * Should be only instantied via EncodingManager
@@ -112,7 +112,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
         badSurfaceSpeedMap.add("ground");
         badSurfaceSpeedMap.add("grass");
 
-        maxPossibleSpeed = 100;
+        maxPossibleSpeed = SEVENTY_MPH_IN_KPH;
         
         // autobahn
         defaultSpeedMap.put("motorway", 100);
@@ -140,39 +140,8 @@ public class CarFlagEncoder extends AbstractFlagEncoder
         // forestry stuff
         defaultSpeedMap.put("track", 15);
 
-        defaultSpeedMap.put("Motorway", SEVENTY_MPH_IN_KPH);
-        defaultSpeedMap.put("A Road", SIXTY_MPH_IN_KPH);
-        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
-        //        defaultSpeedMap.put("Alley", 35);
-        defaultSpeedMap.put("A Road-Single Carriageway", SIXTY_MPH_IN_KPH);
-        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
-        //        defaultSpeedMap.put("Alley", 35);
-        defaultSpeedMap.put("Motorway", SEVENTY_MPH_IN_KPH);
-        defaultSpeedMap.put("A Road", SIXTY_MPH_IN_KPH);
-        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
-        //        defaultSpeedMap.put("Alley", 35);
-        defaultSpeedMap.put("A Road-Dual Carriageway", SIXTY_MPH_IN_KPH);
-        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
-        //        defaultSpeedMap.put("Alley", 35);
-        defaultSpeedMap.put("Motorway-Slip Road", SEVENTY_MPH_IN_KPH);
-        defaultSpeedMap.put("A Road-Slip Road", SIXTY_MPH_IN_KPH);
-        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
-        //        defaultSpeedMap.put("Alley", 35);
-        defaultSpeedMap.put("Motorway-Roundabout", SEVENTY_MPH_IN_KPH);
-        defaultSpeedMap.put("A Road-Roundabout", SIXTY_MPH_IN_KPH);
-        defaultSpeedMap.put("B Road-Roundabout", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Minor Road-Roundabout", THIRTY_MPH_IN_KPH);
-        defaultSpeedMap.put("Local Street-Roundabout", THIRTY_MPH_IN_KPH);
+        addNationalUKSpeedMapping();
+        addRoadTypeUKSpeedMapping();
 
         // You can not drive down a pedestrianised street
         defaultSpeedMap.put("Pedestrianised Street", 0);
@@ -220,6 +189,50 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 
     }
 
+	private void addNationalUKSpeedMapping()
+    {
+	    defaultSpeedMap.put("GB:motorway", SEVENTY_MPH_IN_KPH);
+	    defaultSpeedMap.put("GB:nsl_dual", SEVENTY_MPH_IN_KPH);
+	    defaultSpeedMap.put("GB:nsl_single", SIXTY_MPH_IN_KPH);
+    }
+
+	private void addRoadTypeUKSpeedMapping()
+    {
+	    defaultSpeedMap.put("Motorway", SEVENTY_MPH_IN_KPH);
+        defaultSpeedMap.put("A Road", SIXTY_MPH_IN_KPH);
+        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+        //        defaultSpeedMap.put("Alley", 35);
+        defaultSpeedMap.put("A Road-Single Carriageway", SIXTY_MPH_IN_KPH);
+        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+        //        defaultSpeedMap.put("Alley", 35);
+        defaultSpeedMap.put("Motorway", SEVENTY_MPH_IN_KPH);
+        defaultSpeedMap.put("A Road", SIXTY_MPH_IN_KPH);
+        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+        //        defaultSpeedMap.put("Alley", 35);
+        defaultSpeedMap.put("A Road-Dual Carriageway", SIXTY_MPH_IN_KPH);
+        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+        //        defaultSpeedMap.put("Alley", 35);
+        defaultSpeedMap.put("Motorway-Slip Road", SEVENTY_MPH_IN_KPH);
+        defaultSpeedMap.put("A Road-Slip Road", SIXTY_MPH_IN_KPH);
+        defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+        //        defaultSpeedMap.put("Alley", 35);
+        defaultSpeedMap.put("Motorway-Roundabout", SEVENTY_MPH_IN_KPH);
+        defaultSpeedMap.put("A Road-Roundabout", SIXTY_MPH_IN_KPH);
+        defaultSpeedMap.put("B Road-Roundabout", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Minor Road-Roundabout", THIRTY_MPH_IN_KPH);
+        defaultSpeedMap.put("Local Street-Roundabout", THIRTY_MPH_IN_KPH);
+    }
+
     /**
      * Define the place of the speedBits in the edge flags for car.
      */
@@ -235,21 +248,25 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 
     protected double getSpeed( Way way )
     {
-        String highwayValue = way.getTag("highway");
-        Integer speed = defaultSpeedMap.get(highwayValue);
-        if (speed == null)
-            throw new IllegalStateException(toString() + ", no speed found for: " + highwayValue + ", tags: " + way);
+    	String typeMax = way.getTag("maxspeed:type");
+    	Integer speed = defaultSpeedMap.get(typeMax);
+    	if(null==speed) {
+    		String highwayValue = way.getTag("highway");
+    		speed = defaultSpeedMap.get(highwayValue);
+    		if (speed == null)
+    			throw new IllegalStateException(toString() + ", no speed found for: " + highwayValue + ", tags: " + way);
 
-        if (highwayValue.equals("track"))
-        {
-            String tt = way.getTag("tracktype");
-            if (!Helper.isEmpty(tt))
-            {
-                Integer tInt = trackTypeSpeedMap.get(tt);
-                if (tInt != null)
-                    speed = tInt;
-            }
-        }
+    		if (highwayValue.equals("track"))
+    		{
+    			String tt = way.getTag("tracktype");
+    			if (!Helper.isEmpty(tt))
+    			{
+    				Integer tInt = trackTypeSpeedMap.get(tt);
+    				if (tInt != null)
+    					speed = tInt;
+    			}
+    		}
+    	}
 
         return speed;
     }

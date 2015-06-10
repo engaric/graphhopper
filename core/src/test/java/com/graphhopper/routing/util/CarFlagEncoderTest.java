@@ -17,10 +17,14 @@
  */
 package com.graphhopper.routing.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import com.graphhopper.reader.OSMNode;
 import com.graphhopper.reader.OSMWay;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -30,7 +34,7 @@ public class CarFlagEncoderTest
 {
     private final EncodingManager em = new EncodingManager("CAR,BIKE,FOOT");
     private final CarFlagEncoder encoder = (CarFlagEncoder) em.getEncoder("CAR");
-
+    
     @Test
     public void testAccess()
     {
@@ -164,7 +168,7 @@ public class CarFlagEncoderTest
         way.setTag("maxspeed", "500");
         long allowed = encoder.acceptWay(way);
         long encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(100, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(110, encoder.getSpeed(encoded), 1e-1);
 
         way = new OSMWay(1);
         way.setTag("highway", "primary");
@@ -216,6 +220,48 @@ public class CarFlagEncoderTest
         allowed = encoder.acceptWay(way);
         encoded = encoder.handleWayTags(way, allowed, 0);
         assertEquals(20, encoder.getSpeed(encoded), 1e-1);
+
+        try
+        {
+            encoder.setSpeed(0, -1);
+            assertTrue(false);
+        } catch (IllegalArgumentException ex)
+        {
+        }
+    }
+    
+    @Test
+    public void testMaxSpeedType()
+    {
+        // limit bigger than default road speed
+        OSMWay way = new OSMWay(1);
+        way.setTag("highway", "primary");
+        way.setTag("maxspeed:type", "GB:nsl_dual");
+        long allowed = encoder.acceptWay(way);
+        long encoded = encoder.handleWayTags(way, allowed, 0);
+        assertEquals(Math.round(CarFlagEncoder.SEVENTY_MPH_IN_KPH/5)*5, encoder.getSpeed(encoded), 1e-1);
+
+        way.clearTags();
+        way.setTag("highway", "secondary");
+        way.setTag("maxspeed:type", "GB:nsl_single");
+        allowed = encoder.acceptWay(way);
+        encoded = encoder.handleWayTags(way, allowed, 0);
+        assertEquals(Math.round(CarFlagEncoder.SIXTY_MPH_IN_KPH/5)*5, encoder.getSpeed(encoded), 1e-1);
+
+        way.clearTags();
+        way.setTag("highway", "motorway");
+        way.setTag("maxspeed:type", "GB:motorway");
+        allowed = encoder.acceptWay(way);
+        encoded = encoder.handleWayTags(way, allowed, 0);
+        assertEquals(Math.round(CarFlagEncoder.SEVENTY_MPH_IN_KPH/5)*5, encoder.getSpeed(encoded), 1e-1);
+
+        way.clearTags();
+        way.setTag("highway", "secondary");
+        way.setTag("maxspeed", "30 mph");
+        way.setTag("maxspeed:type", "GB:nsl_single");
+        allowed = encoder.acceptWay(way);
+        encoded = encoder.handleWayTags(way, allowed, 0);
+        assertEquals(Math.round(CarFlagEncoder.THIRTY_MPH_IN_KPH/5)*5, encoder.getSpeed(encoded), 1e-1);
 
         try
         {
@@ -437,7 +483,7 @@ public class CarFlagEncoderTest
         way.setTag("highway", "motorway_link");
         way.setTag("maxspeed", "70 mph");
         flags = instance.handleWayTags(way, 1, 0);
-        assertEquals(100, instance.getSpeed(flags), 1e-1);
+        assertEquals(101.5, instance.getSpeed(flags), 1e-1);
     }
 
     @Test
