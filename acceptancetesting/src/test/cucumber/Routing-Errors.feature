@@ -1,4 +1,4 @@
-Feature: Verify Error Messages from a routing service for invalid routing requests
+Feature: Verify Error Messages from a routing service
    As a user
    I want to get a valid Error message and status code for a invalid route request
 
@@ -27,7 +27,7 @@ Feature: Verify Error Messages from a routing service for invalid routing reques
       | 2             | 50.729205,-3.523206 | Turn right onto WELL STREET | 210.0   | SW        | 4050 | 112.5    |           |
 
   # Parameter :  vehicle
-   @ErrorMessages @Demo
+   @ErrorMessages 
   Scenario Outline: Incorrect Parameter Value for "Vehicle"
     Given I have route point as
       | pointA              | pointB              |
@@ -557,13 +557,12 @@ Feature: Verify Error Messages from a routing service for invalid routing reques
   # Nearest Point : Invalid Parameter Value "point"
    @ErrorMessages @Current
   Scenario Outline: Verify  nearest point of point using NearestPoint API
-    Given My routing points for nearestPoint API as "<pointA>"
-    And I have type as "<responseFormat>"
-    When I request a nearest point from from Nearest Point API
+    Given I have type as "<responseFormat>"
+    And My routing points for nearestPoint API as "<pointA>"
     Then I should be able to verify the response message as "<errorMessage>"
     Then I should be able to verify the statuscode as "<statusCode>"
 
-    #  Then I should be able to verify the http response message as "<errorMessage>"
+    #  Then I should be able to verify the http response message as "<httpErrorMessage>"
     #Then I should be able to verify the http statuscode as "<statusCode>"
     Examples: 
       | pointA              | errorMessage | responseFormat | statusCode |

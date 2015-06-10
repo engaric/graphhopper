@@ -8,7 +8,6 @@ import java.util.Map;
 import org.junit.Assert;
 
 import uk.co.ordnancesurvey.gpx.graphhopper.IntegrationTestProperties;
-import uk.co.ordnancesurvey.gpx.graphhopper.NearestPointServiceUtil;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
@@ -26,15 +25,12 @@ public class GraphHopperHooks {
 	String instruction;
 	String nearestPoint = "";
 	String Distance = "";
-	String pointA;
 
 	DataTable routePointsTable;
 
-	NearestPointServiceUtil nearestPointUtil= new NearestPointServiceUtil();
-
-	@Before({"~@WebOnly","~@SampleScenario"})
+	@Before({ "~@WebOnly", "~@SampleScenario" })
 	public void init() {
-		
+
 		graphUiUtil = (IntegrationTestProperties
 				.getTestPropertyBool("viaApigee") == true) ? new GraphHopperUIUtil(
 				IntegrationTestProperties
@@ -60,8 +56,6 @@ public class GraphHopperHooks {
 
 	}
 
-	
-	
 	@Before("@ErrorMessages")
 	public void overrideTestONProperty() {
 
@@ -69,18 +63,19 @@ public class GraphHopperHooks {
 		IntegrationTestProperties.setTestProperty("testON", "Service");
 	}
 
+	@Given("^My routing ([^\"]*) for nearestPoint API as \"([^\"]*)\"$")
+	public void I_have_route_point_for_Nearest_Point_API(String paramName,
+			String pointA) {
+		graphUiUtil.getNearestPoint(paramName, pointA);
 
-
-	@Given("^My routing point for nearestPoint API as \"([^\"]*)\"$")
-	public void I_have_route_point_for_Nearest_Point_API(String pointA) {
-		this.pointA = pointA;
 	}
 
 	@When("^I request a nearest point from from Nearest Point API$")
 	public void I_request_a_nearest_point_from_from_Nearest_Point_API() {
-		if (IntegrationTestProperties.getTestProperty("testON").equalsIgnoreCase("json")){
-		nearestPoint=nearestPointUtil.getNearestPoint(pointA);
-		Distance = nearestPointUtil.getNearestPointDistance();
+		if (IntegrationTestProperties.getTestProperty("testON")
+				.equalsIgnoreCase("Service")) {
+			nearestPoint = graphUiUtil.getNearestPoint();
+			Distance = graphUiUtil.getNearestPointDistance();
 		}
 
 	}
@@ -88,14 +83,15 @@ public class GraphHopperHooks {
 	@Then("^I should be able to verify the nearest point to be \"([^\"]*)\" at a distance of \"([^\"]*)\"$")
 	public void I_should_be_able_to_verify_the_nearest_point_to_be(
 			String pointB, String distance) {
-		if (IntegrationTestProperties.getTestProperty("testON").equalsIgnoreCase("json")){
-		
-		Assert.assertTrue("******Expected nearest Point " + pointB
-				+ " is not matching with " + nearestPoint + "********",
-				pointB.equals(nearestPoint));
-		Assert.assertTrue("******Expected nearest Point distance " + distance
-				+ " is not matcching with " + Distance,
-				Distance.equals(distance));
+		if (IntegrationTestProperties.getTestProperty("testON")
+				.equalsIgnoreCase("json")) {
+
+			Assert.assertTrue("******Expected nearest Point " + pointB
+					+ " is not matching with " + nearestPoint + "********",
+					pointB.equals(nearestPoint));
+			Assert.assertTrue("******Expected nearest Point distance "
+					+ distance + " is not matcching with " + Distance,
+					Distance.equals(distance));
 		}
 
 	}
@@ -171,9 +167,10 @@ public class GraphHopperHooks {
 		graphUiUtil.verifyErrorMessage(responseMessage);
 
 	}
-	
+
 	@Then("^I should be able to verify the http statuscode as \"([^\"]*)\"$")
-	public void I_should_be_able_to_verify_the_http_responseCode_as(int statusCode) {
+	public void I_should_be_able_to_verify_the_http_responseCode_as(
+			int statusCode) {
 
 		graphUiUtil.verifyHttpStatusCode(statusCode);
 
@@ -186,8 +183,6 @@ public class GraphHopperHooks {
 		graphUiUtil.verifyHttpErrorMessage(responseMessage);
 
 	}
-
-	
 
 	@When("^I request for a route$")
 	public void I_request_for_route() {
@@ -224,14 +219,11 @@ public class GraphHopperHooks {
 		}
 
 	}
-	
+
 	@And("^I request for HTTP \"([^\"]*)\" method$")
-	public void I_request_for_http_mehtod(String httpMethod)
-	{
+	public void I_request_for_http_mehtod(String httpMethod) {
 		graphUiUtil.setHTTPMethod(httpMethod);
 	}
-	
-	
 
 	@After("@SampleScenario")
 	public void I_should_be_able_to_capture_a_screenshot(Scenario sc)

@@ -651,7 +651,8 @@ Feature: Verify a route from A to B
 
   @Routing
   Scenario Outline: Verify  nearest point of point using NearestPoint API
-    Given My routing point for nearestPoint API as "<pointA>"
+    Given I have type as "<responseFormat>"
+    And My routing point for nearestPoint API as "<pointA>"
     When I request a nearest point from from Nearest Point API
     Then I should be able to verify the nearest point to be "<pointB>" at a distance of "<distance>"
 
@@ -909,7 +910,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  @Routing @Current
+  @Routing
   Scenario Outline: Verify  Route using 2 intermediate waypoints (Oxford to LONDON )
     Given I have route point as
       | pointA              | pointB              | pointC             | pointD              |
