@@ -32,6 +32,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -795,6 +796,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		
 		break;
 
+	case "OPTIONS":
+		
+		httpRequest = new HttpOptions(serviceUrl);
+		
+		break;
 	default:
 		httpRequest = new HttpGet(serviceUrl);
 		break;
@@ -1017,6 +1023,35 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	{
 		return requestParameters;
 	}
+	
+	
+	public void getNearestPoint(String paramName,String pointA) {
+
+		String nearestpoint = "";
+		StringBuffer sb = new StringBuffer();
+		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {
+			sb.append(IntegrationTestProperties
+					.getTestProperty("graphHopperWebUrlViaApigee"));
+		} else {
+			sb.append(IntegrationTestProperties
+					.getTestProperty("graphHopperWebUrl"));
+		}
+
+		sb.append("nearest?");
+		sb.append(paramName+"=");
+		sb.append(pointA);
+
+		getRouteFromServiceWithParameters(sb);
+
+	//	nearestpoint = getNearestPoint();
+		
+
+		//return nearestpoint;
+
+	}
+
+
+	
 	public String getNearestPoint() {
 
 		return GPHJSONUtil.getNearestPoint();
@@ -1042,6 +1077,12 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	public void verifyHttpErrorMessage(String responseMessage) {
 		Assert.assertTrue("Actual http Error Message "+ actualResponseMsg+ " is not matching with "+responseMessage,responseMessage.equalsIgnoreCase(actualResponseMsg));
+		
+	}
+
+	public void setPointForNearest(String paramName, String pointA) {
+		
+	
 		
 	}
 

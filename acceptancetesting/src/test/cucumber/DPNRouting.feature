@@ -557,7 +557,7 @@ Feature: Verify a route from A to B
       | vehicleType  | avoidances | routeType |
       | mountainbike |            |           |
 
-  @Routing 
+  @Routing @Demo
   Scenario Outline: Verify DPN Route with avoidance -(A Road)
     Given I have route point as
       | pointA              | pointB              |
