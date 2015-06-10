@@ -10,10 +10,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.graphhopper.reader.Way;
-import com.graphhopper.reader.osgb.dpn.OsDpnOsmAttributeMappingVisitor;
+import com.graphhopper.reader.osgb.OsToOsmAttributeMappingVisitor;
+import com.graphhopper.reader.osgb.dpn.additionalrights.AdoptedByNationalCycleRoute;
 
 public class AdoptedByNationalCycleRouteTest {
-    static OsDpnOsmAttributeMappingVisitor visitor;
+    static OsToOsmAttributeMappingVisitor visitor;
     @Mock
     Way way;
 
