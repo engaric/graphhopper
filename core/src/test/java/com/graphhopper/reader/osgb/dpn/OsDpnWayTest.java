@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
-import com.graphhopper.reader.osgb.dpn.potentialHazards.InvalidPotentialHazardException;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.InvalidPotentialHazardException;
 
 public class OsDpnWayTest {
 

@@ -35,34 +35,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.graphhopper.reader.Way;
-import com.graphhopper.reader.osgb.dpn.additionalRights.AdoptedByNationalCycleRoute;
-import com.graphhopper.reader.osgb.dpn.additionalRights.AdoptedByOtherCycleRoute;
-import com.graphhopper.reader.osgb.dpn.additionalRights.AdoptedByRecreationalRoute;
-import com.graphhopper.reader.osgb.dpn.additionalRights.WithinAccessLand;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Boulders;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Cliff;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Foreshore;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.InlandWater;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.InvalidPotentialHazardException;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Marsh;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Mud;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.QuarryOrPit;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Rock;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Sand;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Scree;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Shingle;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.Spoil;
-import com.graphhopper.reader.osgb.dpn.potentialHazards.TidalWater;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.BridleWay;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.BywayOpenToAllTraffic;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.CorePath;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.Footpath;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.None;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.NormalPermissibleUses;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.OtherRouteWithPublicAccess;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.PermissiveBridleWay;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.PermissivePath;
-import com.graphhopper.reader.osgb.dpn.rightOfWay.RestrictedByway;
+import com.graphhopper.reader.osgb.OsToOsmAttributeMappingVisitor;
+import com.graphhopper.reader.osgb.dpn.additionalrights.AdoptedByNationalCycleRoute;
+import com.graphhopper.reader.osgb.dpn.additionalrights.AdoptedByOtherCycleRoute;
+import com.graphhopper.reader.osgb.dpn.additionalrights.AdoptedByRecreationalRoute;
+import com.graphhopper.reader.osgb.dpn.additionalrights.WithinAccessLand;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Boulders;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Cliff;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Foreshore;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.InlandWater;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.InvalidPotentialHazardException;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Marsh;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Mud;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.QuarryOrPit;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Rock;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Sand;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Scree;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Shingle;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.Spoil;
+import com.graphhopper.reader.osgb.dpn.potentialhazards.TidalWater;
+import com.graphhopper.reader.osgb.dpn.rightofway.BridleWay;
+import com.graphhopper.reader.osgb.dpn.rightofway.BywayOpenToAllTraffic;
+import com.graphhopper.reader.osgb.dpn.rightofway.CorePath;
+import com.graphhopper.reader.osgb.dpn.rightofway.Footpath;
+import com.graphhopper.reader.osgb.dpn.rightofway.None;
+import com.graphhopper.reader.osgb.dpn.rightofway.NormalPermissibleUses;
+import com.graphhopper.reader.osgb.dpn.rightofway.OtherRouteWithPublicAccess;
+import com.graphhopper.reader.osgb.dpn.rightofway.PermissiveBridleWay;
+import com.graphhopper.reader.osgb.dpn.rightofway.PermissivePath;
+import com.graphhopper.reader.osgb.dpn.rightofway.RestrictedByway;
 
 /**
  * Represents an OSM Way
@@ -77,13 +78,13 @@ public class OsDpnWay extends OsDpnElement implements Way {
     protected String endCoord;
     private String[] wayCoords;
     private static final Logger logger = LoggerFactory.getLogger(OsDpnWay.class);
-    private static OsDpnOsmAttributeMappingVisitor[] RIGHT_OF_WAY_VISITORS = { new BridleWay(),
+    private static OsToOsmAttributeMappingVisitor[] RIGHT_OF_WAY_VISITORS = { new BridleWay(),
         new BywayOpenToAllTraffic(), new CorePath(), new Footpath(), new None(), new NormalPermissibleUses(),
         new OtherRouteWithPublicAccess(), new PermissiveBridleWay(), new PermissivePath(), new RestrictedByway() };
-    private static OsDpnOsmAttributeMappingVisitor[] POTENTIAL_HAZARD_VISITORS = { new Boulders(), new Cliff(),
+    private static OsToOsmAttributeMappingVisitor[] POTENTIAL_HAZARD_VISITORS = { new Boulders(), new Cliff(),
         new Marsh(), new Mud(), new Sand(), new Scree(), new Shingle(), new Spoil(), new Rock(), new TidalWater(),
         new QuarryOrPit(), new InlandWater(), new Foreshore() };
-    private static OsDpnOsmAttributeMappingVisitor[] ADDITIONAL_RIGHTS_VISITORS = { new AdoptedByNationalCycleRoute(),
+    private static OsToOsmAttributeMappingVisitor[] ADDITIONAL_RIGHTS_VISITORS = { new AdoptedByNationalCycleRoute(),
         new AdoptedByOtherCycleRoute(), new AdoptedByRecreationalRoute(), new WithinAccessLand() };
 
     public static boolean THROW_EXCEPTION_ON_INVALID_HAZARD = false;
@@ -118,7 +119,7 @@ public class OsDpnWay extends OsDpnElement implements Way {
     protected int handleAdditionalRights(XMLStreamReader parser) throws XMLStreamException {
         String access = parser.getElementText();
         if ("true".equals(access)) {
-            for (OsDpnOsmAttributeMappingVisitor visitor : ADDITIONAL_RIGHTS_VISITORS) {
+            for (OsToOsmAttributeMappingVisitor visitor : ADDITIONAL_RIGHTS_VISITORS) {
                 visitor.visitWayAttribute(parser.getLocalName().toLowerCase(), this);
             }
         }
@@ -154,7 +155,7 @@ public class OsDpnWay extends OsDpnElement implements Way {
     @Override
     protected int handleRightOfUse(XMLStreamReader parser) throws XMLStreamException {
         String attributeValue = parser.getElementText().replaceAll(" ", "").toLowerCase();
-        for (OsDpnOsmAttributeMappingVisitor visitor : RIGHT_OF_WAY_VISITORS) {
+        for (OsToOsmAttributeMappingVisitor visitor : RIGHT_OF_WAY_VISITORS) {
             visitor.visitWayAttribute(attributeValue, this);
         }
         return parser.getEventType();
@@ -184,7 +185,7 @@ public class OsDpnWay extends OsDpnElement implements Way {
         // <dpn:potentialHazardCrossed>Boulders, Inland
         // Wat</dpn:potentialHazardCrossed>
         boolean handled = false;
-        for (OsDpnOsmAttributeMappingVisitor visitor : POTENTIAL_HAZARD_VISITORS) {
+        for (OsToOsmAttributeMappingVisitor visitor : POTENTIAL_HAZARD_VISITORS) {
             handled |= visitor.visitWayAttribute(attributeValue, this);
         }
         if (!handled) {
