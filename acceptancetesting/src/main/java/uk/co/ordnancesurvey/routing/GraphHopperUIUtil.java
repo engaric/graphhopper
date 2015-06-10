@@ -71,7 +71,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	JavascriptExecutor js = (JavascriptExecutor) driver;
 	WebElement we;
 	private BufferedImage actualMap;
-	private String httpMethod="";
+	private String httpMethod = "";
 	private int actualResponseCode;
 	private String actualResponseMsg;
 
@@ -324,7 +324,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			break;
 		case "SERVICE":
 
-			if (requestParameters.get("type").get(0).equals("gpx")) {
+			if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
 				wp = buildWayPoint(wayPoint_Coordinates, wayPointDescription,
 						azimuth, direction, time, distance);
 				isWayPointonRouteMap = GPHServiceUtil.isWayPointOnGPXRoutes(wp);
@@ -573,8 +573,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					"trackPointco");
 
 			Waypoint trackPoint = buildWayPoint(waypointco);
-			if (IntegrationTestProperties.getTestProperty("routeType").equals(
-					"gpx")) {
+			if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
 				assertTrue(GPHServiceUtil.isWayPointOnTrack(trackPoint,
 						GPHServiceUtil.getTracks().iterator().next()));
 			}
@@ -598,7 +597,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					"trackPointco");
 
 			Waypoint trackPoint = buildWayPoint(waypointco);
-			if (requestParameters.get("type").get(0).equals("gpx")) {
+			if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
 				assertTrue(!GPHServiceUtil.isWayPointOnTrack(trackPoint,
 						GPHServiceUtil.getTracks().iterator().next()));
 			}
@@ -682,12 +681,12 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	protected void addParameter(String key, String value) {
 		ArrayList<String> tempList = null;
-		if (value.equals("mountainbike"))
-		{	value="mtb";}
-		
+		if (value.equals("mountainbike")) {
+			value = "mtb";
+		}
 
-			value= value.toLowerCase().replaceAll(" ", "");
-		
+		value = value.toLowerCase().replaceAll(" ", "");
+
 		if (requestParameters.containsKey(key)) {
 			tempList = requestParameters.get(key);
 			if (tempList == null)
@@ -727,7 +726,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			serviceResponse = IOUtils.toString(httpResponse.getEntity()
 					.getContent(), "UTF-8");
 			
+				
+			
+
 			final StatusLine statusLine = httpResponse.getStatusLine();
+			
 			actualResponseCode = statusLine.getStatusCode();
 			actualResponseMsg = statusLine.getReasonPhrase();
 
@@ -738,8 +741,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		if (serviceResponse != null && serviceResponse.length() > 0) {
 
-			if (requestParameters.get("type").get(0)
-					.equalsIgnoreCase("gpx")) {
+			if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
 				GPHServiceUtil.parseGPXFromString(serviceResponse);
 			} else {
 				GPHJSONUtil.parse(serviceResponse);
@@ -770,43 +772,43 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	CloseableHttpResponse doSendAndGetResponse(String serviceUrl)
 			throws IOException, ClientProtocolException {
 		CloseableHttpClient httpClient = HttpClientUtils.createClient();
-		
-		HttpUriRequest httpRequest=null;
-		
-	switch (httpMethod) {
-	case "PUT":
-		httpRequest = new HttpPut(serviceUrl);
-		
-		break;
-	case "GET":
-		
-		httpRequest = new HttpGet(serviceUrl);
-		
-		break;
-		
-	case "DEL":
-		
-		httpRequest = new HttpDelete(serviceUrl);
-		
-		break;
-		
-	case "POST":
-		
-		httpRequest = new HttpPost(serviceUrl);
-		
-		break;
 
-	case "OPTIONS":
-		
-		httpRequest = new HttpOptions(serviceUrl);
-		
-		break;
-	default:
-		httpRequest = new HttpGet(serviceUrl);
-		break;
-	}
-		
-		//HttpGet httpget = new HttpGet(serviceUrl);
+		HttpUriRequest httpRequest = null;
+
+		switch (httpMethod) {
+		case "PUT":
+			httpRequest = new HttpPut(serviceUrl);
+
+			break;
+		case "GET":
+
+			httpRequest = new HttpGet(serviceUrl);
+
+			break;
+
+		case "DEL":
+
+			httpRequest = new HttpDelete(serviceUrl);
+
+			break;
+
+		case "POST":
+
+			httpRequest = new HttpPost(serviceUrl);
+
+			break;
+
+		case "OPTIONS":
+
+			httpRequest = new HttpOptions(serviceUrl);
+
+			break;
+		default:
+			httpRequest = new HttpGet(serviceUrl);
+			break;
+		}
+
+		// HttpGet httpget = new HttpGet(serviceUrl);
 		addCustomHeaders(httpRequest);
 
 		return httpClient.execute(httpRequest);
@@ -862,9 +864,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		String avoidances = requestParameters.get("avoidances").get(0);
 		String vehicle = requestParameters.get("vehicle").get(0);
-		if (vehicle.equalsIgnoreCase("mountainbike"))
-		{
-			vehicle="mtb";
+		if (vehicle.equalsIgnoreCase("mountainbike")) {
+			vehicle = "mtb";
 		}
 
 		ArrayList<String> points = requestParameters.get("point");
@@ -1019,15 +1020,12 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		}
 	}
 
-	public Map<String, ArrayList<String>> getrequestParameters()
-	{
+	public Map<String, ArrayList<String>> getrequestParameters() {
 		return requestParameters;
 	}
-	
-	
-	public void getNearestPoint(String paramName,String pointA) {
 
-		String nearestpoint = "";
+	public void getNearestPoint(String paramName, String pointA) {
+
 		StringBuffer sb = new StringBuffer();
 		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {
 			sb.append(IntegrationTestProperties
@@ -1038,20 +1036,13 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		}
 
 		sb.append("nearest?");
-		sb.append(paramName+"=");
+		sb.append(paramName + "=");
 		sb.append(pointA);
 
 		getRouteFromServiceWithParameters(sb);
 
-	//	nearestpoint = getNearestPoint();
-		
-
-		//return nearestpoint;
-
 	}
 
-
-	
 	public String getNearestPoint() {
 
 		return GPHJSONUtil.getNearestPoint();
@@ -1064,27 +1055,22 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	}
 
 	public void setHTTPMethod(String httpMethod) {
-		
-		this.httpMethod=httpMethod;
-		
 
-		
+		this.httpMethod = httpMethod;
+
 	}
 
 	public void verifyHttpStatusCode(int statusCode) {
-		Assert.assertTrue("Actual http Status Code"+ actualResponseCode+ "i s not matching with "+statusCode,statusCode==actualResponseCode);		
+		Assert.assertTrue("Actual http Status Code" + actualResponseCode
+				+ "i s not matching with " + statusCode,
+				statusCode == actualResponseCode);
 	}
 
 	public void verifyHttpErrorMessage(String responseMessage) {
-		Assert.assertTrue("Actual http Error Message "+ actualResponseMsg+ " is not matching with "+responseMessage,responseMessage.equalsIgnoreCase(actualResponseMsg));
-		
+		Assert.assertTrue("Actual http Error Message " + actualResponseMsg
+				+ " is not matching with " + responseMessage,
+				responseMessage.equalsIgnoreCase(actualResponseMsg));
+
 	}
 
-	public void setPointForNearest(String paramName, String pointA) {
-		
-	
-		
-	}
-
-	
 }
