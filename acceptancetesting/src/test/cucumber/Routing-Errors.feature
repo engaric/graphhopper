@@ -555,7 +555,7 @@ Feature: Verify Error Messages from a routing service
       | car         |            | fastest   | OPTIONS    | json           | OK                 | 200        |
 
   # Nearest Point : Invalid Parameter Value "point"
-   @ErrorMessages @Current
+   @ErrorMessages
   Scenario Outline: Verify  nearest point of point using NearestPoint API
     Given I have type as "<responseFormat>"
     And My routing points for nearestPoint API as "<pointA>"
