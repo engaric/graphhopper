@@ -209,18 +209,18 @@ public abstract class OSITNElement implements RoutingElement {
     private String resolveHighway(String elementText) {
         logger.info("OSITNElement.resolveHighway( " + elementText + ")");
         switch (elementText) {
+        case "Private Road – Publicly Accessible":	
+        	setTag("access", "private");
+        	return elementText;
+        case "Private Road - Restricted Access":
+        	setTag("access", "no");
         case "A Road":
         case "Motorway":
         case "B Road":
         case "Minor Road":
-            // Pedestrianised Street is supported for walking so traversing will be controlled by speed in the flag encoders
-        //case "Pedestrianised Street":
-            // Private Road - Publicly Accessible are NOT traversible
-            //        case "Private Road - Publicly Accessible":
-            // Alleys are not traversible
-            // case "Alley":
-            // Private Road - Restricted Access are not traversible
-            // case "Private Road - Restricted Access":
+        	return elementText;
+        case "Pedestrianised Street":
+            return "pedestrian";
         case "Local Street":
             return elementText;
         default:
