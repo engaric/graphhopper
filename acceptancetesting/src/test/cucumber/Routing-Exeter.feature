@@ -297,7 +297,7 @@ Feature: Verify a route from A to B
       | car         |            | fastest   |
 
   # Access Limited To
-  @Routing @Current
+  @Routing 
   Scenario Outline: Verify  Access Limited To  Restrictions on a Route (North Street-Exeter)
     Given I have route point as
       | pointA              | pointB              |

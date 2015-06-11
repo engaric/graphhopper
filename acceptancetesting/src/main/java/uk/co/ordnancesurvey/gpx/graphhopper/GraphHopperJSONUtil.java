@@ -30,6 +30,11 @@ public class GraphHopperJSONUtil {
 			}
 
 		}
+		
+		if(!iswaypointinPath)
+		{
+			LOG.info("Way point not found in the JSON Route");
+		}
 
 		return iswaypointinPath;
 
@@ -42,13 +47,18 @@ public class GraphHopperJSONUtil {
 
 			if (new RouteWayPoint(we).equals(new RouteWayPoint(waypoint))) {
 				iswaypointinPath = true;
-				LOG.info("WayPoint " + we + " Found In a Path");
+				LOG.info("WayPoint " + we + " Found In a JSON Route");
 			}
 			if (iswaypointinPath) {
 				break;
 			}
 		}
 
+		
+		if(!iswaypointinPath)
+		{
+			LOG.info("Way point not found in the JSON Route");
+		}
 		return iswaypointinPath;
 	}
 
@@ -84,7 +94,7 @@ public class GraphHopperJSONUtil {
 
 	public void verifyMessage(String responseMessage) {
 		String actualErrorMessage = parser.getErrorMessage();
-		Assert.assertTrue("actual error message:" + actualErrorMessage
+		Assert.assertTrue(" Service : actual error message:" + actualErrorMessage
 				+ " does not match with: " + responseMessage,
 				responseMessage.equalsIgnoreCase(actualErrorMessage));
 
@@ -92,7 +102,7 @@ public class GraphHopperJSONUtil {
 
 	public void verifyStatusCode(int statusCode) {
 		int actualStatusCode = parser.getStatusCode();
-		Assert.assertTrue("actual error message: " + actualStatusCode
+		Assert.assertTrue("Service : actual error message: " + actualStatusCode
 				+ " does not match with: " + statusCode,
 				(actualStatusCode == statusCode));
 

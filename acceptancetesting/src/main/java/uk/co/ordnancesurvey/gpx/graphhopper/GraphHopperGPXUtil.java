@@ -54,6 +54,10 @@ public class GraphHopperGPXUtil {
 
 		}
 
+		if(!isWayPointOnTrack)
+		{
+			LOG.info("Track Point not found on the GPX track");
+		}
 		return isWayPointOnTrack;
 	}
 
@@ -83,11 +87,14 @@ public class GraphHopperGPXUtil {
 
 		for (Route route : getRoutes()) {
 			isWayPointOnRoute = isWayPointOnRoute(wp, route);
-
+			
 			if (isWayPointOnRoute(wp, route)) {
 				break;
 			}
 
+		}
+		if(!isWayPointOnRoute){
+			LOG.info("Way Point not found on the GPX route");
 		}
 		return isWayPointOnRoute;
 	}
@@ -107,7 +114,7 @@ public class GraphHopperGPXUtil {
 
 	public void verifyMessage(String responseMessage) {
 		String actualErrorMessage = parser.getErrorMessage();
-		Assert.assertTrue("actual error message: " + actualErrorMessage
+		Assert.assertTrue("Service :actual error message: " + actualErrorMessage
 				+ "does not match with: " + responseMessage,
 				responseMessage.equalsIgnoreCase(actualErrorMessage));
 
@@ -116,7 +123,7 @@ public class GraphHopperGPXUtil {
 	public void verifyStatusCode(int statusCode) {
 
 		int actualstatusCode = parser.getstatusCode();
-		Assert.assertTrue("actual error message: " + actualstatusCode
+		Assert.assertTrue("Service : actual error message: " + actualstatusCode
 				+ "does not match with: " + statusCode,
 				(statusCode == actualstatusCode));
 
