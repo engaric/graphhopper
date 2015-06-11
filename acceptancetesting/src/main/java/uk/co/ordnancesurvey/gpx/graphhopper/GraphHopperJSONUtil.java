@@ -84,7 +84,7 @@ public class GraphHopperJSONUtil {
 
 	public void verifyMessage(String responseMessage) {
 		String actualErrorMessage = parser.getErrorMessage();
-		Assert.assertTrue("actual error message:" + actualErrorMessage
+		Assert.assertTrue(" Service : actual error message:" + actualErrorMessage
 				+ " does not match with: " + responseMessage,
 				responseMessage.equalsIgnoreCase(actualErrorMessage));
 
@@ -92,7 +92,7 @@ public class GraphHopperJSONUtil {
 
 	public void verifyStatusCode(int statusCode) {
 		int actualStatusCode = parser.getStatusCode();
-		Assert.assertTrue("actual error message: " + actualStatusCode
+		Assert.assertTrue("Service : actual error message: " + actualStatusCode
 				+ " does not match with: " + statusCode,
 				(actualStatusCode == statusCode));
 
