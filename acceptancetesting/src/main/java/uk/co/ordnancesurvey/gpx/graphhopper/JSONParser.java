@@ -21,7 +21,6 @@ public class JSONParser {
 	private JsonObject jObject;
 	private JsonArray paths;
 	private JsonArray instructions;
-	private JsonObject info;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JSONParser.class);
 
@@ -54,7 +53,7 @@ public class JSONParser {
 			jElement = parser.parse(jsonString);
 			jObject = jElement.getAsJsonObject();
 			paths = jObject.getAsJsonArray("paths");
-			info = jObject.getAsJsonObject("info");
+			//info = jObject.getAsJsonObject("info");
 
 			instructions = paths.get(0).getAsJsonObject()
 					.getAsJsonArray("instructions");

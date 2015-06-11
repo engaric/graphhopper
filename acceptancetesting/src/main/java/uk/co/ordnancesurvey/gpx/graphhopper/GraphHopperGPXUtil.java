@@ -54,6 +54,10 @@ public class GraphHopperGPXUtil {
 
 		}
 
+		if(!isWayPointOnTrack)
+		{
+			LOG.info("Track Point not found on the GPX track");
+		}
 		return isWayPointOnTrack;
 	}
 
@@ -83,11 +87,14 @@ public class GraphHopperGPXUtil {
 
 		for (Route route : getRoutes()) {
 			isWayPointOnRoute = isWayPointOnRoute(wp, route);
-
+			
 			if (isWayPointOnRoute(wp, route)) {
 				break;
 			}
 
+		}
+		if(!isWayPointOnRoute){
+			LOG.info("Way Point not found on the GPX route");
 		}
 		return isWayPointOnRoute;
 	}
