@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.graphhopper.reader.RoutingElement;
+import com.graphhopper.reader.osgb.roadclassification.RoadClassification;
 
 /**
  * Base class for all OsITN objects
@@ -175,8 +176,17 @@ public abstract class OSITNElement implements RoutingElement {
             }
         }
     }
-
+    
     private int handleRoadNature(XMLStreamReader parser) throws XMLStreamException {
+        String elementText = parser.getElementText();
+        RoadClassification roadType = resolveHighway(elementText);
+        if (RoadClassification.NULLCLASSIFICATION != roadType) {
+            roadType.applyWayAttribute(this);
+        }
+        return parser.getEventType();
+    }
+
+    /*private int handleRoadNature(XMLStreamReader parser) throws XMLStreamException {
         String elementText = parser.getElementText();
         String nature = resolveNature(elementText);
         //        String highwayType = getTag("highway");
@@ -190,55 +200,33 @@ public abstract class OSITNElement implements RoutingElement {
             setTag("direction", "clockwise");
         }
         return parser.getEventType();
-    }
+    }*/
 
     private int handleDescriptiveGroup(XMLStreamReader parser) throws XMLStreamException {
         String elementText = parser.getElementText();
-        String roadType = resolveHighway(elementText);
-        if (null != roadType && !hasTag("highway")) {
+        RoadClassification roadType = resolveHighway(elementText);
+        if (RoadClassification.NULLCLASSIFICATION != roadType) {
             setTag("type", "route");
-            setTag("highway", roadType);
-        }
-        // This line is for debug and could possibly be removed.
-        if (null == roadType) {
-            setTag("nothighway", elementText);
+            roadType.applyWayAttribute(this);
         }
         return parser.getEventType();
     }
 
-    private String resolveHighway(String elementText) {
+    private RoadClassification resolveHighway(String elementText) {
         logger.info("OSITNElement.resolveHighway( " + elementText + ")");
-        switch (elementText) {
-        case "Private Road – Publicly Accessible":	
-        	setTag("access", "private");
-        	return elementText;
-        case "Private Road - Restricted Access":
-        	setTag("access", "no");
-        case "A Road":
-        case "Motorway":
-        case "B Road":
-        case "Minor Road":
-        	return elementText;
-        case "Pedestrianised Street":
-            return "pedestrian";
-        case "Local Street":
-            return elementText;
-        default:
-            return null;
-        }
-
+        return RoadClassification.lookup(elementText);
     }
 
-    private String resolveNature(String elementText) {
-        logger.info("OSITNElement.resolveNature( " + elementText + ")");
-        switch (elementText) {
-        case "Single Carriageway":
-        case "Dual Carriageway":
-        case "Slip Road":
-            return elementText;
-        }
-        return null;
-    }
+//    private String resolveNature(String elementText) {
+//        logger.info("OSITNElement.resolveNature( " + elementText + ")");
+//        switch (elementText) {
+//        case "Single Carriageway":
+//        case "Dual Carriageway":
+//        case "Slip Road":
+//            return elementText;
+//        }
+//        return null;
+//    }
 
     /**
      * Process <code><osgb:instruction>One Way</osgb:instruction></code>

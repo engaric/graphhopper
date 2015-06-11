@@ -1,6 +1,6 @@
 package com.graphhopper.reader.osgb.dpn.potentialhazards;
 
-import com.graphhopper.reader.Way;
+import com.graphhopper.reader.RoutingElement;
 import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
 
 /**
@@ -9,7 +9,7 @@ import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
 public class Cliff extends AbstractOsToOsmAttibuteMappingVisitor {
 
     @Override
-    protected void applyAttributes(Way way) {
+    public void applyAttributes(RoutingElement way) {
         setOrAppendTag(way, "natural", "cliff");
     }
 

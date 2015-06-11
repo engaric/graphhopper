@@ -1,5 +1,6 @@
 package com.graphhopper.reader.osgb;
 
+import com.graphhopper.reader.RoutingElement;
 import com.graphhopper.reader.Way;
 import com.graphhopper.routing.util.OsFlagUtils;
 
@@ -18,9 +19,9 @@ public abstract class AbstractOsToOsmAttibuteMappingVisitor implements OsToOsmAt
         return false;
     }
 
-    protected abstract void applyAttributes(Way way);
+    public abstract void applyAttributes(RoutingElement way);
 
-    protected void setOrAppendTag(Way way, String key, String value) {
-        OsFlagUtils.setOrAppendTag(way, key, value);
+    protected void setOrAppendTag(RoutingElement routingElement, String key, String value) {
+        OsFlagUtils.setOrAppendTag(routingElement, key, value);
     }
 }
