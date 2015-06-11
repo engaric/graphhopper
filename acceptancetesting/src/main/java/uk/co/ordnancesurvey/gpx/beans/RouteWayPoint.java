@@ -6,11 +6,8 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 import org.alternativevision.gpx.beans.Waypoint;
-import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXParser;
 
 public class RouteWayPoint {
 

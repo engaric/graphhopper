@@ -114,7 +114,7 @@ public final class IntegrationTestProperties {
     }
 
     private void copyProperties(Properties srcProp, Properties destProp) {
-        for (Enumeration propertyNames = srcProp.propertyNames(); propertyNames
+        for (Enumeration<?> propertyNames = srcProp.propertyNames(); propertyNames
                 .hasMoreElements();) {
             Object key = propertyNames.nextElement();
             Object value = srcProp.get(key);

@@ -14,7 +14,6 @@ import org.junit.Test;
 import uk.co.ordnancesurvey.gpx.extensions.ExtensionConstants;
 import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXParser;
 import uk.co.ordnancesurvey.gpx.graphhopper.GraphHopperGPXUtil;
-import uk.co.ordnancesurvey.routing.GraphHopperUIUtil;
 
 public class GPHRouteTest {
 	String path = getClass().getResource("sampleGraphHopper.gpx").getPath();
