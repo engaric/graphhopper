@@ -59,7 +59,7 @@ public class GraphHopperHooks {
 
 	}
 
-	@Before("@ErrorMessages")
+	@After("@ErrorMessages")
 	public void rollBackTestONPropertyToBoth() {
 
 		IntegrationTestProperties.setTestProperty("testON", testON);
