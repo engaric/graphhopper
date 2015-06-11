@@ -30,6 +30,11 @@ public class GraphHopperJSONUtil {
 			}
 
 		}
+		
+		if(!iswaypointinPath)
+		{
+			LOG.info("Way point not found in the JSON Route");
+		}
 
 		return iswaypointinPath;
 
@@ -42,13 +47,18 @@ public class GraphHopperJSONUtil {
 
 			if (new RouteWayPoint(we).equals(new RouteWayPoint(waypoint))) {
 				iswaypointinPath = true;
-				LOG.info("WayPoint " + we + " Found In a Path");
+				LOG.info("WayPoint " + we + " Found In a JSON Route");
 			}
 			if (iswaypointinPath) {
 				break;
 			}
 		}
 
+		
+		if(!iswaypointinPath)
+		{
+			LOG.info("Way point not found in the JSON Route");
+		}
 		return iswaypointinPath;
 	}
 
