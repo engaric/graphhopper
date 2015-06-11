@@ -21,7 +21,6 @@ public class JSONParser {
 	private JsonObject jObject;
 	private JsonArray paths;
 	private JsonArray instructions;
-//	private JsonObject info;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JSONParser.class);
 
