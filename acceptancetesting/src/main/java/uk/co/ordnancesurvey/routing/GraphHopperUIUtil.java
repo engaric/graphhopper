@@ -25,9 +25,16 @@ import javax.imageio.ImageIO;
 import org.alternativevision.gpx.beans.Route;
 import org.alternativevision.gpx.beans.Waypoint;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpRequest;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -63,6 +70,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	JavascriptExecutor js = (JavascriptExecutor) driver;
 	WebElement we;
 	private BufferedImage actualMap;
+	private String httpMethod="";
+	private int actualResponseCode;
+	private String actualResponseMsg;
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(GraphHopperUIUtil.class);
@@ -671,6 +681,12 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	protected void addParameter(String key, String value) {
 		ArrayList<String> tempList = null;
+		if (value.equals("mountainbike"))
+		{	value="mtb";}
+		
+
+			value= value.toLowerCase().replaceAll(" ", "");
+		
 		if (requestParameters.containsKey(key)) {
 			tempList = requestParameters.get(key);
 			if (tempList == null)
@@ -680,6 +696,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			tempList = new ArrayList<String>();
 			tempList.add(value);
 		}
+
 		requestParameters.put(key, tempList);
 	}
 
@@ -708,6 +725,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					.toString());
 			serviceResponse = IOUtils.toString(httpResponse.getEntity()
 					.getContent(), "UTF-8");
+			
+			final StatusLine statusLine = httpResponse.getStatusLine();
+			actualResponseCode = statusLine.getStatusCode();
+			actualResponseMsg = statusLine.getReasonPhrase();
 
 		} catch (IOException e) {
 			LOG.info("Exception raised whilst attempting to call graphhopper server "
@@ -739,19 +760,50 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		return doSendAndGetResponse(serviceUrl);
 	}
 
-	private void addCustomHeaders(HttpGet httpget) {
+	private void addCustomHeaders(HttpUriRequest httpRequest) {
 		for (Entry<String, String> header : customHeaders.entrySet()) {
-			httpget.addHeader(header.getKey(), header.getValue());
+			httpRequest.addHeader(header.getKey(), header.getValue());
 		}
 	}
 
 	CloseableHttpResponse doSendAndGetResponse(String serviceUrl)
 			throws IOException, ClientProtocolException {
 		CloseableHttpClient httpClient = HttpClientUtils.createClient();
-		HttpGet httpget = new HttpGet(serviceUrl);
-		addCustomHeaders(httpget);
+		
+		HttpUriRequest httpRequest=null;
+		
+	switch (httpMethod) {
+	case "PUT":
+		httpRequest = new HttpPut(serviceUrl);
+		
+		break;
+	case "GET":
+		
+		httpRequest = new HttpGet(serviceUrl);
+		
+		break;
+		
+	case "DEL":
+		
+		httpRequest = new HttpDelete(serviceUrl);
+		
+		break;
+		
+	case "POST":
+		
+		httpRequest = new HttpPost(serviceUrl);
+		
+		break;
 
-		return httpClient.execute(httpget);
+	default:
+		httpRequest = new HttpGet(serviceUrl);
+		break;
+	}
+		
+		//HttpGet httpget = new HttpGet(serviceUrl);
+		addCustomHeaders(httpRequest);
+
+		return httpClient.execute(httpRequest);
 	}
 
 	protected void getRouteFromServiceWithParameters() {
@@ -804,6 +856,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		String avoidances = requestParameters.get("avoidances").get(0);
 		String vehicle = requestParameters.get("vehicle").get(0);
+		if (vehicle.equalsIgnoreCase("mountainbike"))
+		{
+			vehicle="mtb";
+		}
 
 		ArrayList<String> points = requestParameters.get("point");
 
@@ -829,6 +885,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			break;
 		case "bike":
 			clickElement(ROUTE_TYPE_BIKE);
+			break;
+		case "mtb":
+			clickElement(ROUTE_TYPE_MOUNTAINBIKE);
 			break;
 		case "foot":
 			clickElement(ROUTE_TYPE_WALK);
@@ -969,4 +1028,22 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		return GPHJSONUtil.getNearestPointDistance();
 	}
 
+	public void setHTTPMethod(String httpMethod) {
+		
+		this.httpMethod=httpMethod;
+		
+
+		
+	}
+
+	public void verifyHttpStatusCode(int statusCode) {
+		Assert.assertTrue("Actual http Status Code"+ actualResponseCode+ "i s not matching with "+statusCode,statusCode==actualResponseCode);		
+	}
+
+	public void verifyHttpErrorMessage(String responseMessage) {
+		Assert.assertTrue("Actual http Error Message "+ actualResponseMsg+ " is not matching with "+responseMessage,responseMessage.equalsIgnoreCase(actualResponseMsg));
+		
+	}
+
+	
 }

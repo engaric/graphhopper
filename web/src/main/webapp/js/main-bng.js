@@ -1030,8 +1030,8 @@ function routeLatLng(request, doQuery) {
     descriptionDiv.html('<img src="img/indicator.gif"/> Search Route ...');
     request.doRequest(urlForAPI, function (json) {
         descriptionDiv.html("");
-        if (json.message) {
-            var tmpErrors = json.message;
+        if (json.error) {
+            var tmpErrors = json.error;
             log(tmpErrors);
             if (json.hints)
                 for (var m = 0; m < json.hints.length; m++) {

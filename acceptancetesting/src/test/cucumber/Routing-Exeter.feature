@@ -150,8 +150,8 @@ Feature: Verify a route from A to B
     And I have weighting as "<routeType>"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco         | waypointdesc                           | azimuth | direction | time  | distance | avoidance |
-      | 4             | 50.726418,-3.52381 | Turn slight left onto BAMPFYLDE STREET | 45.0    | NE        | 10510 | 131.4    |           |
+      | wayPointIndex | waypointco         | waypointdesc                    | azimuth | direction | time  | distance | avoidance |
+      | 4             | 50.726418,-3.52381 | Turn left onto BAMPFYLDE STREET | 45.0    | NE        | 10510 | 131.4    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -297,7 +297,7 @@ Feature: Verify a route from A to B
       | car         |            | fastest   |
 
   # Access Limited To
-  @Routing
+  @Routing @Current
   Scenario Outline: Verify  Access Limited To  Restrictions on a Route (North Street-Exeter)
     Given I have route point as
       | pointA              | pointB              |
@@ -308,7 +308,7 @@ Feature: Verify a route from A to B
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco       | waypointdesc               | azimuth | direction | time  | distance | avoidance |
-      | 2             | 50.72258,-3.5326 | Continue onto SOUTH STREET | 135.0   | SE        | 15537 | 194.2    |           |
+      | 2             | 50.72258,-3.5326 | Continue onto SOUTH STREET | 135.0   | SE        | 30038 | 379.1    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -324,8 +324,8 @@ Feature: Verify a route from A to B
     And I have weighting as "<routeType>"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco         | waypointdesc                           | azimuth | direction | time  | distance | avoidance |
-      | 5             | 50.726418,-3.52381 | Turn slight left onto BAMPFYLDE STREET | 45.0    | NE        | 10510 | 131.4    |           |
+      | wayPointIndex | waypointco         | waypointdesc                    | azimuth | direction | time  | distance | avoidance |
+      | 5             | 50.726418,-3.52381 | Turn left onto BAMPFYLDE STREET | 45.0    | NE        | 10510 | 131.4    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -832,105 +832,3 @@ Feature: Verify a route from A to B
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
-
-  #Error Messages
-  @Routing @ErrorMessages
-  Scenario Outline: Incorrect Parameter Value for "Vehicle"
-    Given I have route point as
-      | pointA              | pointB              |
-      | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
-    And I have weighting as "<routeType>"
-    When I request for a route
-    Then I should be able to verify the response message as "<errorMessage>"
-    Then I should be able to verify the statuscode as "<statusCode>"
-
-    Examples: 
-      | vehicleType | avoidances | routeType | errorMessage                                                 | statusCode |
-      | 123         |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are car. 	| 400        |
-      | foot        |            | fastest   | Vehicle foot is not a valid vehicle. Valid vehicles are car. | 400        |
-      | cycle       |            | fastest   | Vehicle cycle is not a valid vehicle. Valid vehicles are car.| 400        |
-      | Bike        |            | fastest   | Vehicle Bike is not a valid vehicle. Valid vehicles are car. | 400        |
-
-  @Routing @ErrorMessages
-  Scenario Outline: Incorrect Parameter Name "vehicles"
-    Given I have route point as
-      | pointA              | pointB              |
-      | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicles as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
-    And I have weighting as "<routeType>"
-    And I have type as "<responseFormat>"
-    When I request for a route
-    Then I should be able to verify the response message as "<errorMessage>"
-    Then I should be able to verify the statuscode as "<statusCode>"
-
-    Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage | statusCode |
-      | car         |            | fastest   | json           |              | 400        |
-
-  @Routing @ErrorMessages
-  Scenario Outline: Incorrect Parameter Value "point"
-    Given I have route point as
-      | pointA           | pointB              |
-      | 50.729961,string | 50.723364,-3.523895 |
-    And I have vehicles as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
-    And I have weighting as "<routeType>"
-    And I have type as "<responseFormat>"
-    When I request for a route
-    Then I should be able to verify the response message as "<errorMessage>"
-    Then I should be able to verify the statuscode as "<statusCode>"
-
-    Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
-      | car         |            | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
-
-  @Routing @ErrorMessages
-  Scenario Outline: Incorrect Parameter Name "points"
-    Given I have route points as
-      | pointA              | pointB              |
-      | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicles as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
-    And I have weighting as "<routeType>"
-    And I have type as "<responseFormat>"
-    When I request for a route
-    Then I should be able to verify the response message as "<errorMessage>"
-    Then I should be able to verify the statuscode as "<statusCode>"
-
-    Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                       | statusCode |
-      | car         |            | fastest   | json           | Parameter points is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
-
-  @Routing @ErrorMessages
-  Scenario Outline: Missing Parameter "point"
-    Given I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
-    And I have weighting as "<routeType>"
-    And I have type as "<responseFormat>"
-    When I request for a route
-    Then I should be able to verify the response message as "<errorMessage>"
-    Then I should be able to verify the statuscode as "<statusCode>"
-
-    Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                | statusCode |
-      | car         |            | fastest   | json           | No point parameter provided | 400        |
-
-  @Routing @ErrorMessages
-  Scenario Outline: Invalid Parameter Value for "avoidances"
-    Given I have route point as
-      | pointA              | pointB              |
-      | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    Given I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
-    And I have weighting as "<routeType>"
-    And I have type as "<responseFormat>"
-    When I request for a route
-    Then I should be able to verify the response message as "<errorMessage>"
-    Then I should be able to verify the statuscode as "<statusCode>"
-
-    Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
-      | car         | trees      | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
