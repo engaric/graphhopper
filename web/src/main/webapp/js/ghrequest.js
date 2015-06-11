@@ -436,7 +436,7 @@ GHRequest.prototype.createPointParams = function (useRawInput) {
 };
 
 GHRequest.prototype.createPath = function (url) {
-    if (this.vehicle && this.vehicle !== "car")
+    if (this.vehicle)
         url += "&vehicle=" + this.vehicle;
     // fastest or shortest
     var checkedValue = ""; 
