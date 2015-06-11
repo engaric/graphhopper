@@ -43,11 +43,11 @@ Feature: Smoke Tests- Peak District: Verify a route from A to B
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | errorMessage                                                   | statusCode | httpErrorMessage |
-      | 123         |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are foot.   | 400        | Bad Request      |
-      | car        |            | fastest   | Vehicle car is not a valid vehicle. Valid vehicles are foot.   | 400        | Bad Request      |
-      | cycle       |            | fastest   | Vehicle cycle is not a valid vehicle. Valid vehicles are foot. | 400        | Bad Request      |
-      | Bike        |            | fastest   | Vehicle Bike is not a valid vehicle. Valid vehicles are foot.  | 400        | Bad Request      |
+      | vehicleType | avoidances | routeType | errorMessage                                                     | statusCode | httpErrorMessage |
+      | 123         |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are foot,mtb. | 400        | Bad Request      |
+      | car         |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are foot,mtb. | 400        | Bad Request      |
+      | cycle       |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are foot,mtb. | 400        | Bad Request      |
+      | Bike        |            | fastest   | Vehicle 123 is not a valid vehicle. Valid vehicles are foot,mtb. | 400        | Bad Request      |
 
   # Parameter :  vehicle
   @ErrorMessages @Smoke @Current
@@ -569,8 +569,7 @@ Feature: Smoke Tests- Peak District: Verify a route from A to B
       | pointA              | errorMessage | responseFormat | statusCode |
       | 51.878966,-0.903849 | e            | json           | 400        |
 
-      
-       @Smoke
+  @Smoke
   Scenario Outline: Verify DPN Route with avoidance -(A Road)
     Given I have route point as
       | pointA              | pointB              |
@@ -585,5 +584,21 @@ Feature: Smoke Tests- Peak District: Verify a route from A to B
 
     Examples: 
       | vehicleType  | avoidances | routeType |
-      | mountainbike | A Road      |      fastavoid     |
-      
+      | mountainbike | A Road     | fastavoid |
+
+  @Smoke
+  Scenario Outline: Verify DPN Route with boulders avoidance -(boulders)
+    Given I have route point as
+      | pointA              | pointB              |
+      | 53.311217,-1.629849 | 53.156465,-1.908797 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints not on the route map:
+      | wayPointIndex | waypointco          | waypointdesc        | azimuth | direction | time  | distance | avoidance |
+      | 3             | 53.309004,-1.627564 | Turn left onto Path | 98.0    | E         | 99563 | 138.3    | Boulders  |
+
+    Examples: 
+      | vehicleType | avoidances | routeType |
+      | foot        | Boulders   | fastavoid |
