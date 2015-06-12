@@ -96,7 +96,7 @@ public class GraphHopperServlet extends GHBaseServlet
 		String vehicleStr = getParam(httpReq, "vehicle", null);
 		String weighting = getParam(httpReq, "weighting", "fastest");
 		String algoStr = getParam(httpReq, "algorithm", null);
-		String localeStr = getParam(httpReq, "locale", "en");
+		String localeStr = getParam(httpReq, "locale", "en").replace('-', '_');
 
 		StopWatch sw = new StopWatch().start();
 		GHResponse ghRsp = null;
