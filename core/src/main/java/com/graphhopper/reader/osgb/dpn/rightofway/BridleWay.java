@@ -1,6 +1,6 @@
 package com.graphhopper.reader.osgb.dpn.rightofway;
 
-import com.graphhopper.reader.Way;
+import com.graphhopper.reader.RoutingElement;
 import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
 
 /**
@@ -13,7 +13,7 @@ import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
 public class BridleWay extends AbstractOsToOsmAttibuteMappingVisitor {
 
     @Override
-    protected void applyAttributes(Way way)
+    public void applyAttributes(RoutingElement way)
     {
         way.setTag("designation", "public_bridleway");
         way.setTag("highway", "bridleway");

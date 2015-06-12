@@ -1,6 +1,6 @@
 package com.graphhopper.reader.osgb.dpn.rightofway;
 
-import com.graphhopper.reader.Way;
+import com.graphhopper.reader.RoutingElement;
 import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
 
 /**
@@ -18,7 +18,7 @@ public class None extends AbstractOsToOsmAttibuteMappingVisitor {
      * This assumption is based on the current DPN xml structure. If this were to change in the future we would need to rethink how we process this rightOfWay.
      */
     @Override
-    protected void applyAttributes(Way way) {
+    public void applyAttributes(RoutingElement way) {
         way.setTag("foot", "no");
         way.setTag("bicycle", "no");
         way.setTag("horse", "no");

@@ -61,7 +61,6 @@ GHRequest = function (host) {
     // Our routing service is also free for certain applications or smaller volume. Be fair, grab an API key and support us:
     // https://graphhopper.com/#directions-api Misuse of API keys that you don't own is prohibited and you'll be blocked.                    
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    this.key = "Cmmtvx01R56rdHcQQo7VjI6rgPgxuFLvqI8cR31u";
 
     // register events
     this.route.addListener('route.add', function (evt) {
@@ -400,7 +399,7 @@ GHRequest.prototype.createGeocodeURL = function (host, prevIndex) {
     if (host)
         tmpHost = host;
 
-    var path = this.createPath(tmpHost + "/geocode?limit=6&type=" + this.dataType + "&key=" + this.key);
+    var path = this.createPath(tmpHost + "/geocode?limit=6&type=" + this.dataType);
     if (prevIndex >= 0 && prevIndex < this.route.size()) {
         var point = this.route.getIndex(prevIndex);
         path += "&lat=" + point.lat + "&lon=" + point.lng;
@@ -409,11 +408,11 @@ GHRequest.prototype.createGeocodeURL = function (host, prevIndex) {
 };
 
 GHRequest.prototype.createURL = function () {
-    return this.createPath(this.host + "/route?" + this.createPointParams(false) + "&type=" + this.dataType + "&key=" + this.key);
+    return this.createPath(this.host + "/route?" + this.createPointParams(false) + "&type=" + this.dataType);
 };
 
 GHRequest.prototype.createGPXURL = function () {
-    return this.createPath(this.host + "/route?" + this.createPointParams(false) + "&type=gpx&key=" + this.key);
+    return this.createPath(this.host + "/route?" + this.createPointParams(false) + "&type=gpx);
 };
 
 GHRequest.prototype.createHistoryURL = function () {
@@ -436,7 +435,7 @@ GHRequest.prototype.createPointParams = function (useRawInput) {
 };
 
 GHRequest.prototype.createPath = function (url) {
-    if (this.vehicle && this.vehicle !== "car")
+    if (this.vehicle)
         url += "&vehicle=" + this.vehicle;
     // fastest or shortest
     var checkedValue = ""; 
@@ -589,7 +588,7 @@ GHRequest.prototype.doRequest = function (url, callback) {
 };
 
 GHRequest.prototype.getInfo = function () {
-    var url = this.host + "/info?type=" + this.dataType + "&key=" + this.key;
+    var url = this.host + "/info?type=" + this.dataType;
     log(url);
     return $.ajax({
         url: url,
@@ -669,7 +668,7 @@ GHRequest.prototype.fetchTranslationMap = function (urlLocaleParam) {
     if (!urlLocaleParam)
         // let servlet figure out the locale from the Accept-Language header
         urlLocaleParam = "";
-    var url = this.host + "/i18n/" + urlLocaleParam + "?type=" + this.dataType + "&key=" + this.key;
+    var url = this.host + "/i18n/" + urlLocaleParam + "?type=" + this.dataType;
     log(url);
     return $.ajax({
         url: url,
