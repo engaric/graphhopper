@@ -44,7 +44,7 @@ public class TranslationMap
 	public static final List<String> LOCALES = Arrays.asList("bg", "ca", "cz", "de_DE", "el",
 	        "en_US", "es", "fa", "fil", "fi", "fr", "gl", "he", "hu_HU", "it", "ja", "ne", "nl",
 	        "pl_PL", "pt_BR", "pt_PT", "ro", "ru", "si", "sk", "sv_SE", "tr", "uk", "vi_VI",
-	        "zh_CN");
+	        "zh_CN", "en_GB");
 	private final Map<String, Translation> translations = new HashMap<String, Translation>();
 
 	/**
