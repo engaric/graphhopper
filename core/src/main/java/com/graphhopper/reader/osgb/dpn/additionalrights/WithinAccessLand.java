@@ -1,6 +1,6 @@
 package com.graphhopper.reader.osgb.dpn.additionalrights;
 
-import com.graphhopper.reader.Way;
+import com.graphhopper.reader.RoutingElement;
 import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
 
 /**
@@ -17,7 +17,7 @@ import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
 public class WithinAccessLand extends AbstractOsToOsmAttibuteMappingVisitor {
 
     @Override
-    protected void applyAttributes(Way way) {
+    public void applyAttributes(RoutingElement way) {
         way.setTag("foot", "yes");
     }
 

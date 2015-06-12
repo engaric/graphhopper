@@ -41,7 +41,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -85,12 +84,10 @@ public class GraphHopperServlet extends GHBaseServlet
 	public void doGet( HttpServletRequest httpReq, HttpServletResponse httpRes )
 	        throws ServletException, IOException
 	{
-		List<GHPoint> infoPoints = getPoints(httpReq, "point");
 
-		// we can reduce the path length based on the maximum differences to the
-		// original coordinates
-		double minPathPrecision = getDoubleParam(httpReq, "way_point_max_distance", 1d);
+		List<GHPoint> infoPoints = getPoints(httpReq, "point");
 		boolean writeGPX = "gpx".equalsIgnoreCase(getParam(httpReq, "type", "json"));
+		double minPathPrecision = getDoubleParam(httpReq, "way_point_max_distance", 1d);
 		boolean enableInstructions = writeGPX || getBooleanParam(httpReq, "instructions", true);
 		boolean calcPoints = getBooleanParam(httpReq, "calc_points", true);
 		boolean enableElevation = getBooleanParam(httpReq, "elevation", false);
@@ -98,8 +95,8 @@ public class GraphHopperServlet extends GHBaseServlet
 
 		String vehicleStr = getParam(httpReq, "vehicle", "car");
 		String weighting = getParam(httpReq, "weighting", "fastest");
-		String algoStr = getParam(httpReq, "algorithm", AlgorithmOptions.DIJKSTRA_BI);
-		String localeStr = getParam(httpReq, "locale", "en_US");
+		String algoStr = getParam(httpReq, "algorithm", "");
+		String localeStr = getParam(httpReq, "locale", "en");
 
 		StopWatch sw = new StopWatch().start();
 		GHResponse ghRsp = null;
@@ -110,101 +107,114 @@ public class GraphHopperServlet extends GHBaseServlet
 		String debugString = getParam(httpReq, "debug", "true");
 		String prettyString = getParam(httpReq, "pretty", "true");
 		String avoidancesString = getParam(httpReq, "avoidances", null);
+		try
+		{
+			ApiResource.ROUTE.checkAllRequestParameters(httpReq);
 
-		if (!new CaseInsensitiveStringListValidator().isValid(localeStr, TranslationMap.LOCALES))
-		{
-			String errMesg = buildErrorMessageString(localeStr, "locale", TranslationMap.LOCALES);
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg.toString()));
-		} else if (!new CaseInsensitiveStringListValidator().isValid(algoStr,
-		        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI, AlgorithmOptions.DIJKSTRA,
-		        AlgorithmOptions.DIJKSTRA_BI, AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
-		{
-			String errMesg = buildErrorMessageString(algoStr, "algorithm", AlgorithmOptions.ASTAR,
-			        AlgorithmOptions.ASTAR_BI, AlgorithmOptions.DIJKSTRA,
-			        AlgorithmOptions.DIJKSTRA_BI, AlgorithmOptions.DIJKSTRA_ONE_TO_MANY);
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!new BooleanValidator().isValid(instructionsString))
-		{
-			String errMesg = buildBooleanErrorMessageString(instructionsString, "instructions");
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!new BooleanValidator().isValid(pointsEncodedString))
-		{
-			String errMesg = buildBooleanErrorMessageString(pointsEncodedString, "points_encoded");
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!new BooleanValidator().isValid(calcPointsString))
-		{
-			String errMesg = buildBooleanErrorMessageString(calcPointsString, "calc_points");
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!new BooleanValidator().isValid(debugString))
-		{
-			String errMesg = buildBooleanErrorMessageString(debugString, "debug");
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!new BooleanValidator().isValid(prettyString))
-		{
-			String errMesg = buildBooleanErrorMessageString(prettyString, "pretty");
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (!hopper.getEncodingManager().supports(vehicleStr))
-		{
-			String supported = hopper.getGraph().getEncodingManager().toString();
-			String errMesg = String.format(
-			        "Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr,
-			        supported);
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
-		} else if (enableElevation && !hopper.hasElevation())
-		{
-			ghRsp = new GHResponse().addError(new IllegalArgumentException(
-			        "Elevation not supported!"));
-		} else
-		{
-			FlagEncoder algoVehicle = hopper.getEncodingManager().getEncoder(vehicleStr);
+			// we can reduce the path length based on the maximum differences to the original
+			// coordinates
 
-			// Lots of lovely braces. I will tidy this up next week... promise!
-			if (avoidancesString != null)
+			if (!new CaseInsensitiveStringListValidator()
+			        .isValid(localeStr, TranslationMap.LOCALES))
 			{
-				System.out.println("Avoidances for " + algoVehicle);
-				List<String> allowedAvoidances = new ArrayList<>();
-				// Check Avoidances
-				if (algoVehicle instanceof AbstractFlagEncoder)
+				String errMesg = buildErrorMessageString(localeStr, "locale",
+				        TranslationMap.LOCALES);
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg.toString()));
+			} else if (!new CaseInsensitiveStringListValidator().isValid(algoStr,
+			        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI, AlgorithmOptions.DIJKSTRA,
+			        AlgorithmOptions.DIJKSTRA_BI, AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
+			{
+				String errMesg = buildErrorMessageString(algoStr, "algorithm",
+				        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
+				        AlgorithmOptions.DIJKSTRA, AlgorithmOptions.DIJKSTRA_BI,
+				        AlgorithmOptions.DIJKSTRA_ONE_TO_MANY);
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+			} else if (!new BooleanValidator().isValid(instructionsString))
+			{
+				String errMesg = buildBooleanErrorMessageString(instructionsString, "instructions");
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+			} else if (!new BooleanValidator().isValid(pointsEncodedString))
+			{
+				String errMesg = buildBooleanErrorMessageString(pointsEncodedString,
+				        "points_encoded");
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+			} else if (!new BooleanValidator().isValid(calcPointsString))
+			{
+				String errMesg = buildBooleanErrorMessageString(calcPointsString, "calc_points");
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+			} else if (!new BooleanValidator().isValid(debugString))
+			{
+				String errMesg = buildBooleanErrorMessageString(debugString, "debug");
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+			} else if (!new BooleanValidator().isValid(prettyString))
+			{
+				String errMesg = buildBooleanErrorMessageString(prettyString, "pretty");
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+			} else if (!hopper.getEncodingManager().supports(vehicleStr))
+			{
+				String supported = hopper.getGraph().getEncodingManager().toString();
+				String errMesg = String.format(
+				        "Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr,
+				        supported);
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+			} else if (enableElevation && !hopper.hasElevation())
+			{
+				ghRsp = new GHResponse().addError(new IllegalArgumentException(
+				        "Elevation not supported!"));
+			} else
+			{
+				FlagEncoder algoVehicle = hopper.getEncodingManager().getEncoder(vehicleStr);
+
+				// Lots of lovely braces. I will tidy this up next week... promise!
+				if (avoidancesString != null)
 				{
-					AbstractFlagEncoder abstractFlagEncoder = (AbstractFlagEncoder) algoVehicle;
-					List<EncoderDecorator> encoderDecorators = abstractFlagEncoder
-					        .getEncoderDecorators();
-					if (encoderDecorators != null)
+					System.out.println("Avoidances for " + algoVehicle);
+					List<String> allowedAvoidances = new ArrayList<>();
+					// Check Avoidances
+					if (algoVehicle instanceof AbstractFlagEncoder)
 					{
-						for (EncoderDecorator encoderDecorator : encoderDecorators)
+						AbstractFlagEncoder abstractFlagEncoder = (AbstractFlagEncoder) algoVehicle;
+						List<EncoderDecorator> encoderDecorators = abstractFlagEncoder
+						        .getEncoderDecorators();
+						if (encoderDecorators != null)
 						{
-							if (encoderDecorator instanceof AbstractAvoidanceDecorator)
+							for (EncoderDecorator encoderDecorator : encoderDecorators)
 							{
-								AbstractAvoidanceDecorator abstractAvoidanceDecorator = (AbstractAvoidanceDecorator) encoderDecorator;
-								allowedAvoidances.addAll(Arrays.asList(abstractAvoidanceDecorator
-								        .getEdgeAttributesOfInterestNames()));
+								if (encoderDecorator instanceof AbstractAvoidanceDecorator)
+								{
+									AbstractAvoidanceDecorator abstractAvoidanceDecorator = (AbstractAvoidanceDecorator) encoderDecorator;
+									allowedAvoidances.addAll(Arrays
+									        .asList(abstractAvoidanceDecorator
+									                .getEdgeAttributesOfInterestNames()));
+								}
 							}
 						}
 					}
+					if (!allowedAvoidances.contains(avoidancesString))
+					{
+						String errMesg = buildErrorMessageString(avoidancesString, "avoidances",
+						        allowedAvoidances);
+						ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg
+						        .toString()));
+					}
 				}
-				if (!allowedAvoidances.contains(avoidancesString))
+
+				if (ghRsp == null)
 				{
-					String errMesg = buildErrorMessageString(avoidancesString, "avoidances",
-					        allowedAvoidances);
-					ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg
-					        .toString()));
+					GHRequest request = new GHRequest(infoPoints);
+
+					initHints(request, httpReq.getParameterMap());
+					request.setVehicle(algoVehicle.toString()).setWeighting(weighting)
+					        .setAlgorithm(algoStr).setLocale(localeStr).getHints()
+					        .put("calcPoints", calcPoints).put("instructions", enableInstructions)
+					        .put("wayPointMaxDistance", minPathPrecision);
+					ghRsp = hopper.route(request);
 				}
 			}
-
-			if (ghRsp == null)
-			{
-				GHRequest request = new GHRequest(infoPoints);
-
-				initHints(request, httpReq.getParameterMap());
-				request.setVehicle(algoVehicle.toString()).setWeighting(weighting)
-				        .setAlgorithm(algoStr).setLocale(localeStr).getHints()
-				        .put("calcPoints", calcPoints).put("instructions", enableInstructions)
-				        .put("wayPointMaxDistance", minPathPrecision);
-
-				ghRsp = hopper.route(request);
-			}
+		} catch (NoSuchParameterException | MissingParameterException | InvalidParameterException e)
+		{
+			ghRsp = new GHResponse().addError(e);
 		}
-
 		float took = sw.stop().getSeconds();
 		String infoStr = httpReq.getRemoteAddr() + " " + httpReq.getLocale() + " "
 		        + httpReq.getHeader("User-Agent");
@@ -357,13 +367,14 @@ public class GraphHopperServlet extends GHBaseServlet
 			json.put("error", map);
 			Throwable throwable = rsp.getErrors().get(0);
 			map.put("message", throwable.getMessage());
-			map.put("statuscode", "" + HttpStatus.BAD_REQUEST_400);
+			map.put("statuscode", ((APIException) throwable).getStatusCode().toString());
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (Throwable t : rsp.getErrors())
 			{
 				Map<String, String> hintMap = new HashMap<String, String>();
 				hintMap.put("message", t.getMessage());
-				if(internalErrorsAllowed) {
+				if (internalErrorsAllowed)
+				{
 					hintMap.put("details", t.getClass().getName());
 				}
 				list.add(hintMap);

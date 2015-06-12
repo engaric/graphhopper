@@ -82,7 +82,7 @@ public class OSITNWayTest {
 				"	xsi:schemaLocation='http://www.ordnancesurvey.co.uk/xml/namespaces/osgb http://www.ordnancesurvey.co.uk/xml/schema/v7/OSDNFFeatures.xsd'\n" + 
 				"	fid='GDS-58096-1'>" +
 				"		<osgb:RoadLink fid='osgb4000000009314037'>\n" + 
-				"<osgb:descriptiveTerm>Private Road - Restricted Access</osgb:descriptiveTerm>\n" + 
+				"<osgb:descriptiveTerm>Private Road – Restricted Access</osgb:descriptiveTerm>\n" + 
 				"<osgb:natureOfRoad>Single Carriageway</osgb:natureOfRoad>\n" + 
 				"<osgb:length>12.04</osgb:length>\n" + 
 				"<osgb:polyline>\n" + 

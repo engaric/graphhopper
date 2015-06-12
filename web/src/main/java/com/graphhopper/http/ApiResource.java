@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 
 public enum ApiResource
@@ -97,10 +96,8 @@ public enum ApiResource
 	 *
 	 * @param request
 	 * @throws NoSuchParameterException
-	 * @throws InvalidParameterException
 	 */
-	private void checkValidParameters( HttpServletRequest request )
-	        throws NoSuchParameterException, InvalidParameterException
+	private void checkValidParameters( HttpServletRequest request ) throws NoSuchParameterException
 	{
 		// Now check for all the valid parameters for the resource
 		List<String> list = Arrays.asList(this.getValidValues());
