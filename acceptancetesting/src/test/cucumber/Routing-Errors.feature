@@ -185,7 +185,7 @@ ssFeature: Verify Error Messages from a routing service
 
   # Parameter :  locale
   @ErrorMessages
-  Scenario Outline: Invalid Parameter Value for "locale"
+  Scenario Outline: Invalid Parameter Value for "locale"      | t  |
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
