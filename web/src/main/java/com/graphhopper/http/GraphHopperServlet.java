@@ -168,7 +168,6 @@ public class GraphHopperServlet extends GHBaseServlet
 				// Lots of lovely braces. I will tidy this up next week... promise!
 				if (avoidancesString != null)
 				{
-					System.out.println("Avoidances for " + algoVehicle);
 					List<String> allowedAvoidances = new ArrayList<>();
 					// Check Avoidances
 					if (algoVehicle instanceof AbstractFlagEncoder)
@@ -193,7 +192,7 @@ public class GraphHopperServlet extends GHBaseServlet
 					String avoidanceArray[] = avoidancesString.split(",");
 					for (String avoidance : avoidanceArray)
                     {
-						if (!allowedAvoidances.contains(avoidance))
+						if (!allowedAvoidances.contains(avoidance.trim()))
 						{
 							String errMesg = buildErrorMessageString(avoidance, "avoidances",
 									allowedAvoidances);
