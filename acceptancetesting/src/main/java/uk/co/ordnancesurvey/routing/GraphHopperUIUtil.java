@@ -62,6 +62,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -705,8 +706,9 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		if (value.equals("mountainbike")) {
 			value = "mtb";
 		}
-
-		value = value.toLowerCase().replaceAll(" ", "");
+		if (!key.equalsIgnoreCase("point")) {
+			value = value.toLowerCase().replaceAll(" ", "");
+		}
 
 		if (requestParameters.containsKey(key)) {
 			tempList = requestParameters.get(key);
@@ -1058,8 +1060,10 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	private void verifyUIErrorMessage(String responseMessage) {
 
-		Assert.assertTrue("Web Interface: Actual Error Message" + getTextValue(error_Message) + " is not matching with :"+ responseMessage,getTextValue(error_Message).equalsIgnoreCase(responseMessage));
-		
+		Assert.assertTrue("Web Interface: Actual Error Message"
+				+ getTextValue(error_Message) + " is not matching with :"
+				+ responseMessage, getTextValue(error_Message)
+				.equalsIgnoreCase(responseMessage));
 
 	}
 
