@@ -51,6 +51,7 @@ import com.graphhopper.reader.Way;
 import com.graphhopper.reader.dem.ElevationProvider;
 import com.graphhopper.reader.osgb.AbstractOsReader;
 import com.graphhopper.reader.osgb.hn.OsHnReader;
+import com.graphhopper.reader.osgb.roadclassification.RoadClassification;
 import com.graphhopper.routing.util.CarFlagEncoder;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.routing.util.FlagEncoder;
@@ -801,9 +802,11 @@ public class OsItnReader extends AbstractOsReader<Long> {
             // We have at least one bit set so create tags for the set
             // attributes
             if ((attributeBits & ATTRIBUTE_BIT_FORD) != 0) {
+            	System.err.println("FORD_NBIT");
                 way.setTag(OSITNElement.TAG_VALUE_CLASSIFICATION_FORD, "yes");
             }
             if ((attributeBits & ATTRIBUTE_BIT_GATE) != 0) {
+            	System.err.println("GATE_NBIT");
                 way.setTag("barrier", OSITNElement.TAG_VALUE_CLASSIFICATION_GATE);
             }
             if ((attributeBits & ATTRIBUTE_BIT_LEVEL_CROSSING) != 0) {
@@ -832,17 +835,8 @@ public class OsItnReader extends AbstractOsReader<Long> {
             way.setTag("highway", wayType);
         }
         String wayEnvironment = getWayEnvironment(way.getId());
-        if (null != wayEnvironment && !way.hasTag("environment")) {
-
-            String nature = way.getTag("nature");
-            if (!Helper.isEmpty(nature))
-            {
-                wayEnvironment += ":"+nature;
-            }
-
-            //            System.out.println(">>>>>>>>>>>>>>>> Way " + wayOsmId + " is in environment " + wayEnvironment );
-            way.setTag("environment", wayEnvironment);
-        }
+        RoadClassification lookup = RoadClassification.lookup(wayEnvironment);
+        lookup.applyWayAttribute(way);
 
         String wayDirection = getWayRoadDirection(way.getId());
         // If the way is ONEWAY then set the direction

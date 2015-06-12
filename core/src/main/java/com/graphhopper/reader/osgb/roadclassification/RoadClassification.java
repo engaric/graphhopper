@@ -6,7 +6,13 @@ import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
 
 public enum RoadClassification 
 {
-	NULLCLASSIFICATION(null),
+	NULLCLASSIFICATION(null) {
+		@Override
+		public void applyWayAttribute( RoutingElement way )
+		{
+			//nullop
+		}
+	},
 	ALLEY(new Alley()),
 	AROAD(new ARoad()),
 	BROAD(new BRoad()),
@@ -44,7 +50,7 @@ public enum RoadClassification
     		System.err.println("Search:" + dataName + " Found:" + valueOf.toString());
     		return valueOf;
     	}
-    	catch (IllegalArgumentException iae) {
+    	catch (IllegalArgumentException | NullPointerException e) {
     		return NULLCLASSIFICATION;
     	}
     }
