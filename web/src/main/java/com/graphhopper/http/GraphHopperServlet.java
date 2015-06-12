@@ -249,7 +249,7 @@ public class GraphHopperServlet extends GHBaseServlet
 				String errorMessage = type
 				        + " is not a valid value for parameter type. Valid values are ";
 				errorMessage += jsonpAllowed ? "JSON, GPX or JSONP." : "GPX or JSON.";
-				ghRsp.addError(new IllegalArgumentException(errorMessage));
+				ghRsp.addError(new InvalidParameterException(errorMessage));
 			}
 			Map<String, Object> map = createJson(ghRsp, calcPoints, pointsEncoded, enableElevation,
 			        enableInstructions);
