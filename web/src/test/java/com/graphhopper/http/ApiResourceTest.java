@@ -1,14 +1,12 @@
 package com.graphhopper.http;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -119,7 +117,9 @@ public class ApiResourceTest
 			fail(exception.getMessage());
 		} catch (NoSuchParameterException e)
 		{
-			assertEquals("Parameter bogus is not a valid parameter for resource route. Valid parameters for requested resource are point, vehicle, locale, instructions, weighting, algorithm, points_encoded, debug, pretty, calc_points, type, avoidances.", e.getMessage());  
+			assertEquals(
+			        "Parameter bogus is not a valid parameter for resource route. Valid parameters for requested resource are point, vehicle, locale, instructions, weighting, algorithm, points_encoded, debug, pretty, calc_points, type, avoidances.",
+			        e.getMessage());
 		}
 	}
 
