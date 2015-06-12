@@ -93,9 +93,9 @@ public class GraphHopperServlet extends GHBaseServlet
 		boolean enableElevation = getBooleanParam(httpReq, "elevation", false);
 		boolean pointsEncoded = getBooleanParam(httpReq, "points_encoded", true);
 
-		String vehicleStr = getParam(httpReq, "vehicle", "car");
+		String vehicleStr = getParam(httpReq, "vehicle", null);
 		String weighting = getParam(httpReq, "weighting", "fastest");
-		String algoStr = getParam(httpReq, "algorithm", "");
+		String algoStr = getParam(httpReq, "algorithm", null);
 		String localeStr = getParam(httpReq, "locale", "en");
 
 		StopWatch sw = new StopWatch().start();
@@ -119,8 +119,8 @@ public class GraphHopperServlet extends GHBaseServlet
 			{
 				String errMesg = buildErrorMessageString(localeStr, "locale",
 				        TranslationMap.LOCALES);
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg.toString()));
-			} else if (!new CaseInsensitiveStringListValidator().isValid(algoStr,
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg.toString()));
+			} else if (null!=algoStr && !new CaseInsensitiveStringListValidator().isValid(algoStr,
 			        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI, AlgorithmOptions.DIJKSTRA,
 			        AlgorithmOptions.DIJKSTRA_BI, AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
 			{
@@ -128,38 +128,38 @@ public class GraphHopperServlet extends GHBaseServlet
 				        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
 				        AlgorithmOptions.DIJKSTRA, AlgorithmOptions.DIJKSTRA_BI,
 				        AlgorithmOptions.DIJKSTRA_ONE_TO_MANY);
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
 			} else if (!new BooleanValidator().isValid(instructionsString))
 			{
 				String errMesg = buildBooleanErrorMessageString(instructionsString, "instructions");
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
 			} else if (!new BooleanValidator().isValid(pointsEncodedString))
 			{
 				String errMesg = buildBooleanErrorMessageString(pointsEncodedString,
 				        "points_encoded");
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
 			} else if (!new BooleanValidator().isValid(calcPointsString))
 			{
 				String errMesg = buildBooleanErrorMessageString(calcPointsString, "calc_points");
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
 			} else if (!new BooleanValidator().isValid(debugString))
 			{
 				String errMesg = buildBooleanErrorMessageString(debugString, "debug");
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
 			} else if (!new BooleanValidator().isValid(prettyString))
 			{
 				String errMesg = buildBooleanErrorMessageString(prettyString, "pretty");
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
 			} else if (!hopper.getEncodingManager().supports(vehicleStr))
 			{
 				String supported = hopper.getGraph().getEncodingManager().toString();
 				String errMesg = String.format(
 				        "Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr,
 				        supported);
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg));
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
 			} else if (enableElevation && !hopper.hasElevation())
 			{
-				ghRsp = new GHResponse().addError(new IllegalArgumentException(
+				ghRsp = new GHResponse().addError(new InvalidParameterException(
 				        "Elevation not supported!"));
 			} else
 			{
@@ -190,13 +190,17 @@ public class GraphHopperServlet extends GHBaseServlet
 							}
 						}
 					}
-					if (!allowedAvoidances.contains(avoidancesString))
-					{
-						String errMesg = buildErrorMessageString(avoidancesString, "avoidances",
-						        allowedAvoidances);
-						ghRsp = new GHResponse().addError(new IllegalArgumentException(errMesg
-						        .toString()));
-					}
+					String avoidanceArray[] = avoidancesString.split(",");
+					for (String avoidance : avoidanceArray)
+                    {
+						if (!allowedAvoidances.contains(avoidance))
+						{
+							String errMesg = buildErrorMessageString(avoidance, "avoidances",
+									allowedAvoidances);
+							ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg
+									.toString()));
+						}
+                    }
 				}
 
 				if (ghRsp == null)
