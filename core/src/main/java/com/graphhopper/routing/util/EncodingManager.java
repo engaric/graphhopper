@@ -51,6 +51,7 @@ import com.graphhopper.util.Helper;
 public class EncodingManager
 {
 	public static final String CAR = "car";
+	private static final Object EMV = "emv";
 	public static final String BIKE = "bike";
 	public static final String BIKE2 = "bike2";
 	public static final String RACINGBIKE = "racingbike";
@@ -161,6 +162,9 @@ public class EncodingManager
 			AbstractFlagEncoder fe;
 			if (entry.equals(CAR))
 				fe = new CarFlagEncoder(entryVal);
+			
+			else if (entry.equals(EMV))
+				fe = new EmergencyVehicleFlagEncoder(entryVal);
 
 			else if (entry.equals(BIKE))
 				fe = new BikeFlagEncoder(entryVal);
