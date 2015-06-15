@@ -51,7 +51,7 @@ import com.graphhopper.util.Helper;
 public class EncodingManager
 {
 	public static final String CAR = "car";
-	private static final Object EMV = "emv";
+	public static final String EMV = "emv";
 	public static final String BIKE = "bike";
 	public static final String BIKE2 = "bike2";
 	public static final String RACINGBIKE = "racingbike";
