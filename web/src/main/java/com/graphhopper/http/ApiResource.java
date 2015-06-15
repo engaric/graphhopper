@@ -105,11 +105,11 @@ public enum ApiResource
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (Map.Entry<String, String[]> entry : parameterMap.entrySet())
 		{
-			String parameterName = entry.getKey().toLowerCase();
-			if (!list.contains(parameterName))
+			String name = entry.getKey().toLowerCase();
+			if (!list.contains(name))
 			{
-				throw new NoSuchParameterException(getInvalidPara​meterMessage(parameterName,
-						this.getResourceName(), this.getValidValues()));
+				String msg = getInvalidPara​meterMessage(name, getResourceName(), getValidValues());
+				throw new NoSuchParameterException(msg);
 			}
 		}
 	}
