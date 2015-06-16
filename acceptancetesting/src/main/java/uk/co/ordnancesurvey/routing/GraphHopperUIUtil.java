@@ -1029,10 +1029,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 		switch (testOn) {
 		case "Web":
-
-			navigateTo(sb.toString().replaceAll("/route?", "/"));
-			waitFor(error_Message);
-			verifyUIErrorMessage(responseMessage);
+			navigateTo(sb.toString());
 
 			break;
 		case "Service":
@@ -1045,9 +1042,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			break;
 
 		default:
-			navigateTo(sb.toString().replaceAll("/route?", "/"));
-			waitFor(error_Message);
-			verifyUIErrorMessage(responseMessage);
+
+			navigateTo(sb.toString());
 
 			if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
 				GPHServiceUtil.verifyMessage(responseMessage);
