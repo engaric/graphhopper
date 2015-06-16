@@ -59,7 +59,7 @@ public class GraphHopperServletIT extends BaseServletTester
     @Test
     public void testBasicQuery() throws Exception
     {
-        JSONObject json = query("point=42.554851,1.536198&point=42.510071,1.548128", 200);
+        JSONObject json = query("point=42.554851,1.536198&point=42.510071,1.548128&vehicle=car&locale=en_US", 200);
         JSONObject infoJson = json.getJSONObject("info");
         assertFalse(infoJson.has("errors"));
         JSONObject path = json.getJSONArray("paths").getJSONObject(0);
@@ -71,7 +71,7 @@ public class GraphHopperServletIT extends BaseServletTester
     @Test
     public void testJsonRounding() throws Exception
     {
-        JSONObject json = query("point=42.554851234,1.536198&point=42.510071,1.548128&points_encoded=false", 200);
+        JSONObject json = query("point=42.554851234,1.536198&point=42.510071,1.548128&points_encoded=false&vehicle=car&locale=en_US", 200);
         JSONObject cson = json.getJSONArray("paths").getJSONObject(0).getJSONObject("points");
         assertTrue("unexpected precision!", cson.toString().contains("[1.536374,42.554839]"));
     }
@@ -79,9 +79,9 @@ public class GraphHopperServletIT extends BaseServletTester
     @Test
     public void testFailIfElevationRequestedButNotIncluded() throws Exception
     {
-        JSONObject json = query("point=42.554851234,1.536198&point=42.510071,1.548128&points_encoded=false&elevation=true", 400);
-        assertTrue(json.has("message"));
-        assertEquals("Elevation not supported!", json.get("message"));
+        JSONObject json = query("point=42.554851234,1.536198&point=42.510071,1.548128&points_encoded=false&elevation=true&vehicle=car&locale=en_US", 400);
+        assertTrue(json.has("error"));
+        assertEquals("Elevation not supported!", json.get("error"));
         assertEquals("Elevation not supported!", json.getJSONArray("hints").getJSONObject(0).getString("message"));
     }
 
@@ -90,7 +90,10 @@ public class GraphHopperServletIT extends BaseServletTester
     {
         GraphHopperAPI hopper = new GraphHopperWeb();
         assertTrue(hopper.load(getTestRouteAPIUrl()));
-        GHResponse rsp = hopper.route(new GHRequest(42.554851, 1.536198, 42.510071, 1.548128));
+        GHRequest request = new GHRequest(42.554851, 1.536198, 42.510071, 1.548128);
+        request.setVehicle("car");
+        request.setLocale("en_US");
+		GHResponse rsp = hopper.route(request);
         assertTrue(rsp.getErrors().toString(), rsp.getErrors().isEmpty());
         assertTrue("distance wasn't correct:" + rsp.getDistance(), rsp.getDistance() > 9000);
         assertTrue("distance wasn't correct:" + rsp.getDistance(), rsp.getDistance() < 9500);
@@ -98,7 +101,7 @@ public class GraphHopperServletIT extends BaseServletTester
         rsp = hopper.route(new GHRequest().
                 addPoint(new GHPoint(42.554851, 1.536198)).
                 addPoint(new GHPoint(42.531896, 1.553278)).
-                addPoint(new GHPoint(42.510071, 1.548128)));
+                addPoint(new GHPoint(42.510071, 1.548128)).setVehicle("car").setLocale("en_US"));
         assertTrue(rsp.getErrors().toString(), rsp.getErrors().isEmpty());
         assertTrue("distance wasn't correct:" + rsp.getDistance(), rsp.getDistance() > 20000);
         assertTrue("distance wasn't correct:" + rsp.getDistance(), rsp.getDistance() < 21000);
@@ -147,7 +150,7 @@ public class GraphHopperServletIT extends BaseServletTester
     @Test
     public void testGPX() throws Exception
     {
-        String str = queryString("point=42.554851,1.536198&point=42.510071,1.548128&type=gpx", 200);
+        String str = queryString("point=42.554851,1.536198&point=42.510071,1.548128&type=gpx&vehicle=car&locale=en_US", 200);
         assertTrue(str.contains("<gh:distance>115.1</gh:distance>"));
         assertTrue(str.contains("<trkpt lat=\"42.554839\" lon=\"1.536374\"><time>"));
     }
@@ -155,10 +158,10 @@ public class GraphHopperServletIT extends BaseServletTester
     @Test
     public void testGPXWithError() throws Exception
     {
-        String str = queryString("point=42.554851,1.536198&type=gpx", 400);
+        String str = queryString("point=42.554851,1.536198&type=gpx&vehicle=car&locale=en_US", 400);
         assertFalse(str, str.contains("<html>"));
         assertFalse(str, str.contains("{"));
         assertTrue("Expected error but was: " + str, str.contains("<message>At least 2 points has to be specified, but was:1</message>"));
-        assertTrue("Expected error but was: " + str, str.contains("<hints><error details=\"java"));
+        assertTrue("Expected error but was: " + str, str.contains("<hints>"));
     }
 }

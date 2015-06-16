@@ -4,15 +4,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 public enum ApiResource
 {
 	ROUTE("route", new String[] { "point", "vehicle" }, new String[] { "point", "vehicle",
-	        "locale", "instructions", "weighting", "algorithm", "points_encoded", "debug",
-	        "pretty", "calc_points", "type", "avoidances" }), NEAREST("nearest",
-	        new String[] { "point" }, new String[] { "point" }), INFO("info", new String[] {},
-	        new String[] {});
+			"locale", "instructions", "weighting", "algorithm", "points_encoded", "debug",
+			"pretty", "calc_points", "type", "avoidances" }), NEAREST("nearest",
+					new String[] { "point" }, new String[] { "point" }), INFO("info", new String[] {},
+							new String[] {});
 
 	public String[] getMandatoryValues()
 	{
@@ -52,7 +53,7 @@ public enum ApiResource
 	 * @throws NoSuchParameterException
 	 */
 	public void checkAllRequestParameters( HttpServletRequest request )
-	        throws MissingParameterException, NoSuchParameterException, InvalidParameterException
+			throws MissingParameterException, NoSuchParameterException, InvalidParameterException
 	{
 		// Check if the mandatory parameter exists in the request
 		String value = this.getMandatoryValues()[0];
@@ -104,11 +105,11 @@ public enum ApiResource
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (Map.Entry<String, String[]> entry : parameterMap.entrySet())
 		{
-			String parameterName = entry.getKey().toLowerCase();
-			if (!list.contains(parameterName))
+			String name = entry.getKey().toLowerCase();
+			if (!list.contains(name))
 			{
-				throw new NoSuchParameterException(getInvalidPara​meterMessage(parameterName,
-				        this.getResourceName(), this.getValidValues()));
+				String msg = getInvalidPara​meterMessage(name, getResourceName(), getValidValues());
+				throw new NoSuchParameterException(msg);
 			}
 		}
 	}
@@ -122,12 +123,12 @@ public enum ApiResource
 	 * @return message String
 	 */
 	private String getInvalidPara​meterMessage( String invalid, String parameter,
-	        String[] validValues )
+			String[] validValues )
 	{
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("Parameter ").append(invalid).append(" is not a valid parameter for resource ")
-		        .append(parameter).append(". Valid parameters for requested resource are ");
+		.append(parameter).append(". Valid parameters for requested resource are ");
 
 		List<String> validList = Arrays.asList(validValues);
 		for (String valid : validList)

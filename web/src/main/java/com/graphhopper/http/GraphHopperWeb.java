@@ -22,7 +22,9 @@ import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopperAPI;
 import com.graphhopper.util.*;
 import com.graphhopper.util.shapes.GHPoint;
+
 import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -116,9 +118,14 @@ public class GraphHopperWeb implements GraphHopperAPI
                     + "&instructions=" + tmpInstructions
                     + "&points_encoded=true"
                     + "&calc_points=" + tmpCalcPoints
-                    + "&algo=" + request.getAlgorithm()
-                    + "&locale=" + request.getLocale().toString()
-                    + "&elevation=" + tmpElevation;
+                    + "&locale=" + request.getLocale().toString();
+            String algorithm = request.getAlgorithm();
+			if(algorithm!=null  && algorithm.trim().length()>0) {
+            	url += "&algorithm=" + algorithm;
+            }
+            if (tmpElevation) {
+            	url += "&elevation=" + tmpElevation;
+            }
 
             if (!request.getVehicle().isEmpty())
                 url += "&vehicle=" + request.getVehicle();

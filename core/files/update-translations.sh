@@ -19,3 +19,5 @@ for tr in $translations; do
   echo -e '# do not edit manually, instead use spreadsheet https://t.co/f086oJXAEI and script ./core/files/update-translations.sh\n' > $destination/$tr.txt
   tail -n+5 "$file" | cut -s -f1,$INDEX --output-delimiter='=' >> $destination/$tr.txt
 done
+
+cp $destination/en_US.txt $destination/en_GB.txt
