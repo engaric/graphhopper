@@ -540,7 +540,8 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances     | routeType |
       | foot        | Boulders,Cliff | fastavoid |
 
-  @Routing 
+  # MOUNTAIN BIKE
+  @Routing
   Scenario Outline: Verify DPN Route with -(mountainbike)
     Given I have route point as
       | pointA              | pointB              |
@@ -557,26 +558,8 @@ Feature: Verify a route from A to B
       | vehicleType  | avoidances | routeType |
       | mountainbike |            |           |
 
-  @Routing @Demo
-  Scenario Outline: Verify DPN Route with avoidance -(A Road)
-    Given I have route point as
-      | pointA              | pointB              |
-      | 53.298525,-1.679533 | 53.203145,-1.799292 |
-    And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
-    And I have weighting as "<routeType>"
-    When I request for a route
-    Then I should be able to verify the waypoints not on the route map:
-      | wayPointIndex | waypointco         | waypointdesc           | azimuth | direction | time  | distance | avoidance |
-      | 6             | 53.28017,-1.711765 | Turn right onto A Road | 236.0   | SW        | 43838 | 219.2    | ARoad     |
-
-    Examples: 
-      | vehicleType  | avoidances | routeType |
-      | mountainbike | A Road      |      fastavoid     |
-
-  #Add shortest,fastest,fastavoid and shortavoid for both foot and mountainbike
-  @Routing 
-  Scenario Outline: Verify DPN Route with out avoidance -(Mountain Bike)
+  @Routing
+  Scenario Outline: Verify DPN Route with out avoidance -(InlandWater)
     Given I have route point as
       | pointA              | pointB              |
       | 53.334174,-1.936591 | 53.182547,-1.824527 |
@@ -592,13 +575,13 @@ Feature: Verify a route from A to B
       | vehicleType  | avoidances | routeType |
       | mountainbike |            |           |
 
-  @Routing 
+  # ARoad
+  @Routing
   Scenario Outline: Verify DPN Route without  avoidance -(A Road )
     Given I have route point as
       | pointA              | pointB              |
       | 53.288886,-1.980339 | 53.311846,-1.783654 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
@@ -608,3 +591,162 @@ Feature: Verify a route from A to B
     Examples: 
       | vehicleType  | avoidances | routeType |
       | mountainbike |            |           |
+
+  #InlandWater , Scree
+  @Routing
+  Scenario Outline: Verify DPN Route with out avoidance -(InlandWater , Scree)
+    Given I have route point as
+      | pointA              | pointB              |
+      | 54.156158,-2.337516 | 54.175403,-2.233866 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc               | azimuth | direction | time   | distance | avoidance   |
+      | 2             | 54.15466,-2.329533  | Continue onto Path         | 103.0   | E         | 1818   | 2.0      | InlandWater |
+      | 4             | 54.154148,-2.326061 | Turn slight left onto Path | 92.0    | E         | 240237 | 266.9    | Scree       |
+
+    Examples: 
+      | vehicleType  | avoidances | routeType |
+      | mountainbike |            |           |
+
+  # QuarryOrPit
+  @Routing
+  Scenario Outline: Verify DPN Route without  avoidance -(QuarryOrPit )
+    Given I have route point as
+      | pointA            | pointB              |
+      | 53.328689,-2.0808 | 53.318817,-2.069958 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc       | azimuth | direction | time  | distance | avoidance   |
+      | 5             | 53.329358,-2.074421 | Continue onto Path | 91.0    | E         | 73446 | 81.6     | QuarryOrPit |
+
+    Examples: 
+      | vehicleType  | avoidances | routeType |
+      | mountainbike |            |           |
+
+  # Yorkshire Dales National Park
+  #Marsh
+  @Routing
+  Scenario Outline: Verify DPN Route with out avoidance -(Yorkshire Dales National Park)
+    Given I have route point as
+      | pointA              | pointB              |
+      | 54.356512,-2.321062 | 54.366348,-2.192719 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc       | azimuth | direction | time | distance | avoidance |
+      | 4             | 54.327239,-2.255641 | Continue onto Path | 120.0   | SE        | 5864 | 26.1     | Marsh     |
+
+    Examples: 
+      | vehicleType  | avoidances | routeType |
+      | mountainbike |            |           |
+
+  # Loch Lomond and The Trossachs National Park
+  @Routing
+  Scenario Outline: Verify DPN Route without  avoidance -(Loch Lomond and The Trossachs National Park )
+    Given I have route point as
+      | pointA              | pointB              |
+      | 56.202278,-4.795406 | 56.254588,-4.254916 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco         | waypointdesc                     | azimuth | direction | time  | distance | avoidance |
+      | 5             | 56.20172,-4.725335 | Turn slight left onto Local Road | 42.0    | NE        | 65891 | 329.5    | cycleway  |
+
+    Examples: 
+      | vehicleType  | avoidances | routeType |
+      | mountainbike |            |           |
+
+  # Northumberland National Park
+  @Routing
+  Scenario Outline: Verify DPN Route without  avoidance -(Northumberland National Park )
+    Given I have route point as
+      | pointA              | pointB              |
+      | 55.301982,-1.899986 | 55.251792,-2.317673 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                          | azimuth | direction | time  | distance | avoidance |
+      | 3             | 55.304153,-1.909006 | Turn slight left onto Carterside Road | 273.0   | W         | 90932 | 454.7    | cycleway  |
+
+    Examples: 
+      | vehicleType  | avoidances | routeType |
+      | mountainbike |            |           |
+
+  # A Road
+  @Routing
+  Scenario Outline: Verify DPN Route with avoidance -(ARoad)
+    Given I have route point as
+      | pointA              | pointB              |
+      | 53.298525,-1.679533 | 53.203145,-1.799292 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints not on the route map:
+      | wayPointIndex | waypointco         | waypointdesc           | azimuth | direction | time  | distance | avoidance |
+      | 6             | 53.28017,-1.711765 | Turn right onto A Road | 236.0   | SW        | 43838 | 219.2    | ARoad     |
+
+    Examples: 
+      | vehicleType  | avoidances | routeType |
+      | mountainbike | A Road     | fastavoid |
+
+  #InlandWater
+  @Routing
+  Scenario Outline: Verify DPN Route with avoidance -(InlandWater)
+    Given I have route point as
+      | pointA              | pointB             |
+      | 53.996509,-2.132063 | 54.24286,-2.284947 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints not on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                 | azimuth | direction | time | distance | avoidance   |
+      | 19            | 54.122794,-2.279481 | Continue onto Moor Head Lane | 298.0   | NW        | 407  | 1.8      | InlandWater |
+
+    Examples: 
+      | vehicleType  | avoidances  | routeType |
+      | mountainbike | InlandWater | fastavoid |
+
+  #Boulders
+  @Routing
+  Scenario Outline: Verify DPN Route with avoidance -(Boulders)
+    Given I have route point as
+      | pointA              | pointB              |
+      | 54.210408,-2.135322 | 54.169941,-2.192232 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints not on the route map:
+      | wayPointIndex | waypointco          | waypointdesc        | azimuth | direction | time   | distance | avoidance |
+      | 3             | 54.208065,-2.143237 | Continue onto Route | 295.0   | NW        | 185328 | 205.9    | Boulders  |
+
+    Examples: 
+      | vehicleType  | avoidances | routeType |
+      | mountainbike | Boulders   | fastavoid |
+
+  #Cliff
+  @Routing
+  Scenario Outline: Verify DPN Route with avoidance -(Cliff)
+    Given I have route point as
+      | pointA              | pointB              |
+      | 53.558168,-1.939639 | 53.505273,-1.881245 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints not on the route map:
+      | wayPointIndex | waypointco          | waypointdesc        | azimuth | direction | time | distance | avoidance |
+      | 22            | 53.496366,-1.888756 | Continue onto Route | 92.0    | E         | 6003 | 6.7      | Cliff     |
+
+    Examples: 
+      | vehicleType  | avoidances | routeType |
+      | mountainbike | Cliff      | fastavoid |
