@@ -412,7 +412,7 @@ GHRequest.prototype.createURL = function () {
 };
 
 GHRequest.prototype.createGPXURL = function () {
-    return this.createPath(this.host + "/route?" + this.createPointParams(false) + "&type=gpx);
+    return this.createPath(this.host + "/route?" + this.createPointParams(false) + "&type=gpx");
 };
 
 GHRequest.prototype.createHistoryURL = function () {
