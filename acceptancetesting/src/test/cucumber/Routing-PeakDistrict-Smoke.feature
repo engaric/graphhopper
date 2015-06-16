@@ -1,4 +1,4 @@
-Feature: Smoke Tests- Peak District: Verify a route from A to B
+Feature: Smoke Tests- Peak District: Verify Error Messsage for a route from A to B
    As a user
    I want to get a route from location A to location B using the routing service
    And route should be the fastest route and contain the waypoints,restrictions,time and other instructions
@@ -8,15 +8,14 @@ Feature: Smoke Tests- Peak District: Verify a route from A to B
   @ErrorMessages @Smoke
   Scenario: Successful request with all parameters
     Given I have route point as
-      | pointA              | pointB              |
-      | 53.298525,-1.679533 | 53.203145,-1.799292 |
+      | pointA              | pointB             |
+      | 53.176062,-1.871472 | 53.154773,-1.77272 |
     And I have vehicle as "foot"
-    And I have avoidances as ""
     And I have weighting as "fastest"
-    And I have locale as "en_US"
+    And I have locale as "en_GB"
     And I have debug as "true"
     And I have points_encoded as "true"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "true"
     And I have algorithm as "astar"
     And I have type as "json"
@@ -24,8 +23,8 @@ Feature: Smoke Tests- Peak District: Verify a route from A to B
     Then I should be able to verify the http response message as "OK"
     Then I should be able to verify the http statuscode as "200"
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc                | azimuth | direction | time | distance | avoidance |
-      | 2             | 50.729205,-3.523206 | Turn right onto WELL STREET | 210.0   | SW        | 4050 | 112.5    |           |
+      | wayPointIndex | waypointco          | waypointdesc        | azimuth | direction | time   | distance | avoidance |
+      | 4             | 53.173017,-1.868287 | continue onto Route | 117.0   | SE        | 132624 | 184.2    |           |
 
   # Parameter :  vehicle
   @ErrorMessages @Smoke

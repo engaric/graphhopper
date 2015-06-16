@@ -41,6 +41,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -96,7 +97,7 @@ public class GraphHopperServlet extends GHBaseServlet
 		String vehicleStr = getParam(httpReq, "vehicle", null);
 		String weighting = getParam(httpReq, "weighting", "fastest");
 		String algoStr = getParam(httpReq, "algorithm", null);
-		String localeStr = getParam(httpReq, "locale", "en").replace('-', '_');
+		String localeStr = getParam(httpReq, "locale", "en_GB").replace('-', '_');
 
 		StopWatch sw = new StopWatch().start();
 		GHResponse ghRsp = null;
@@ -119,10 +120,13 @@ public class GraphHopperServlet extends GHBaseServlet
 			{
 				String errMesg = buildErrorMessageString(localeStr, "locale",
 				        TranslationMap.LOCALES);
-				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg.toString()));
-			} else if (null!=algoStr && !new CaseInsensitiveStringListValidator().isValid(algoStr,
-			        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI, AlgorithmOptions.DIJKSTRA,
-			        AlgorithmOptions.DIJKSTRA_BI, AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
+				ghRsp = new GHResponse()
+				.addError(new InvalidParameterException(errMesg.toString()));
+			} else if (null != algoStr
+					&& !new CaseInsensitiveStringListValidator().isValid(algoStr,
+							AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
+							AlgorithmOptions.DIJKSTRA, AlgorithmOptions.DIJKSTRA_BI,
+							AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
 			{
 				String errMesg = buildErrorMessageString(algoStr, "algorithm",
 				        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
@@ -191,7 +195,7 @@ public class GraphHopperServlet extends GHBaseServlet
 					}
 					String avoidanceArray[] = avoidancesString.split(",");
 					for (String avoidance : avoidanceArray)
-                    {
+					{
 						if (!allowedAvoidances.contains(avoidance.trim()))
 						{
 							String errMesg = buildErrorMessageString(avoidance, "avoidances",
@@ -199,7 +203,7 @@ public class GraphHopperServlet extends GHBaseServlet
 							ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg
 									.toString()));
 						}
-                    }
+					}
 				}
 
 				if (ghRsp == null)
@@ -370,7 +374,13 @@ public class GraphHopperServlet extends GHBaseServlet
 			json.put("error", map);
 			Throwable throwable = rsp.getErrors().get(0);
 			map.put("message", throwable.getMessage());
-			map.put("statuscode", ((APIException) throwable).getStatusCode().toString());
+			String statusCode = "" + HttpStatus.BAD_REQUEST_400;
+			if (throwable instanceof APIException)
+			{
+				statusCode = ((APIException) throwable).getStatusCode().toString();
+				logger.error("Unhandled exception, defaulting it to 400");
+			}
+			map.put("statuscode", statusCode);
 			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 			for (Throwable t : rsp.getErrors())
 			{
