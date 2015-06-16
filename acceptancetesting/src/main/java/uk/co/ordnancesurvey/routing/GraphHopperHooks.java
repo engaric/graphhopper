@@ -28,8 +28,10 @@ public class GraphHopperHooks {
 
 	DataTable routePointsTable;
 
+	
 	@Before({ "~@WebOnly", "~@SampleScenario" })
 	public void init() {
+		
 
 		graphUiUtil = (IntegrationTestProperties
 				.getTestPropertyBool("viaApigee") == true) ? new GraphHopperUIUtil(
@@ -55,7 +57,7 @@ public class GraphHopperHooks {
 
 		testON = IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "");
-		init();
+		//init();
 
 	}
 
