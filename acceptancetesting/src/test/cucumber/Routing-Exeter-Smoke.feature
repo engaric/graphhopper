@@ -6,17 +6,17 @@ Feature: Smoke Tests: Verify a route from A to B
   #Error Messages
   #Successful request
   @ErrorMessages @Smoke
+
   Scenario: Successful request with all parameters
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "car"
-    And I have avoidances as ""
     And I have weighting as "fastest"
-    And I have locale as "en_US"
+    And I have locale as "en_GB"
     And I have debug as "true"
     And I have points_encoded as "true"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "true"
     And I have algorithm as "astar"
     And I have type as "json"
@@ -25,7 +25,7 @@ Feature: Smoke Tests: Verify a route from A to B
     Then I should be able to verify the http statuscode as "200"
     Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco          | waypointdesc                | azimuth | direction | time | distance | avoidance |
-      | 2             | 50.729205,-3.523206 | Turn right onto WELL STREET | 210.0   | SW        | 4050 | 112.5    |           |
+      | 2             | 50.729205,-3.523206 | Turn right onto WELL STREET | 210.0   | SW        | 9001 | 112.5    |           |
 
   # Parameter :  vehicle
   @ErrorMessages @Smoke
