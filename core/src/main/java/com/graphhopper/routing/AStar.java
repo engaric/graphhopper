@@ -18,6 +18,7 @@
 package com.graphhopper.routing;
 
 import com.graphhopper.util.DistancePlaneProjection;
+
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -78,6 +79,11 @@ public class AStar extends AbstractRoutingAlgorithm
     public Path calcPath( int from, int to )
     {
         checkAlreadyRun();
+        if (weighting instanceof EscapePrivateWeighting)
+        {
+	        EscapePrivateWeighting escapeWeighting = (EscapePrivateWeighting) weighting;
+	        escapeWeighting.setFromTo(from, to);
+        }
         to1 = to;
         weightApprox.setGoalNode(to);
         currEdge = createEdgeEntry(from, 0);
