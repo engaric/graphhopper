@@ -86,7 +86,6 @@ public class GraphHopperServlet extends GHBaseServlet
 	        throws ServletException, IOException
 	{
 
-		List<GHPoint> infoPoints = getPoints(httpReq, "point");
 		boolean writeGPX = "gpx".equalsIgnoreCase(getParam(httpReq, "type", "json"));
 		double minPathPrecision = getDoubleParam(httpReq, "way_point_max_distance", 1d);
 		boolean enableInstructions = writeGPX || getBooleanParam(httpReq, "instructions", true);
@@ -108,9 +107,12 @@ public class GraphHopperServlet extends GHBaseServlet
 		String debugString = getParam(httpReq, "debug", "true");
 		String prettyString = getParam(httpReq, "pretty", "true");
 		String avoidancesString = getParam(httpReq, "avoidances", null);
+		List<GHPoint> infoPoints = null;
 		try
 		{
 			ApiResource.ROUTE.checkAllRequestParameters(httpReq);
+
+			infoPoints = getPoints(httpReq, "point");
 
 			// we can reduce the path length based on the maximum differences to the original
 			// coordinates
@@ -377,7 +379,7 @@ public class GraphHopperServlet extends GHBaseServlet
 			String statusCode = "" + HttpStatus.BAD_REQUEST_400;
 			if (throwable instanceof APIException)
 			{
-				statusCode = ((APIException) throwable).getStatusCode().toString();
+				statusCode = "" + ((APIException) throwable).getStatusCode().getCode();
 				logger.error("Unhandled exception, defaulting it to 400");
 			}
 			map.put("statuscode", statusCode);
@@ -442,7 +444,8 @@ public class GraphHopperServlet extends GHBaseServlet
 	}
 
 	protected List<GHPoint> getPoints( HttpServletRequest req, String key )
-	{
+			throws InvalidParameterException
+			{
 		String[] pointsAsStr = getParams(req, key);
 		final List<GHPoint> infoPoints = new ArrayList<GHPoint>(pointsAsStr.length);
 		for (String str : pointsAsStr)
@@ -455,11 +458,17 @@ public class GraphHopperServlet extends GHBaseServlet
 				{
 					infoPoints.add(point);
 				}
+			} else
+			{
+				throw new InvalidParameterException(
+						"Point "
+								+ str
+								+ " is not a valid point. Point must be a comma separated coordinate in WGS84 projection.");
 			}
 		}
 
 		return infoPoints;
-	}
+			}
 
 	protected void initHints( GHRequest request, Map<String, String[]> parameterMap )
 	{
