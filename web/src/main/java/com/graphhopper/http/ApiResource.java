@@ -84,7 +84,7 @@ public enum ApiResource
 		Set<String> keys = request.getParameterMap().keySet();
 		for (String key : keys)
 		{
-			if (mandatoryValue.equalsIgnoreCase(key))
+			if (mandatoryValue.equals(key))
 			{
 				return true;
 			}
