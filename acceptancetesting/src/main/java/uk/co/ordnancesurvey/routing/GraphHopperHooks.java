@@ -193,6 +193,14 @@ public class GraphHopperHooks {
 		graphUiUtil.verifyHttpStatusCode(statusCode);
 
 	}
+	
+	
+	
+	@And("^I receive a valid routing response$")
+	public void I_receive_a_valid_routing_response()
+	{
+		graphUiUtil.isValidRouteResponse();
+	}
 
 	@Then("^I should be able to verify the http response message as \"([^\"]*)\"$")
 	public void I_should_be_able_to_verify_the_http_response_message_as(

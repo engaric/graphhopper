@@ -62,7 +62,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1122,10 +1121,26 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	}
 
 	public void verifyHttpErrorMessage(String responseMessage) {
+		navigateTo(sb.toString());
+
 		Assert.assertTrue("Actual http Error Message " + actualResponseMsg
 				+ " is not matching with " + responseMessage,
 				responseMessage.equalsIgnoreCase(actualResponseMsg));
 
+	}
+
+	public void isValidRouteResponse() {
+		
+		if (requestParameters.get("type").get(0).equalsIgnoreCase("json")){
+		
+		Assert.assertTrue("is not a valid route response in json format",GPHJSONUtil.isRoute()==true);
+		}
+		else
+			
+		{
+			Assert.assertTrue("is not a valid route response in gpx format",GPHServiceUtil.isRoute()==true);
+		}
+		
 	}
 
 }
