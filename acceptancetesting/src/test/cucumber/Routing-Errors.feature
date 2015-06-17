@@ -31,8 +31,7 @@ Feature: Verify Error Messages from a routing service
     Given I have route point as
       | pointA           | pointB              |
       | 50.729961,string | 50.723364,-3.523895 |
-    And I have vehicles as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
+    And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -40,16 +39,15 @@ Feature: Verify Error Messages from a routing service
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                   | statusCode |
-      | car         |            | fastest   | json           | No vehicle parameter provided. | 400        |
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                     | statusCode |
+      | car         |            | fastest   | json           | Point 50.729961,string is not a valid point. Point must be a comma separated coordinate in WGS84 projection. | 400        |
 
   @ErrorMessages
   Scenario Outline: Incorrect Parameter Value "point"
     Given I have route point as
       | pointA              |
       | 50.723364,-3.523895 |
-    And I have vehicles as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
+    And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -65,8 +63,7 @@ Feature: Verify Error Messages from a routing service
     Given I have route point as
       | pointA       | pointB              |
       | 292530,92635 | -3.523895,50.723364 |
-    And I have vehicles as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
+    And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -83,8 +80,7 @@ Feature: Verify Error Messages from a routing service
     Given I have route points as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicles as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
+    And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -99,7 +95,6 @@ Feature: Verify Error Messages from a routing service
   @ErrorMessages
   Scenario Outline: Missing Parameter "point"
     Given I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -108,7 +103,7 @@ Feature: Verify Error Messages from a routing service
 
     Examples: 
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                | statusCode |
-      | car         |            | fastest   | json           | No point parameter provided | 400        |
+      | car         |            | fastest   | json           | No point parameter provided. | 400        |
 
   # Parameter :  avoidances
   @ErrorMessages
@@ -117,7 +112,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -135,7 +129,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -153,7 +146,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have locale as "<locale>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
@@ -172,7 +164,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have instructions as "<instructions>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
@@ -191,7 +182,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have algorithm as "<algorithm>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
@@ -212,7 +202,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have algorithm as "<algorithm>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
@@ -234,7 +223,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have points_encoded as "<points_encoded>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
@@ -253,7 +241,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have debug as "<debug>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
@@ -272,7 +259,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have calc_points as "<debug>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
@@ -291,7 +277,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have calc_points as "<debug>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
@@ -310,7 +295,6 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     Given I have vehicle as "<vehicleType>"
-    And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     And I request for HTTP "<httpMethod>" method
@@ -361,7 +345,7 @@ Feature: Verify Error Messages from a routing service
 
     Examples: 
       | locale |
-      | en     |
+      | en_GB  |
       | bg     |
       | ca     |
       | cz     |

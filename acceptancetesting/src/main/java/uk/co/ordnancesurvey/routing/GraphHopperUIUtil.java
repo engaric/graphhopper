@@ -877,10 +877,14 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	}
 
 	public void getRouteFromUI() {
+
+		String avoidances = "";
 		try {
 			String weighting = requestParameters.get("weighting").get(0);
+			if (null != requestParameters.get("avoidances")) {
+				avoidances = requestParameters.get("avoidances").get(0);
+			}
 
-			String avoidances = requestParameters.get("avoidances").get(0);
 			String vehicle = requestParameters.get("vehicle").get(0);
 			if (vehicle.equalsIgnoreCase("mountainbike")) {
 				vehicle = "mtb";

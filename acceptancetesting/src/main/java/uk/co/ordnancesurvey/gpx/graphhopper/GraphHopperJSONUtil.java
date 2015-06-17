@@ -30,9 +30,8 @@ public class GraphHopperJSONUtil {
 			}
 
 		}
-		
-		if(!iswaypointinPath)
-		{
+
+		if (!iswaypointinPath) {
 			LOG.info("Way point not found in the JSON Route");
 		}
 
@@ -54,9 +53,7 @@ public class GraphHopperJSONUtil {
 			}
 		}
 
-		
-		if(!iswaypointinPath)
-		{
+		if (!iswaypointinPath) {
 			LOG.info("Way point not found in the JSON Route");
 		}
 		return iswaypointinPath;
@@ -94,8 +91,9 @@ public class GraphHopperJSONUtil {
 
 	public void verifyMessage(String responseMessage) {
 		String actualErrorMessage = parser.getErrorMessage();
-		Assert.assertTrue(" Service : actual error message:" + actualErrorMessage
-				+ " does not match with: " + responseMessage,
+		Assert.assertTrue(" Service : actual error message:"
+				+ actualErrorMessage + " does not match with: "
+				+ responseMessage,
 				responseMessage.equalsIgnoreCase(actualErrorMessage));
 
 	}
@@ -121,7 +119,7 @@ public class GraphHopperJSONUtil {
 	}
 
 	public String getNearestPointDistance() {
-		// TODO Auto-generated method stub
+
 		return parser.getNearestPointDistance();
 	}
 
