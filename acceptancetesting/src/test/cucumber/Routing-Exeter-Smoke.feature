@@ -6,7 +6,6 @@ Feature: Smoke Tests: Verify a route from A to B
   #Error Messages
   #Successful request
   @ErrorMessages @Smoke
-
   Scenario: Successful request with all parameters
     Given I have route point as
       | pointA              | pointB              |
@@ -180,6 +179,8 @@ Feature: Smoke Tests: Verify a route from A to B
       | weighting |
       | fastest   |
       | shortest  |
+      | FASTEST   |
+      | SHORTEST  |
 
   # Parameter :  avoidances
   @ErrorMessages @Smoke

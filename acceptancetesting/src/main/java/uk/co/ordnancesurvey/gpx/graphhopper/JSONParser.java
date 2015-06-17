@@ -1,6 +1,7 @@
 package uk.co.ordnancesurvey.gpx.graphhopper;
 
 import java.util.HashSet;
+import java.util.Locale;
 
 import org.alternativevision.gpx.beans.Waypoint;
 import org.slf4j.Logger;
@@ -53,7 +54,6 @@ public class JSONParser {
 			jElement = parser.parse(jsonString);
 			jObject = jElement.getAsJsonObject();
 			paths = jObject.getAsJsonArray("paths");
-			//info = jObject.getAsJsonObject("info");
 
 			instructions = paths.get(0).getAsJsonObject()
 					.getAsJsonArray("instructions");
@@ -62,7 +62,7 @@ public class JSONParser {
 		}
 
 		catch (Exception e) {
-			LOG.info("Invalid JSON String :"+ e.getMessage());
+			LOG.info("Invalid JSON String :" + e.getMessage());
 		}
 
 	}
@@ -161,11 +161,9 @@ public class JSONParser {
 	}
 
 	public String getErrorMessage() {
-		
-		JsonObject error= jObject.getAsJsonObject("error");
-	//	JsonArray errors = info.getAsJsonArray("errors");
-		//JsonPrimitive errorMessage = errors.get(0).getAsJsonObject()
-		//		.getAsJsonPrimitive("message");
+
+		JsonObject error = jObject.getAsJsonObject("error");
+
 		JsonPrimitive errorMessage = error.getAsJsonObject()
 				.getAsJsonPrimitive("message");
 		return errorMessage.getAsString();
@@ -173,14 +171,12 @@ public class JSONParser {
 	}
 
 	public int getStatusCode() {
-	//	JsonArray errors = info.getAsJsonArray("errors");
+
 		
-		JsonObject error= jObject.getAsJsonObject("error");
-	//	JsonArray errors = info.getAsJsonArray("errors");
+		JsonObject error = jObject.getAsJsonObject("error");
 
 		JsonPrimitive statusCode = error.getAsJsonPrimitive("statuscode");
-		//JsonPrimitive errorMessage = errors.get(0).getAsJsonObject()
-		//		.getAsJsonPrimitive("statuscode");
+
 		return statusCode.getAsInt();
 
 	}
