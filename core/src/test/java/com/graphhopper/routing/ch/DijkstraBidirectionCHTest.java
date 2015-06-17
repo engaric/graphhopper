@@ -17,14 +17,34 @@
  */
 package com.graphhopper.routing.ch;
 
-import com.graphhopper.routing.*;
-import com.graphhopper.routing.util.*;
-import com.graphhopper.storage.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.graphhopper.routing.AbstractRoutingAlgorithmTester;
+import com.graphhopper.routing.AlgorithmOptions;
+import com.graphhopper.routing.Path;
+import com.graphhopper.routing.RoutingAlgorithm;
+import com.graphhopper.routing.RoutingAlgorithmFactory;
+import com.graphhopper.routing.RoutingAlgorithmFactorySimple;
+import com.graphhopper.routing.util.Bike2WeightFlagEncoder;
+import com.graphhopper.routing.util.CarFlagEncoder;
+import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.routing.util.FastestWeighting;
+import com.graphhopper.routing.util.FlagEncoder;
+import com.graphhopper.routing.util.FootFlagEncoder;
+import com.graphhopper.routing.util.ShortestWeighting;
+import com.graphhopper.routing.util.TraversalMode;
+import com.graphhopper.storage.DAType;
+import com.graphhopper.storage.GHDirectory;
+import com.graphhopper.storage.Graph;
+import com.graphhopper.storage.GraphBuilder;
+import com.graphhopper.storage.LevelGraph;
+import com.graphhopper.storage.LevelGraphStorage;
 import com.graphhopper.util.EdgeIteratorState;
 import com.graphhopper.util.EdgeSkipIterState;
 import com.graphhopper.util.Helper;
-import static org.junit.Assert.*;
-import org.junit.Test;
 
 /**
  * Tests if a graph optimized by contraction hierarchies returns the same results as a none
@@ -144,6 +164,21 @@ public class DijkstraBidirectionCHTest extends AbstractRoutingAlgorithmTester
         super.testCalcFootPath();
         footEncoder = tmpFootEncoder;
         carEncoder = tmpCarEncoder;
+    }
+    
+    @Override
+    @Ignore
+    public void testCalcWontTraversePrivatePath()
+    {
+    	// not supported for contraction heirarchies.
+    }
+    
+    
+    @Override
+    @Ignore
+    public void testCalcStartEndOnlyPrivatePath()
+    {
+    	// not supported for contraction heirarchies.
     }
 
     @Test
