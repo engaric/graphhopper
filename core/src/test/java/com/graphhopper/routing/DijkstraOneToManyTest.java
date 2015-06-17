@@ -109,6 +109,12 @@ public class DijkstraOneToManyTest extends AbstractRoutingAlgorithmTester
     {
         // calcPath with QueryResult not supported
     }
+    
+    @Override
+    public void testCalcWontTraversePrivatePath()
+    {
+        // calcPath with QueryResult not supported
+    }
 
     @Test
     public void testIssue182()

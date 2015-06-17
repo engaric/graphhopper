@@ -1,6 +1,7 @@
 package com.graphhopper.routing.util;
 
 import com.graphhopper.reader.Way;
+import com.graphhopper.routing.EscapePrivateWeighting;
 
 public class EmergencyVehicleFlagEncoder extends CarFlagEncoder
 {
@@ -29,7 +30,7 @@ public class EmergencyVehicleFlagEncoder extends CarFlagEncoder
 	@Override
 	public long getLong( long flags, int key )
 	{
-	    if(key==100) 
+	    if(key==EscapePrivateWeighting.KEY) 
 	    	return startStopEncoder.getValue(flags);
 		return super.getLong(flags, key);
 	}
@@ -58,6 +59,15 @@ public class EmergencyVehicleFlagEncoder extends CarFlagEncoder
         shift += startStopEncoder.getBits();
         
         return shift;
+    }
+    
+    @Override
+    public boolean supports( Class<?> feature )
+    {
+        if (super.supports(feature))
+            return true;
+
+        return EscapePrivateWeighting.class.isAssignableFrom(feature);
     }
 	
 }

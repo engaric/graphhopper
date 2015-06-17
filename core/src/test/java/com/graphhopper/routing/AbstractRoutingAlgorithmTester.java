@@ -17,17 +17,41 @@
  */
 package com.graphhopper.routing;
 
-import com.graphhopper.routing.util.*;
-import com.graphhopper.storage.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gnu.trove.list.TIntList;
+
+import java.util.Random;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.graphhopper.reader.OSMWay;
+import com.graphhopper.reader.Way;
+import com.graphhopper.routing.util.Bike2WeightFlagEncoder;
+import com.graphhopper.routing.util.CarFlagEncoder;
+import com.graphhopper.routing.util.EdgeFilter;
+import com.graphhopper.routing.util.EmergencyVehicleFlagEncoder;
+import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.routing.util.FastestWeighting;
+import com.graphhopper.routing.util.FlagEncoder;
+import com.graphhopper.routing.util.FootFlagEncoder;
+import com.graphhopper.routing.util.ShortestWeighting;
+import com.graphhopper.routing.util.Weighting;
+import com.graphhopper.storage.Graph;
+import com.graphhopper.storage.GraphBuilder;
+import com.graphhopper.storage.NodeAccess;
+import com.graphhopper.storage.RAMDirectory;
 import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.storage.index.LocationIndexTree;
 import com.graphhopper.storage.index.QueryResult;
-import com.graphhopper.util.*;
-import gnu.trove.list.TIntList;
-import java.util.Random;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+import com.graphhopper.util.DistanceCalc;
+import com.graphhopper.util.DistanceCalcEarth;
+import com.graphhopper.util.EdgeIterator;
+import com.graphhopper.util.EdgeIteratorState;
+import com.graphhopper.util.GHUtility;
+import com.graphhopper.util.Helper;
 
 /**
  *
@@ -37,9 +61,10 @@ public abstract class AbstractRoutingAlgorithmTester
 {
     // problem is: matrix graph is expensive to create to cache it in a static variable
     private static Graph matrixGraph;
-    protected static final EncodingManager encodingManager = new EncodingManager("CAR,FOOT");
+    protected static final EncodingManager encodingManager = new EncodingManager("CAR,FOOT,EMV");
     protected FlagEncoder carEncoder;
     protected FlagEncoder footEncoder;
+    protected EmergencyVehicleFlagEncoder emvEncoder;
     protected AlgorithmOptions defaultOpts;
 
     @Before
@@ -47,6 +72,7 @@ public abstract class AbstractRoutingAlgorithmTester
     {
         carEncoder = (CarFlagEncoder) encodingManager.getEncoder("CAR");
         footEncoder = (FootFlagEncoder) encodingManager.getEncoder("FOOT");
+        emvEncoder = (EmergencyVehicleFlagEncoder) encodingManager.getEncoder("EMV");
         defaultOpts = AlgorithmOptions.start().flagEncoder(carEncoder).
                 weighting(new ShortestWeighting()).build();
     }
@@ -187,6 +213,51 @@ public abstract class AbstractRoutingAlgorithmTester
         assertEquals(p1.toString(), 12240 * 1000, p1.getTime());
         assertEquals(Helper.createTList(0, 4, 5, 7), p1.calcNodes());
     }
+    
+    @Test
+    /**
+     * 0-7 can take route 4-5-2-3 despite first and last edge being private as must be able to leave a private start point or reach a private destination
+     */
+    public void testCalcStartEndOnlyPrivatePath()
+    {
+    	Way way = new OSMWay(1L);
+    	way.setTag("access", "no");
+    	way.setTag("highway","track");
+    	way.setTag("tracktype","grade3");
+        Graph graphShortest = createGraph(false);
+        initPrivateSections(graphShortest, emvEncoder.handleWayTags(way, 16, 0));
+        
+        GHUtility.printEdgeInfo(graphShortest, emvEncoder);
+        GHUtility.printInfo(graphShortest, 0,20, EdgeFilter.ALL_EDGES);
+        RoutingAlgorithm algo = createAlgo(graphShortest, AlgorithmOptions.start().flagEncoder(emvEncoder).
+                weighting(new EscapePrivateWeighting(graphShortest, emvEncoder, new ShortestWeighting(), 4, 3)).build());
+		
+        Path p1 = algo.calcPath(4, 3);
+        assertEquals(Helper.createTList(4, 5, 2, 3), p1.calcNodes());
+        assertEquals(p1.toString(), 17000, p1.getDistance(), 1e-6); 
+    }
+    
+    @Test
+    /**
+     * 0-7 cannot take shortest route 0-4-6-7 so must instead take 0-1-5-7
+     */
+    public void testCalcWontTraversePrivatePath()
+    {
+    	Way way = new OSMWay(1L);
+    	way.setTag("access", "no");
+    	way.setTag("highway","track");
+    	way.setTag("tracktype","grade3");
+        Graph graphShortest = createGraph(false);
+        initPrivateSections(graphShortest, emvEncoder.handleWayTags(way, 16, 0));
+        
+        GHUtility.printEdgeInfo(graphShortest, emvEncoder);
+        GHUtility.printInfo(graphShortest, 0,20, EdgeFilter.ALL_EDGES);
+        RoutingAlgorithm algo = createAlgo(graphShortest, AlgorithmOptions.start().flagEncoder(emvEncoder).
+                weighting(new EscapePrivateWeighting(graphShortest, emvEncoder, new ShortestWeighting(), 0, 7)).build());
+		Path p1 = algo.calcPath(0, 7);
+		assertEquals(Helper.createTList(0, 1, 5, 7), p1.calcNodes());
+        assertEquals(p1.toString(), 19000, p1.getDistance(), 1e-6); 
+    }
 
     protected void initFootVsCar( Graph graph )
     {
@@ -210,6 +281,30 @@ public abstract class AbstractRoutingAlgorithmTester
         graph.edge(7, 5).setDistance(5000).setFlags(footEncoder.setProperties(5, true, true) | carEncoder.setProperties(20, true, false));
 
         graph.edge(6, 7).setDistance(5000).setFlags(carEncoder.setProperties(20, true, true));
+    }
+    
+    protected void initPrivateSections( Graph graph, long privateSectionFlagValue  )
+    {
+        graph.edge(0, 1).setDistance(7000).setFlags(emvEncoder.setProperties(10, true, true));
+        graph.edge(0, 4).setDistance(5000).setFlags(emvEncoder.setProperties(10, true, true) );
+
+        graph.edge(1, 4).setDistance(7000).setFlags(emvEncoder.setProperties(10, true, true));
+        graph.edge(1, 5).setDistance(7000).setFlags(emvEncoder.setProperties(10, true, true));
+        graph.edge(1, 2).setDistance(20000).setFlags(emvEncoder.setProperties(10, true, true));
+
+        graph.edge(5, 2).setDistance(5000).setFlags(emvEncoder.setProperties(10, true, true));
+        graph.edge(2, 3).setDistance(5000).setFlags(privateSectionFlagValue);
+
+        graph.edge(5, 3).setDistance(11000).setFlags(privateSectionFlagValue);
+        graph.edge(3, 7).setDistance(7000).setFlags(privateSectionFlagValue);
+
+        graph.edge(4, 6).setDistance(5000).setFlags(privateSectionFlagValue);
+        graph.edge(5, 4).setDistance(7000).setFlags(privateSectionFlagValue);
+
+        graph.edge(5, 6).setDistance(7000).setFlags(privateSectionFlagValue);
+        graph.edge(7, 5).setDistance(5000).setFlags(emvEncoder.setProperties(10, true, true));
+
+        graph.edge(6, 7).setDistance(6000).setFlags(emvEncoder.setProperties(10, true, true));
     }
 
     // see test-graph.svg !
