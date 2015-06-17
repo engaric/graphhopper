@@ -12,29 +12,39 @@ import org.slf4j.LoggerFactory;
 import com.graphhopper.reader.RoutingElement;
 import com.graphhopper.reader.osgb.AbstractRoutingElementFactory;
 
-public class OsDpnRoutingElementFactory extends AbstractRoutingElementFactory<RoutingElement>{
+public class OsDpnRoutingElementFactory extends AbstractRoutingElementFactory<RoutingElement>
+{
 
-    private static final Logger logger = LoggerFactory.getLogger(OsDpnRoutingElementFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(OsDpnRoutingElementFactory.class);
 
-    @Override
-    public RoutingElement create(String name, String idStr, XMLStreamReader parser) throws MismatchedDimensionException, XMLStreamException, FactoryException, TransformException {
-    	idStr = idStr.substring(3);
-        logger.info(":" + name + ":");
-        switch (name) {
-        case "RouteNode": {
-            return OsDpnNode.create(idStr, parser);
-        }
-        case "RouteLink": {
-            return OsDpnWay.create(idStr, parser);
-        }
-        case "Route": {
-            // TODO grouped features
-        }
-        default: {
+	@Override
+	public RoutingElement create( String name, String idStr, XMLStreamReader parser )
+	        throws MismatchedDimensionException, XMLStreamException, FactoryException,
+	        TransformException
+	{
+		idStr = idStr.substring(3);
+		logger.info(":" + name + ":");
+		switch (name)
+		{
+			case "RouteNode":
+			{
+				return OsDpnNode.create(idStr, parser);
+			}
+			case "RouteLink":
+			{
+				return OsDpnWay.create(idStr, parser);
+			}
+			case "Route":
+			{
+				// TODO grouped features
+				break;
+			}
+			default:
+			{
+				break;
+			}
 
-        }
-
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 }
