@@ -172,7 +172,6 @@ public class JSONParser {
 
 	public int getStatusCode() {
 
-		
 		JsonObject error = jObject.getAsJsonObject("error");
 
 		JsonPrimitive statusCode = error.getAsJsonPrimitive("statuscode");

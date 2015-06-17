@@ -6,25 +6,30 @@ Feature: Smoke Tests- Peak District: Verify Error Messsage for a route from A to
   #Error Messages
   #Successful request
   @ErrorMessages @Smoke
-  Scenario: Successful request with all parameters
-    Given I have route point as
+  Scenario Outline: Successful request with all parameters
+    Given I have route <point> as
       | pointA              | pointB             |
       | 53.176062,-1.871472 | 53.154773,-1.77272 |
-    And I have vehicle as "foot"
-    And I have weighting as "fastest"
-    And I have locale as "en_GB"
-    And I have debug as "true"
-    And I have points_encoded as "true"
-    And I have calc_points as "true"
-    And I have instructions as "true"
-    And I have algorithm as "astar"
-    And I have type as "json"
+    And I have <vehicle> as "foot"
+    And I have <weighting> as "fastest"
+    And I have <locale> as "en_GB"
+    And I have <debug> as "true"
+    And I have <points_encoded> as "true"
+    And I have <calc_points> as "true"
+    And I have <instructions> as "true"
+    And I have <algorithm> as "astar"
+    And I have <type> as "json"
     When I request for a route
     Then I should be able to verify the http response message as "OK"
-    Then I should be able to verify the http statuscode as "200"
-    Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc        | azimuth | direction | time   | distance | avoidance |
-      | 4             | 53.173017,-1.868287 | continue onto Route | 117.0   | SE        | 132624 | 184.2    |           |
+    And I should be able to verify the http statuscode as "200"
+    And I receive a valid routing response
+
+    Examples: 
+      | point | vehicle | weighting | locale | debug | points_encoded | calc_points | instructions | algorithm | type |
+      | point | vehicle | weighting | locale | debug | points_encoded | calc_points | instructions | algorithm | type |
+      | POINT | VEHICLE | WEIGHTING | LOCALE | DEBUG | POINTS_ENCODED | CALC_POINTS | INSTRUCTIONS | ALGORITHM | TYPE |
+      | Point | Vehicle | Weighting | Locale | Debug | Points_Encoded | Calc_Points | Instructions | Algorithm | Type |
+      | POinT | VEHiCLE | WEIGHtING | LOCaLE | DEbUG | POINTs_ENCODED | CALc_POINTS | INSTRuCTIONS | ALGOrITHM | TYpE |
 
   # Parameter :  vehicle
   @ErrorMessages @Smoke

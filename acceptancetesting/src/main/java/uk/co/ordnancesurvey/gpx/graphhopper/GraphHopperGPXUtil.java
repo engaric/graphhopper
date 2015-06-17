@@ -128,4 +128,13 @@ public class GraphHopperGPXUtil {
 				(statusCode == actualstatusCode));
 
 	}
+
+	public boolean isRoute() {
+		boolean isRoute = false;
+		if(null!=parser.getRoutes())
+		{
+			isRoute=true;
+		}
+		return isRoute;
+	}
 }

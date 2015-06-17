@@ -122,5 +122,14 @@ public class GraphHopperJSONUtil {
 
 		return parser.getNearestPointDistance();
 	}
-
-}
+	
+	public Boolean isRoute()
+	{
+		Boolean isRoute=false;
+		if(null!=parser.getPaths())
+		{
+			isRoute= true;
+		}
+			return isRoute;
+		}
+	}
