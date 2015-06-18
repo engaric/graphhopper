@@ -54,13 +54,13 @@ public class GHServletModule extends ServletModule
 		bind(IPFilter.class).toInstance(
 				new IPFilter(args.get("jetty.whiteips", ""), args.get("jetty.blackips", "")));
 
-		serve("/i18n").with(I18NServlet.class);
+		serve("/i18n","/i18n/").with(I18NServlet.class);
 		bind(I18NServlet.class).in(Singleton.class);
 
-		serve("/info").with(InfoServlet.class);
+		serve("/info","/info/").with(InfoServlet.class);
 		bind(InfoServlet.class).in(Singleton.class);
 
-		serve("/route").with(GraphHopperServlet.class);
+		serve("/route","/route/").with(GraphHopperServlet.class);
 		bind(GraphHopperServlet.class).in(Singleton.class);
 
 		if (args.getBool("update.enable", true))
@@ -68,7 +68,7 @@ public class GHServletModule extends ServletModule
 			serve("/update*").with(UpdateServlet.class);
 			bind(UpdateServlet.class).in(Singleton.class);
 		}
-		serve("/nearest").with(NearestServlet.class);
+		serve("/nearest","/nearest/").with(NearestServlet.class);
 		bind(NearestServlet.class).in(Singleton.class);
 
 //		serve("/*").with(InvalidRequestServlet.class);
