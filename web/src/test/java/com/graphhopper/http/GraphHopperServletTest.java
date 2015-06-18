@@ -63,7 +63,7 @@ public class GraphHopperServletTest
     private GraphHopper graphHopper;
 
     @Mock
-    private static EncodingManager encodingManager;
+    private EncodingManager encodingManager;
 
     @Mock
     private AbstractFlagEncoder flagEncoder;
