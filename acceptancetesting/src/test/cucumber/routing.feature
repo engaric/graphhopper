@@ -981,7 +981,7 @@ Feature: Verify a route from A to B
       | car         |            | fastest   |
 
   #[ROUTE-133 ]Routing to a waypoint close to motorway stops on motorway instead of routing through local roads
-  @Current
+  @Routing
   Scenario Outline: Verify  waypoints on a Route
     Given I have route point as
       | pointA              | pointB              |
