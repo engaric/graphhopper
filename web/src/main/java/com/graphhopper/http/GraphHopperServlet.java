@@ -41,7 +41,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -123,12 +122,12 @@ public class GraphHopperServlet extends GHBaseServlet
 				String errMesg = buildErrorMessageString(localeStr, "locale",
 						TranslationMap.LOCALES);
 				ghRsp = new GHResponse()
-				        .addError(new InvalidParameterException(errMesg.toString()));
+				.addError(new InvalidParameterException(errMesg.toString()));
 			} else if (null != algoStr
-			        && !new CaseInsensitiveStringListValidator().isValid(algoStr,
-			                AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
-			                AlgorithmOptions.DIJKSTRA, AlgorithmOptions.DIJKSTRA_BI,
-			                AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
+					&& !new CaseInsensitiveStringListValidator().isValid(algoStr,
+							AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
+							AlgorithmOptions.DIJKSTRA, AlgorithmOptions.DIJKSTRA_BI,
+							AlgorithmOptions.DIJKSTRA_ONE_TO_MANY))
 			{
 				String errMesg = buildErrorMessageString(algoStr, "algorithm",
 						AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
@@ -201,9 +200,9 @@ public class GraphHopperServlet extends GHBaseServlet
 						if (!allowedAvoidances.contains(avoidance.trim()))
 						{
 							String errMesg = buildErrorMessageString(avoidance, "avoidances",
-							        allowedAvoidances);
+									allowedAvoidances);
 							ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg
-							        .toString()));
+									.toString()));
 						}
 					}
 				}
@@ -319,7 +318,7 @@ public class GraphHopperServlet extends GHBaseServlet
 			return rsp.getInstructions().createGPX(trackName, time, includeElevation);
 	}
 
-	String errorsToXML( List<Throwable> list )
+	private String errorsToXML( List<Throwable> list )
 	{
 		try
 		{
@@ -372,29 +371,7 @@ public class GraphHopperServlet extends GHBaseServlet
 
 		if (rsp.hasErrors())
 		{
-			Map<String, String> map = new HashMap<String, String>();
-			json.put("error", map);
-			Throwable throwable = rsp.getErrors().get(0);
-			map.put("message", throwable.getMessage());
-			String statusCode = "" + HttpStatus.BAD_REQUEST_400;
-			if (throwable instanceof APIException)
-			{
-				statusCode = "" + ((APIException) throwable).getStatusCode().getCode();
-				logger.error("Unhandled exception, defaulting it to 400");
-			}
-			map.put("statuscode", statusCode);
-			List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-			for (Throwable t : rsp.getErrors())
-			{
-				Map<String, String> hintMap = new HashMap<String, String>();
-				hintMap.put("message", t.getMessage());
-				if (internalErrorsAllowed)
-				{
-					hintMap.put("details", t.getClass().getName());
-				}
-				list.add(hintMap);
-			}
-			json.put("hints", list);
+			processResponseErrors(rsp, json, internalErrorsAllowed);
 		} else
 		{
 			Map<String, Object> jsonInfo = new HashMap<String, Object>();
@@ -441,29 +418,6 @@ public class GraphHopperServlet extends GHBaseServlet
 		jsonPoints.put("type", "LineString");
 		jsonPoints.put("coordinates", points.toGeoJson(includeElevation));
 		return jsonPoints;
-	}
-
-	protected List<GHPoint> getPoints( HttpServletRequest req, String key )
-	        throws InvalidParameterException
-	{
-		String[] pointsAsStr = getParams(req, key);
-		final List<GHPoint> infoPoints = new ArrayList<GHPoint>(pointsAsStr.length);
-		for (String str : pointsAsStr)
-		{
-			GHPoint point = GHPoint.parse(str);
-			if (point != null)
-			{
-				infoPoints.add(point);
-			} else
-			{
-				throw new InvalidParameterException(
-				        "Point "
-				                + str
-				                + " is not a valid point. Point must be a comma separated coordinate in WGS84 projection.");
-			}
-		}
-
-		return infoPoints;
 	}
 
 	protected void initHints( GHRequest request, Map<String, String[]> parameterMap )
