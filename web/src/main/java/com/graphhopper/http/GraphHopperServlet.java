@@ -310,7 +310,7 @@ public class GraphHopperServlet extends GHBaseServlet
 		res.setCharacterEncoding("UTF-8");
 		res.setContentType("application/xml");
 		String trackName = getParam(req, "track", "GraphHopper Track");
-		res.setHeader("Content-Disposition", "attachment;filename=" + "GraphHopper.gpx");
+		res.setHeader("Content-Disposition", "inline; filename=\"" + "GraphHopper.xml\"");
 		long time = getLongParam(req, "millis", System.currentTimeMillis());
 		if (rsp.hasErrors())
 			return errorsToXML(rsp.getErrors());
