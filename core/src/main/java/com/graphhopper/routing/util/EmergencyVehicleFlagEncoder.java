@@ -40,8 +40,13 @@ public class EmergencyVehicleFlagEncoder extends CarFlagEncoder
 	{
 	    long superHandled =  super.handleWayTags(way, allowed, relationFlags);
 	    System.err.println("SUPER"+ superHandled);
-	    return superHandled |= startStopEncoder.setValue(superHandled, way.hasTag("access", "no")?1:0);
+	    return superHandled |= startStopEncoder.setValue(superHandled, noThroughWayAccess(way));
 	}
+
+	private int noThroughWayAccess( Way way )
+    {
+	    return way.hasTag("access", "no")||way.hasTag("service", "alley")?1:0;
+    }
 	
 	/**
      * Define the place of the speedBits in the edge flags for car.

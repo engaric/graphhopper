@@ -61,6 +61,7 @@ public class OSITNWay extends OSITNElement implements Way {
     public static OSITNWay create(long id, XMLStreamReader parser) throws XMLStreamException, MismatchedDimensionException, FactoryException, TransformException {
         OSITNWay way = new OSITNWay(id);
         parser.nextTag();
+        way.setTag("highway","road");
         way.readTags(parser);
         logger.info(way.toString());
         return way;
