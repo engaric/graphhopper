@@ -264,7 +264,7 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have calc_points as "<debug>"
+    And I have calc_points as "<calc_points>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -282,7 +282,7 @@ Feature: Verify Error Messages from a routing service
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
-    And I have calc_points as "<debug>"
+    And I have calc_points as "<calc_points>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -316,7 +316,7 @@ Feature: Verify Error Messages from a routing service
       | car         |            | fastest   | OPTIONS    | json           | OK                 | 200        |
 
   # Nearest Point : Invalid Parameter Value "point"
-  @ErrorMessages
+  @ErrorMessages @Current
   Scenario Outline: Verify  nearest point of point using NearestPoint API
     Given I have type as "<responseFormat>"
     And My routing points for nearestPoint API as "<pointA>"

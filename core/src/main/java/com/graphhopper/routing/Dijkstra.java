@@ -60,6 +60,11 @@ public class Dijkstra extends AbstractRoutingAlgorithm
     public Path calcPath( int from, int to )
     {
         checkAlreadyRun();
+        if (weighting instanceof EscapePrivateWeighting)
+        {
+	        EscapePrivateWeighting escapeWeighting = (EscapePrivateWeighting) weighting;
+	        escapeWeighting.setFromTo(from, to);
+        }
         this.to = to;
         currEdge = createEdgeEntry(from, 0);
         if (!traversalMode.isEdgeBased())

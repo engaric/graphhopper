@@ -58,6 +58,11 @@ public abstract class AbstractBidirAlgo extends AbstractRoutingAlgorithm
         createAndInitPath();
         initFrom(from, 0);
         initTo(to, 0);
+        if (weighting instanceof EscapePrivateWeighting)
+        {
+	        EscapePrivateWeighting escapeWeighting = (EscapePrivateWeighting) weighting;
+	        escapeWeighting.setFromTo(from, to);
+        }
         runAlgo();
         return extractPath();
     }

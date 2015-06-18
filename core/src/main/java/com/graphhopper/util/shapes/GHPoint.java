@@ -24,86 +24,88 @@ import com.graphhopper.util.NumHelper;
  */
 public class GHPoint
 {
-    public double lat = Double.NaN;
-    public double lon = Double.NaN;
+	public double lat = Double.NaN;
+	public double lon = Double.NaN;
 
-    public GHPoint()
-    {
-    }
+	public GHPoint()
+	{
+	}
 
-    public GHPoint( double lat, double lon )
-    {
-        this.lat = lat;
-        this.lon = lon;
-    }
+	public GHPoint( double lat, double lon )
+	{
+		this.lat = lat;
+		this.lon = lon;
+	}
 
-    public double getLon()
-    {
-        return lon;
-    }
+	public double getLon()
+	{
+		return lon;
+	}
 
-    public double getLat()
-    {
-        return lat;
-    }
+	public double getLat()
+	{
+		return lat;
+	}
 
-    public boolean isValid()
-    {
-        return !Double.isNaN(lat) && !Double.isNaN(lon);
-    }
+	public boolean isValid()
+	{
+		return !Double.isNaN(lat) && !Double.isNaN(lon);
+	}
 
-    @Override
-    public int hashCode()
-    {
-        int hash = 7;
-        hash = 83 * hash + (int) (Double.doubleToLongBits(this.lat) ^ (Double.doubleToLongBits(this.lat) >>> 32));
-        hash = 83 * hash + (int) (Double.doubleToLongBits(this.lon) ^ (Double.doubleToLongBits(this.lon) >>> 32));
-        return hash;
-    }
+	@Override
+	public int hashCode()
+	{
+		int hash = 7;
+		hash = 83
+				* hash
+				+ (int) (Double.doubleToLongBits(this.lat) ^ (Double.doubleToLongBits(this.lat) >>> 32));
+		hash = 83
+				* hash
+				+ (int) (Double.doubleToLongBits(this.lon) ^ (Double.doubleToLongBits(this.lon) >>> 32));
+		return hash;
+	}
 
-    @Override
-    public boolean equals( Object obj )
-    {
-        if (obj == null)
-            return false;
+	@Override
+	public boolean equals( Object obj )
+	{
+		if (obj == null)
+			return false;
 
-        @SuppressWarnings("unchecked")
-        final GHPoint other = (GHPoint) obj;
-        return NumHelper.equalsEps(lat, other.lat) && NumHelper.equalsEps(lon, other.lon);
-    }
+		@SuppressWarnings("unchecked")
+		final GHPoint other = (GHPoint) obj;
+		return NumHelper.equalsEps(lat, other.lat) && NumHelper.equalsEps(lon, other.lon);
+	}
 
-    @Override
-    public String toString()
-    {
-        return lat + "," + lon;
-    }
+	@Override
+	public String toString()
+	{
+		return lat + "," + lon;
+	}
 
-    /**
-     * Attention: geoJson is LON,LAT
-     */
-    public Double[] toGeoJson()
-    {
-        return new Double[]
-        {
-            lon, lat
-        };
-    }
+	/**
+	 * Attention: geoJson is LON,LAT
+	 */
+	public Double[] toGeoJson()
+	{
+		return new Double[] { lon, lat };
+	}
 
-    public static GHPoint parse( String str )
-    {
-        // if the point is in the format of lat,lon we don't need to call geocoding service
-        String[] fromStrs = str.split(",");
-        if (fromStrs.length == 2)
-        {
-            try
-            {
-                double fromLat = Double.parseDouble(fromStrs[0]);
-                double fromLon = Double.parseDouble(fromStrs[1]);
-                return new GHPoint(fromLat, fromLon);
-            } catch (Exception ex)
-            {
-            }
-        }
-        return null;
-    }
+	public static GHPoint parse( String str )
+	{
+		// if the point is in the format of lat,lon we don't need to call geocoding service
+		String[] fromStrs = str.split(",");
+		if (fromStrs.length == 2)
+		{
+			try
+			{
+				double fromLat = Double.parseDouble(fromStrs[0]);
+				double fromLon = Double.parseDouble(fromStrs[1]);
+				return new GHPoint(fromLat, fromLon);
+			} catch (NumberFormatException | NullPointerException ex)
+			{
+				// Fall through to return a null below
+			}
+		}
+		return null;
+	}
 }
