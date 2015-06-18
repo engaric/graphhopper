@@ -230,14 +230,13 @@ public abstract class AbstractRoutingAlgorithmTester
 
 		GHUtility.printEdgeInfo(graphShortest, emvEncoder);
 		GHUtility.printInfo(graphShortest, 0, 20, EdgeFilter.ALL_EDGES);
-		// RoutingAlgorithm algo = createAlgo(graphShortest,
-		// AlgorithmOptions.start().flagEncoder(emvEncoder).
-		// weighting(new EscapePrivateWeighting(graphShortest, emvEncoder, new ShortestWeighting(),
-		// 4, 3)).build());
-		//
-		// Path p1 = algo.calcPath(4, 3);
-		// assertEquals(Helper.createTList(4, 5, 2, 3), p1.calcNodes());
-		// assertEquals(p1.toString(), 17000, p1.getDistance(), 1e-6);
+		RoutingAlgorithm algo = createAlgo(graphShortest,
+		AlgorithmOptions.start().flagEncoder(emvEncoder).
+		weighting(new EscapePrivateWeighting(graphShortest, emvEncoder, new ShortestWeighting())).build());
+
+		Path p1 = algo.calcPath(4, 3);
+		assertEquals(Helper.createTList(4, 5, 2, 3), p1.calcNodes());
+		assertEquals(p1.toString(), 17000, p1.getDistance(), 1e-6);
 	}
 
 	@Test
@@ -255,13 +254,12 @@ public abstract class AbstractRoutingAlgorithmTester
 
 		GHUtility.printEdgeInfo(graphShortest, emvEncoder);
 		GHUtility.printInfo(graphShortest, 0, 20, EdgeFilter.ALL_EDGES);
-		// RoutingAlgorithm algo = createAlgo(graphShortest,
-		// AlgorithmOptions.start().flagEncoder(emvEncoder).
-		// weighting(new EscapePrivateWeighting(graphShortest, emvEncoder, new ShortestWeighting(),
-		// 0, 7)).build());
-		// Path p1 = algo.calcPath(0, 7);
-		// assertEquals(Helper.createTList(0, 1, 5, 7), p1.calcNodes());
-		// assertEquals(p1.toString(), 19000, p1.getDistance(), 1e-6);
+		RoutingAlgorithm algo = createAlgo(graphShortest,
+		AlgorithmOptions.start().flagEncoder(emvEncoder).
+		weighting(new EscapePrivateWeighting(graphShortest, emvEncoder, new ShortestWeighting())).build());
+		Path p1 = algo.calcPath(0, 7);
+		assertEquals(Helper.createTList(0, 1, 5, 7), p1.calcNodes());
+		assertEquals(p1.toString(), 19000, p1.getDistance(), 1e-6);
 	}
 
 	protected void initFootVsCar( Graph graph )
