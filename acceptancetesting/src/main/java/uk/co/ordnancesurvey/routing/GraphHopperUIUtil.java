@@ -97,6 +97,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	private int actualResponseCode;
 	private String actualResponseMsg;
 	StringBuffer sb = new StringBuffer();
+	public String serviceAppendString="";
+	public String servicePrefixString="";
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(GraphHopperUIUtil.class);
@@ -793,6 +795,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		CloseableHttpClient httpClient = HttpClientUtils.createClient();
 
 		HttpUriRequest httpRequest = null;
+		
+		try{
 
 		switch (httpMethod) {
 		case "PUT":
@@ -826,7 +830,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			httpRequest = new HttpGet(serviceUrl);
 			break;
 		}
-
+		}
+		catch( Exception e)
+		{
+			LOG.info(e.getMessage());
+		}
 		// HttpGet httpget = new HttpGet(serviceUrl);
 		addCustomHeaders(httpRequest);
 
@@ -843,7 +851,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			sb.append(IntegrationTestProperties
 					.getTestProperty("graphHopperWebUrl"));
 		}
-		sb.append("route?");
+		sb.append(servicePrefixString+"route"+serviceAppendString+"?");
 
 		if (!requestParameters.containsKey("type")) {
 			ArrayList<String> responseType = new ArrayList<String>();
@@ -1015,6 +1023,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				else {
 					waypoint = new ComponentID(i + "_searchBox");
 					typeIntoField(waypoint, point);
+					waitFor(dropDown);
 					clickElement(dropDown);
 				}
 			}
