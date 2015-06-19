@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,9 +49,6 @@ public class NearestServlet extends GHBaseServlet
 {
 	@Inject
 	private GraphHopper hopper;
-
-	@Named("internalErrorsAllowed")
-	private boolean internalErrorsAllowed;
 
 	private final DistanceCalc calc = Helper.DIST_EARTH;
 
@@ -104,7 +100,7 @@ public class NearestServlet extends GHBaseServlet
 			ghRsp = new GHResponse().addError(e);
 		}
 
-		if (ghRsp == null || ghRsp.hasErrors())
+		if (ghRsp != null && ghRsp.hasErrors())
 		{
 			processResponseErrors(ghRsp, map, internalErrorsAllowed);
 			writeJsonError(httpRes, SC_BAD_REQUEST, new JSONObject(map));
