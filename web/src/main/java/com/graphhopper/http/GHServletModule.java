@@ -37,8 +37,8 @@ public class GHServletModule extends ServletModule
 	{
 		this.args = args;
 		params.put("mimeTypes", "text/html," + "text/plain," + "text/xml,"
-				+ "application/xhtml+xml," + "text/css," + "application/json,"
-				+ "application/javascript," + "image/svg+xml");
+		        + "application/xhtml+xml," + "text/css," + "application/json,"
+		        + "application/javascript," + "image/svg+xml");
 	}
 
 	@Override
@@ -52,15 +52,15 @@ public class GHServletModule extends ServletModule
 
 		filter("*").through(IPFilter.class);
 		bind(IPFilter.class).toInstance(
-				new IPFilter(args.get("jetty.whiteips", ""), args.get("jetty.blackips", "")));
+		        new IPFilter(args.get("jetty.whiteips", ""), args.get("jetty.blackips", "")));
 
-		serve("/i18n","/i18n/").with(I18NServlet.class);
+		serve("/i18n", "/i18n/").with(I18NServlet.class);
 		bind(I18NServlet.class).in(Singleton.class);
 
-		serve("/info","/info/").with(InfoServlet.class);
+		serve("/info", "/info/").with(InfoServlet.class);
 		bind(InfoServlet.class).in(Singleton.class);
-
-		serve("/route","/route/").with(GraphHopperServlet.class);
+		//
+		serve("/route", "/route/").with(GraphHopperServlet.class);
 		bind(GraphHopperServlet.class).in(Singleton.class);
 
 		if (args.getBool("update.enable", true))
@@ -68,10 +68,11 @@ public class GHServletModule extends ServletModule
 			serve("/update*").with(UpdateServlet.class);
 			bind(UpdateServlet.class).in(Singleton.class);
 		}
-		serve("/nearest","/nearest/").with(NearestServlet.class);
+		serve("/nearest", "/nearest/").with(NearestServlet.class);
 		bind(NearestServlet.class).in(Singleton.class);
 
-//		serve("/*").with(InvalidRequestServlet.class);
-//		bind(InvalidRequestServlet.class).in(Singleton.class);
+		// Serve files that don't contain cetain file extensions
+		serveRegex("^((?![.]html|css|js|png|gif).)*$").with(InvalidRequestServlet.class);
+		bind(InvalidRequestServlet.class).in(Singleton.class);
 	}
 }

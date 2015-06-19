@@ -21,6 +21,7 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +32,20 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.graphhopper.GHResponse;
 import com.graphhopper.util.shapes.GHPoint;
@@ -51,13 +60,17 @@ public class GHBaseServlet extends HttpServlet
 	@Named("jsonpAllowed")
 	protected boolean jsonpAllowed;
 
+	@Inject
+	@Named("internalErrorsAllowed")
+	protected boolean internalErrorsAllowed;
+
 	protected void writeJson( HttpServletRequest req, HttpServletResponse res, JSONObject json )
-			throws JSONException, IOException
+	        throws JSONException, IOException
 	{
 		String type = getParam(req, "type", "json");
 		res.setCharacterEncoding("UTF-8");
 		boolean debug = getBooleanParam(req, "debug", false)
-				|| getBooleanParam(req, "pretty", false);
+		        || getBooleanParam(req, "pretty", false);
 		if ("jsonp".equals(type))
 		{
 			res.setContentType("application/javascript");
@@ -165,8 +178,8 @@ public class GHBaseServlet extends HttpServlet
 	}
 
 	protected List<GHPoint> getPoints( HttpServletRequest req, String key )
-			throws InvalidParameterException
-			{
+	        throws InvalidParameterException
+	{
 		String[] pointsAsStr = getParams(req, key);
 		final List<GHPoint> infoPoints = new ArrayList<GHPoint>(pointsAsStr.length);
 		for (String str : pointsAsStr)
@@ -178,17 +191,17 @@ public class GHBaseServlet extends HttpServlet
 			} else
 			{
 				throw new InvalidParameterException(
-						"Point "
-								+ str
-								+ " is not a valid point. Point must be a comma separated coordinate in WGS84 projection.");
+				        "Point "
+				                + str
+				                + " is not a valid point. Point must be a comma separated coordinate in WGS84 projection.");
 			}
 		}
 
 		return infoPoints;
-			}
+	}
 
 	protected void processResponseErrors( GHResponse rsp, Map<String, Object> json,
-	        boolean internalErrorsAllowed )
+			boolean internalErrorsAllowed )
 	{
 		if (rsp.hasErrors())
 		{
@@ -215,6 +228,67 @@ public class GHBaseServlet extends HttpServlet
 				list.add(hintMap);
 			}
 			json.put("hints", list);
+		}
+	}
+
+	protected String createGPXString( HttpServletRequest req, HttpServletResponse res,
+			GHResponse rsp )
+	{
+		boolean includeElevation = getBooleanParam(req, "elevation", false);
+		res.setCharacterEncoding("UTF-8");
+		res.setContentType("application/xml");
+		String trackName = getParam(req, "track", "GraphHopper Track");
+		res.setHeader("Content-Disposition", "inline; filename=" + "GraphHopper.gpx");
+		long time = getLongParam(req, "millis", System.currentTimeMillis());
+		if (rsp.hasErrors())
+			return errorsToXML(rsp.getErrors());
+		else
+			return rsp.getInstructions().createGPX(trackName, time, includeElevation);
+	}
+
+	protected String errorsToXML( List<Throwable> list )
+	{
+		try
+		{
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.newDocument();
+			Element gpxElement = doc.createElement("gpx");
+			gpxElement.setAttribute("creator", "GraphHopper");
+			gpxElement.setAttribute("version", "1.1");
+			doc.appendChild(gpxElement);
+
+			Element mdElement = doc.createElement("metadata");
+			gpxElement.appendChild(mdElement);
+
+			Element extensionsElement = doc.createElement("extensions");
+			mdElement.appendChild(extensionsElement);
+
+			Element messageElement = doc.createElement("message");
+			extensionsElement.appendChild(messageElement);
+			messageElement.setTextContent(list.get(0).getMessage());
+
+			Element hintsElement = doc.createElement("hints");
+			extensionsElement.appendChild(hintsElement);
+
+			for (Throwable t : list)
+			{
+				Element error = doc.createElement("error");
+				hintsElement.appendChild(error);
+				error.setAttribute("message", t.getMessage());
+				if (internalErrorsAllowed)
+				{
+					error.setAttribute("details", t.getClass().getName());
+				}
+			}
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			StringWriter writer = new StringWriter();
+			transformer.transform(new DOMSource(doc), new StreamResult(writer));
+			return writer.toString();
+		} catch (Exception ex)
+		{
+			throw new RuntimeException(ex);
 		}
 	}
 
