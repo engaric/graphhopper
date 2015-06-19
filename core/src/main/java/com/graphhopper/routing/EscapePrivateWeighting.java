@@ -17,15 +17,18 @@ public class EscapePrivateWeighting implements Weighting
 	private int start;
 	private int end;
 
-	public EscapePrivateWeighting( Graph graph, FlagEncoder encoder, Weighting weighting, int start, int end )
+	public EscapePrivateWeighting( Graph graph, FlagEncoder encoder, Weighting weighting)
     {
 	    super();
 	    this.graph = graph;
 	    this.encoder = encoder;
 	    this.innerWeighting = weighting;
-	    this.start = start;
-	    this.end = end;
     }
+	
+	public void setFromTo(int from , int to) {
+		start = from;
+		end = to;
+	}
 
 	@Override
 	public double getMinWeight( double distance )

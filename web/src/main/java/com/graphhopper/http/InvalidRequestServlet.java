@@ -15,20 +15,33 @@
  */
 package com.graphhopper.http;
 
-import org.json.JSONObject;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.json.JSONObject;
 
 public class InvalidRequestServlet extends GHBaseServlet
 {
-    @Override
-    protected void service( HttpServletRequest req, HttpServletResponse res ) throws ServletException, IOException
-    {
-        JSONObject json = new JSONObject();
-        json.put("message", "Not found");
-        writeJsonError(res, HttpServletResponse.SC_NOT_FOUND, json);
-    }
+	@Override
+	protected void service( HttpServletRequest req, HttpServletResponse res )
+			throws ServletException, IOException
+	{
+		String resource = req.getRequestURI();
+		if (resource.startsWith("/") && resource.length() > 1)
+		{
+			resource = resource.substring(1, resource.length());
+		}
+		JSONObject json = new JSONObject();
+		Map<String, Object> map = new HashMap<>();
+		map.put("statuscode", "" + HttpServletResponse.SC_NOT_FOUND);
+		map.put("message", "Resource " + resource
+				+ " does not exist. Valid resources are route, nearest.");
+		json.put("error", map);
+		writeJsonError(res, HttpServletResponse.SC_NOT_FOUND, json);
+	}
 }

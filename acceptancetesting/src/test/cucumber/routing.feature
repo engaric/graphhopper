@@ -979,3 +979,21 @@ Feature: Verify a route from A to B
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
+
+  #[ROUTE-133 ]Routing to a waypoint close to motorway stops on motorway instead of routing through local roads
+  @Routing
+  Scenario Outline: Verify  waypoints on a Route
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.949322,-1.483392 | 50.961009,-1.424954 |
+    And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
+    And I have weighting as "<routeType>"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc  | azimuth | direction | time   | distance | avoidance            |
+      | 4             | 50.946653,-1.476133 | At roundabout | 118.0   | SE        | 143795 | 3994.5   | take exit 1 onto M27 |
+
+    Examples: 
+      | vehicleType | avoidances | routeType |
+      | car         |            | shortest  |

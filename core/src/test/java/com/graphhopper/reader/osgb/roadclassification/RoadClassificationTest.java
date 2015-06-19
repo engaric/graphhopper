@@ -19,8 +19,8 @@ public class RoadClassificationTest
 		assertEquals(RoadClassification.MINORROAD, RoadClassification.lookup("Minor Road"));
 		assertEquals(RoadClassification.MOTORWAY, RoadClassification.lookup("Motorway"));
 		assertEquals(RoadClassification.PEDESTRIANISEDSTREET, RoadClassification.lookup("Pedestrianised Street"));
-		assertEquals(RoadClassification.PRIVATEROADPUBLICLYACCESSIBLE, RoadClassification.lookup("Private Road – Publicly Accessible"));
-		assertEquals(RoadClassification.PRIVATEROADRESTRICTEDACCESS, RoadClassification.lookup("Private Road – Restricted Access"));
+		assertEquals(RoadClassification.PRIVATEROADPUBLICLYACCESSIBLE, RoadClassification.lookup("Private Road - Publicly Accessible"));
+		assertEquals(RoadClassification.PRIVATEROADRESTRICTEDACCESS, RoadClassification.lookup("Private Road - Restricted Access"));
 		assertEquals(RoadClassification.SINGLECARRIAGEWAY, RoadClassification.lookup("Single Carriageway"));
 		assertEquals(RoadClassification.URBAN, RoadClassification.lookup("Urban"));
 		assertEquals(RoadClassification.ROUNDABOUT, RoadClassification.lookup("Roundabout"));
