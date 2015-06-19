@@ -5,14 +5,14 @@
 	<groupId>com.graphhopper</groupId>
 	<artifactId>graphhopper-web</artifactId>
 	<packaging>war</packaging>
-	<version>0.7-SNAPSHOT</version>
+	<version>0.7</version>
 	<name>GraphHopper Web</name>
 	<description>Example on how to use GraphHopper in a web-based application</description>
 
 	<parent>
 		<groupId>com.graphhopper</groupId>
 		<artifactId>graphhopper-parent</artifactId>
-		<version>0.7-SNAPSHOT</version>
+		<version>0.7</version>
 	</parent>
 	<properties>
 		<jetty.version>8.1.16.v20140903</jetty.version>
