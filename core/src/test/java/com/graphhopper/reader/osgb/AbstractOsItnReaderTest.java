@@ -15,6 +15,7 @@ import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.reader.osgb.itn.OsItnReader;
+import com.graphhopper.routing.EscapePrivateWeighting;
 import com.graphhopper.routing.util.AbstractFlagEncoder;
 import com.graphhopper.routing.util.BikeFlagEncoder;
 import com.graphhopper.routing.util.BusFlagEncoder;
@@ -22,13 +23,16 @@ import com.graphhopper.routing.util.CarFlagEncoder;
 import com.graphhopper.routing.util.DefaultEdgeFilter;
 import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.routing.util.FootFlagEncoder;
+import com.graphhopper.storage.Graph;
 import com.graphhopper.storage.GraphExtension;
 import com.graphhopper.storage.GraphHopperStorage;
 import com.graphhopper.storage.RAMDirectory;
 import com.graphhopper.storage.TurnCostExtension;
 import com.graphhopper.util.EdgeExplorer;
 import com.graphhopper.util.EdgeIterator;
+import com.graphhopper.util.EdgeIteratorState;
 import com.graphhopper.util.Instruction;
 import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.Translation;
@@ -215,6 +219,26 @@ public abstract class AbstractOsItnReaderTest {
         }
         System.out.println("End Turn Descriptions");
 
+    }
+
+	protected void checkAccessNodeNetwork( Graph graph, final FlagEncoder encoder, final boolean startEndOnly )
+    {
+    	EdgeFilter accessFilter = new EdgeFilter()
+    	{
+    		
+    		@Override
+    		public boolean accept( EdgeIteratorState edgeState )
+    		{
+    			return (startEndOnly?1:0)==encoder.getLong(edgeState.getFlags(), EscapePrivateWeighting.KEY);
+    		}
+    	};
+    	EdgeExplorer explorer = graph.createEdgeExplorer(accessFilter);
+        printNodes(explorer, 9);
+        assertEquals(4, count(explorer.setBaseNode(0)));
+        assertEquals(1, count(explorer.setBaseNode(1)));
+        assertEquals(1, count(explorer.setBaseNode(2)));
+        assertEquals(1, count(explorer.setBaseNode(3)));
+        assertEquals(1, count(explorer.setBaseNode(4)));
     }
 
 }
