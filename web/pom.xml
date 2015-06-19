@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.graphhopper</groupId>
 	<artifactId>graphhopper-web</artifactId>
 	<packaging>war</packaging>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5</version>
 	<name>GraphHopper Web</name>
 	<description>Example on how to use GraphHopper in a web-based application</description>
 
 	<parent>
 		<groupId>com.graphhopper</groupId>
 		<artifactId>graphhopper-parent</artifactId>
-		<version>0.5-SNAPSHOT</version>
+		<version>0.5</version>
 	</parent>
 	<properties>
 		<jetty.version>8.1.16.v20140903</jetty.version>
