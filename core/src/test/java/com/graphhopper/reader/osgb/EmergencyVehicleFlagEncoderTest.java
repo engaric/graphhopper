@@ -44,5 +44,21 @@ public class EmergencyVehicleFlagEncoderTest extends AbstractOsItnReaderTest{
         readGraphFile(graph, file);
         assertEquals(5, graph.getNodes());
         checkSimpleNodeNetwork(graph);
+        checkAccessNodeNetwork(graph, emvEncoder, false);
     }
+    
+    @Test
+	public void testReadSimplePrivateRestrictedCrossRoads() throws IOException
+	{
+		final boolean turnRestrictionsImport = false;
+		final boolean is3D = false;
+		final GraphHopperStorage graph = configureStorage(turnRestrictionsImport, is3D);
+
+		final File file = new File(
+		        "./src/test/resources/com/graphhopper/reader/os-itn-simple-private-restricted-crossroad.xml");
+		readGraphFile(graph, file);
+		assertEquals(5, graph.getNodes());
+		checkSimpleNodeNetwork(graph);
+		checkAccessNodeNetwork(graph, emvEncoder, true);
+	}
 }
