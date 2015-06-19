@@ -532,6 +532,7 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
+  @Routing
   Scenario Outline: Verify  Route using one intermediate waypoint (Hounslow to Reading via Staines )
     Given I have route point as
       | pointA                                 | pointB              | pointC                                 |
@@ -991,9 +992,9 @@ Feature: Verify a route from A to B
     And I have weighting as "<routeType>"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc  | azimuth | direction | time   | distance | avoidance            |
-      | 4             | 50.946653,-1.476133 | At roundabout | 118.0   | SE        | 143795 | 3994.5   | take exit 1 onto M27 |
+      | wayPointIndex | waypointco          | waypointdesc                     | azimuth | direction | time  | distance | avoidance |
+      | 2             | 50.956976,-1.485761 | Turn right onto COLDHARBOUR LANE | 89.0    | E         | 69870 | 970.4    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
-      | car         |            | shortest  |
+      | car         |            | fastest   |

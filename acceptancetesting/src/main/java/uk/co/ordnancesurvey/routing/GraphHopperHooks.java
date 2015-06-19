@@ -28,6 +28,8 @@ public class GraphHopperHooks {
 
 	DataTable routePointsTable;
 
+	private String serviceAppendString;
+
 	
 	@Before({ "~@WebOnly", "~@SampleScenario" })
 	public void init() {
@@ -245,6 +247,17 @@ public class GraphHopperHooks {
 		}
 
 	}
+	
+
+	@And("^I prefix the string \"([^\"]*)\" and append the string \"([^\"]*)\" to service URL$")
+	public void I_override_the_service_URL_to_invalid_URL(String str1,String str2)
+	{
+		graphUiUtil.servicePrefixString=str1;
+		graphUiUtil.serviceAppendString=str2;
+				
+	}
+	
+	
 
 	@And("^I request for HTTP \"([^\"]*)\" method$")
 	public void I_request_for_http_mehtod(String httpMethod) {
