@@ -77,6 +77,7 @@ public class ApiResourceTest
 		allParameters.put("calc_points", new String[] { "x" });
 		allParameters.put("type", new String[] { "x" });
 		allParameters.put("avoidances", new String[] { "x" });
+		allParameters.put("private", new String[] { "x" });
 		when(request.getParameterMap()).thenReturn(allParameters);
 		try
 		{
@@ -106,6 +107,7 @@ public class ApiResourceTest
 		allParameters.put("calc_points", new String[] { "x" });
 		allParameters.put("type", new String[] { "x" });
 		allParameters.put("avoidances", new String[] { "x" });
+		allParameters.put("private", new String[] { "x" });
 		// incorrect
 		allParameters.put("bogus", new String[] { "x" });
 		when(request.getParameterMap()).thenReturn(allParameters);
@@ -118,7 +120,7 @@ public class ApiResourceTest
 		} catch (NoSuchParameterException e)
 		{
 			assertEquals(
-			        "Parameter bogus is not a valid parameter for resource route. Valid parameters for requested resource are point, vehicle, locale, instructions, weighting, algorithm, points_encoded, debug, pretty, calc_points, type, avoidances.",
+			        "Parameter bogus is not a valid parameter for resource route. Valid parameters for requested resource are point, vehicle, locale, instructions, weighting, algorithm, points_encoded, debug, pretty, calc_points, type, avoidances, private.",
 			        e.getMessage());
 		}
 	}

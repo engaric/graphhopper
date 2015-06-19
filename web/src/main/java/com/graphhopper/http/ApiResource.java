@@ -11,7 +11,7 @@ public enum ApiResource
 {
 	ROUTE("route", new String[] { "point", "vehicle" }, new String[] { "point", "vehicle",
 			"locale", "instructions", "weighting", "algorithm", "points_encoded", "debug",
-			"pretty", "calc_points", "type", "avoidances" }), NEAREST("nearest",
+			"pretty", "calc_points", "type", "avoidances", "private" }), NEAREST("nearest",
 					new String[] { "point" }, new String[] { "point" }), INFO("info", new String[] {},
 							new String[] {});
 
