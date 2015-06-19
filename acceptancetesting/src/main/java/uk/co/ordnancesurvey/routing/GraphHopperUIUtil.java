@@ -2,31 +2,8 @@ package uk.co.ordnancesurvey.routing;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ADD_WAYPOINT;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.INSTRUCTIONS;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_SEARCH;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_BIKE;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_CAR;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_MOUNTAINBIKE;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.ROUTE_TYPE_WALK;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.TOTAL_ROUTE_TIME;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_ARoad;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Boulders;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Cliff;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_InlandWater;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Marsh;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Mud;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_QuarryOrPit;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Rock;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Sand;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Scree;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.avoidance_Shingle;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.dropDown;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.error_Message;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.fastest_RButton;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.settingsButton;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.shortest_RButton;
-import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.waypoint;
+import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.*;
+
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
