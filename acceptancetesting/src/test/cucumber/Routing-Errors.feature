@@ -521,7 +521,7 @@ Feature: Verify Error Messages from a routing service
       | gpx  |
       | json |
 
-  @Current
+  @ErrorMessages
   Scenario Outline: with invalid uri and verify resource not available
     Given I have route point as
       | pointA              | pointB              |

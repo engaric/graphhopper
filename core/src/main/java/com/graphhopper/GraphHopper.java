@@ -39,6 +39,7 @@ import com.graphhopper.reader.osgb.dpn.OsDpnReader;
 import com.graphhopper.reader.osgb.hn.OsHnReader;
 import com.graphhopper.reader.osgb.itn.OsItnReader;
 import com.graphhopper.routing.AlgorithmOptions;
+import com.graphhopper.routing.EscapePrivateWeighting;
 import com.graphhopper.routing.Path;
 import com.graphhopper.routing.QueryGraph;
 import com.graphhopper.routing.RoutingAlgorithm;
@@ -974,6 +975,16 @@ public class GraphHopper implements GraphHopperAPI
 			return new TurnWeighting(weighting, encoder, (TurnCostExtension) graph.getExtension());
 		return weighting;
 	}
+	
+	/**
+	 * Potentially wraps the specified weighting into a EscapePrivateWeighting instance.
+	 */
+	public Weighting createEscapePrivateWeighting( Weighting weighting, Graph graph, FlagEncoder encoder )
+	{
+		if (encoder.supports(EscapePrivateWeighting.class))
+			return new EscapePrivateWeighting(graph, encoder, weighting);
+		return weighting;
+	}
 
 	@Override
 	public GHResponse route( GHRequest request )
@@ -1086,6 +1097,7 @@ public class GraphHopper implements GraphHopperAPI
 			return Collections.emptyList();
 		}
 		weighting = createTurnWeighting(weighting, queryGraph, encoder);
+		weighting = createEscapePrivateWeighting(weighting, queryGraph, encoder);
 
 		double weightLimit = request.getHints().getDouble("defaultWeightLimit", defaultWeightLimit);
 		String algoStr = request.getAlgorithm().isEmpty() ? AlgorithmOptions.DIJKSTRA_BI : request

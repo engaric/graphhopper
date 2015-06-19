@@ -30,7 +30,7 @@ public class PrivateRoadPubliclyAccessibleTest {
 
     @Test
     public void testVisitWayAttribute() {
-        visitor.visitWayAttribute("Private Road – Publicly Accessible".toLowerCase().replace(" ", "").replace("–", ""), way);
+        visitor.visitWayAttribute("Private Road - Publicly Accessible".toLowerCase().replace(" ", "").replace("-", ""), way);
         verify(way).setTag("access", "private");
         verifyNoMoreInteractions(way);
     }

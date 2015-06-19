@@ -46,7 +46,7 @@ public enum RoadClassification
      */    
     public static RoadClassification lookup(String dataName) {
     	try {
-    		RoadClassification valueOf = RoadClassification.valueOf(dataName.replace(" ", "").replace("–", "").toUpperCase());
+    		RoadClassification valueOf = RoadClassification.valueOf(dataName.replace(" ", "").replace("-", "").toUpperCase());
     		return valueOf;
     	}
     	catch (IllegalArgumentException | NullPointerException e) {
