@@ -5,19 +5,19 @@
 	<groupId>com.graphhopper</groupId>
 	<artifactId>graphhopper-parent</artifactId>
 	<name>GraphHopper Parent Project</name>
-	<version>0.7-SNAPSHOT</version>
+	<version>0.8-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>http://graphhopper.com</url>
 	<inceptionYear>2012</inceptionYear>
 	<description>
         Super pom of GraphHopper core, a fast Java road routing engine.
     </description>
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>9</version>
-		<relativePath></relativePath>
-	</parent>
+<!-- 	<parent> -->
+<!-- 		<groupId>org.sonatype.oss</groupId> -->
+<!-- 		<artifactId>oss-parent</artifactId> -->
+<!-- 		<version>9</version> -->
+<!-- 		<relativePath></relativePath> -->
+<!-- 	</parent> -->
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
