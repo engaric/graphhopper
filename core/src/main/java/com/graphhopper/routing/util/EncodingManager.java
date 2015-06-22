@@ -57,6 +57,7 @@ public class EncodingManager
 	public static final String RACINGBIKE = "racingbike";
 	public static final String MOUNTAINBIKE = "mtb";
 	public static final String OSMOUNTAINBIKE = "osmtb";
+	public static final String OSCAR = "oscar";
 	public static final String FOOT = "foot";
 	public static final String FOOT2 = "foot2";
 	public static final String MOTORCYCLE = "motorcycle";
@@ -162,6 +163,9 @@ public class EncodingManager
 			AbstractFlagEncoder fe;
 			if (entry.equals(CAR))
 				fe = new CarFlagEncoder(entryVal);
+
+			if (entry.equals(OSCAR))
+				fe = new OsCarFlagEncoder(entryVal);
 			
 			else if (entry.equals(EMV))
 				fe = new EmergencyVehicleFlagEncoder(entryVal);
