@@ -164,7 +164,7 @@ public class EncodingManager
 			if (entry.equals(CAR))
 				fe = new CarFlagEncoder(entryVal);
 
-			if (entry.equals(OSCAR))
+			else if (entry.equals(OSCAR))
 				fe = new OsCarFlagEncoder(entryVal);
 			
 			else if (entry.equals(EMV))
