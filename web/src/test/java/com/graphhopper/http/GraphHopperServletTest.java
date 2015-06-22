@@ -2,7 +2,6 @@ package com.graphhopper.http;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -12,7 +11,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,9 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.google.inject.AbstractModule;
@@ -343,13 +344,18 @@ public class GraphHopperServletTest
 
 		allParameters.put("type", new String[] { WRONG_TYPE });
 		when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
-
-		GHResponse ghResponse = graphHopperServlet.getGHResponse(httpServletRequest,
-		        httpServletResponse);
-		assertEquals(WRONG_TYPE
-		        + " is not a valid value for parameter type. Valid values are GPX or JSON.",
-		        ghResponse.getErrors().get(0).getMessage());
+		expectError();
+		graphHopperServlet.getGHResponse(httpServletRequest, httpServletResponse);
+		verifyError(WRONG_TYPE
+		        + " is not a valid value for parameter type. Valid values are GPX or JSON.");
 	}
+
+	private void verifyError( String expectedError)
+    {
+		ArgumentCaptor<Throwable> error = ArgumentCaptor.forClass(Throwable.class);
+	    verify(response).addError(error.capture());
+	    assertEquals(expectedError, error.getAllValues().get(0).getMessage());
+    }
 
 	@Test
 	public void testGetGHResponseWithCorrectVehicles() throws IOException,
@@ -719,6 +725,14 @@ public class GraphHopperServletTest
 		InstructionList instructions = new InstructionList(null);
 		when(response.getInstructions()).thenReturn(instructions);
 	}
+	
+	private void expectError()
+    {
+	    when(response.hasErrors()).thenReturn(true);
+	    List<Throwable> errors = new ArrayList<Throwable>();
+	    errors.add(new Throwable("test error"));
+		when(response.getErrors()).thenReturn(errors );
+    }
 
 	private void verifyNoError()
 	{

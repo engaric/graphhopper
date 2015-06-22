@@ -46,6 +46,7 @@ import com.graphhopper.routing.util.AbstractAvoidanceDecorator;
 import com.graphhopper.routing.util.AbstractFlagEncoder;
 import com.graphhopper.routing.util.EncoderDecorator;
 import com.graphhopper.routing.util.FlagEncoder;
+import com.graphhopper.routing.util.Weighting;
 import com.graphhopper.routing.util.WeightingMap;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.InstructionList;
@@ -137,6 +138,12 @@ public class GraphHopperServlet extends GHBaseServlet
 				        AlgorithmOptions.ASTAR, AlgorithmOptions.ASTAR_BI,
 				        AlgorithmOptions.DIJKSTRA, AlgorithmOptions.DIJKSTRA_BI,
 				        AlgorithmOptions.DIJKSTRA_ONE_TO_MANY);
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
+			} else if (null != weighting
+			        && !new CaseInsensitiveStringListValidator().isValid(weighting,
+			                "fastest","shortest" ))
+			{
+				String errMesg = buildErrorMessageString(weighting, "weighting","fastest","shortest");
 				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
 			} else if (!new BooleanValidator().isValid(instructionsString))
 			{
@@ -261,6 +268,7 @@ public class GraphHopperServlet extends GHBaseServlet
 			} else
 			{
 				String type = getParam(httpReq, "type", "json");
+				System.err.println("TYPE:" + type) ;
 				if (!"json".equalsIgnoreCase(type)
 				        || (!"jsonp".equalsIgnoreCase(type) && jsonpAllowed))
 				{
