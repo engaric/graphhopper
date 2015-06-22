@@ -978,10 +978,12 @@ public class GraphHopper implements GraphHopperAPI
 	
 	/**
 	 * Potentially wraps the specified weighting into a EscapePrivateWeighting instance.
+	 * @param includeNoThrough 
 	 */
-	public Weighting createEscapePrivateWeighting( Weighting weighting, Graph graph, FlagEncoder encoder )
+	public Weighting createEscapePrivateWeighting( Weighting weighting, GHRequest request , Graph graph, FlagEncoder encoder )
 	{
-		if (encoder.supports(EscapePrivateWeighting.class))
+		boolean includeNoThrough = checkForNoThroughAccess(request);
+		if (includeNoThrough && encoder.supports(EscapePrivateWeighting.class))
 			return new EscapePrivateWeighting(graph, encoder, weighting);
 		return weighting;
 	}
@@ -1097,7 +1099,7 @@ public class GraphHopper implements GraphHopperAPI
 			return Collections.emptyList();
 		}
 		weighting = createTurnWeighting(weighting, queryGraph, encoder);
-		weighting = createEscapePrivateWeighting(weighting, queryGraph, encoder);
+		weighting = createEscapePrivateWeighting(weighting, request, queryGraph, encoder);
 
 		double weightLimit = request.getHints().getDouble("defaultWeightLimit", defaultWeightLimit);
 		String algoStr = request.getAlgorithm().isEmpty() ? AlgorithmOptions.DIJKSTRA_BI : request
@@ -1138,6 +1140,11 @@ public class GraphHopper implements GraphHopperAPI
 		rsp.setDebugInfo(debug);
 		return paths;
 	}
+
+	private boolean checkForNoThroughAccess( GHRequest request )
+    {
+	    return request.getHints().getBool("private",true) || request.getVehicle().equals("emv");
+    }
 
 	protected LocationIndex createLocationIndex( Directory dir )
 	{

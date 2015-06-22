@@ -100,6 +100,7 @@ public class GraphHopperServlet extends GHBaseServlet
 		String debugString = getParam(httpReq, "debug", "true");
 		String prettyString = getParam(httpReq, "pretty", "true");
 		String avoidancesString = getParam(httpReq, "avoidances", null);
+		String noThroughAccessString = getParam(httpReq, "private", "true");
 
 		GHResponse ghRsp = null;
 		List<GHPoint> infoPoints;
@@ -165,6 +166,11 @@ public class GraphHopperServlet extends GHBaseServlet
 				        "Vehicle %s is not a valid vehicle. Valid vehicles are %s", vehicleStr,
 				        supported);
 				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
+			} else if (!new BooleanValidator().isValid(noThroughAccessString)) 
+			{
+				String errMesg = buildBooleanErrorMessageString(noThroughAccessString, "private");
+				ghRsp = new GHResponse().addError(new InvalidParameterException(errMesg));
+			
 			} else if (enableElevation && !hopper.hasElevation())
 			{
 				ghRsp = new GHResponse().addError(new InvalidParameterException(
@@ -234,8 +240,10 @@ public class GraphHopperServlet extends GHBaseServlet
 			String logStr = httpReq.getQueryString() + " " + infoStr + " " + infoPoints + ", took:"
 			        + took + ", " + algoStr + ", " + weighting + ", " + vehicleStr;
 
-			if (ghRsp.hasErrors())
+			if (ghRsp.hasErrors()) {
 				logger.error(logStr + ", errors:" + ghRsp.getErrors());
+				logger.info("GraphHopperServlet.getGHResponse(ERROR)");
+			}
 			else
 				logger.info(logStr + ", distance: " + ghRsp.getDistance() + ", time:"
 				        + Math.round(ghRsp.getTime() / 60000f) + "min, points:"
@@ -261,6 +269,8 @@ public class GraphHopperServlet extends GHBaseServlet
 					errorMessage += jsonpAllowed ? "JSON, GPX or JSONP." : "GPX or JSON.";
 					ghRsp.addError(new InvalidParameterException(errorMessage));
 				}
+				logger.info("GraphHopperServlet.getGHResponse("+ enableInstructions
+						+ ")");
 				Map<String, Object> map = createJson(ghRsp, calcPoints, pointsEncoded,
 				        enableElevation, enableInstructions);
 				Object infoMap = map.get("info");
