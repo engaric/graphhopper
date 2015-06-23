@@ -208,8 +208,8 @@ abstract public class AbstractOsInputFile<T extends RoutingElement>  implements 
     @Override
     public void close() throws IOException {
         try {
-            if (!binary)
-                parser.close();
+            if (!binary && null != parser)
+            		parser.close();
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         } finally {

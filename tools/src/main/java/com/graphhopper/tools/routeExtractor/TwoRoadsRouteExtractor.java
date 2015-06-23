@@ -5,6 +5,7 @@ import gnu.trove.list.array.TLongArrayList;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -17,11 +18,13 @@ import org.opengis.referencing.operation.TransformException;
 import org.xml.sax.SAXException;
 
 import com.graphhopper.reader.OSMElement;
+import com.graphhopper.reader.Relation;
 import com.graphhopper.reader.RoutingElement;
-import com.graphhopper.reader.osgb.itn.OSITNRelation;
+import com.graphhopper.reader.osgb.itn.OSITNElement;
 import com.graphhopper.reader.osgb.itn.OSITNWay;
 
 public class TwoRoadsRouteExtractor extends AbstractProblemRouteExtractor {
+	private final static Logger LOGGER = Logger.getLogger(TwoRoadsRouteExtractor.class.getName());
     protected String workingRoadName;
     protected String workingLinkRoad;
     public TwoRoadsRouteExtractor(String fileOrDirName, String namedRoad, String namedLinkRoad) {
@@ -76,24 +79,27 @@ public class TwoRoadsRouteExtractor extends AbstractProblemRouteExtractor {
             if (item.isType(OSMElement.WAY)) {
                 final OSITNWay way = (OSITNWay) item;
                 if (way.hasTag("name", workingRoadName)) {
-                    System.out.println("Way found on " + workingRoadName + " id is " + way.getId());
+                    LOGGER.info("Way found on " + workingRoadName + " id is " + way.getId());
                     fullWayList.add(way.getId());
                 }
             }
             if (item.isType(OSMElement.RELATION)) {
-                final OSITNRelation relation = (OSITNRelation) item;
+                final Relation relation = (Relation) item;
                 // if (!relation.isMetaRelation()
                 // && relation.hasTag(OSITNElement.TAG_KEY_TYPE, "route"))
                 // prepareWaysWithRelationInfo(relation);
-                // System.out.println("\t\tCHECK OUT A RELATION " +
+                // LOGGER.info("\t\tCHECK OUT A RELATION " +
                 // relation.getId());
                 if (relation.isMetaRelation()) {
-                    System.out.println("\t\tADD IT TO my road fids");
+                    LOGGER.info("\t\tADD IT TO my road fids");
                 }
                 if (relation.hasTag("name", workingRoadName)) {
-                    System.out.println("Relation found on " + workingRoadName + " id is " + relation.getId());
-                    prepareNameRelation(relation, fullWayList);
-                    roadFidList.add(relation.getId());
+                	if (relation instanceof OSITNElement) {
+                		OSITNElement element = (OSITNElement)relation;
+	                    LOGGER.info("Relation found on " + workingRoadName + " id is " + element.getId());
+	                    prepareNameRelation(relation, fullWayList);
+	                    roadFidList.add(element.getId());
+                	}
                 }
             }
         }
