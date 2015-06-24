@@ -8,19 +8,20 @@ public class OsCarFlagEncoder extends CarFlagEncoder {
 	private EncodedValue startStopEncoder;
 	
 	public OsCarFlagEncoder() {
-		super(5, 5, 0);
-		restrictedValues.clear();
+		this(5, 5, 0);
 //		setOsAvoidanceDecorator();
 	}
 
 	public OsCarFlagEncoder(String propertiesStr) {
 		super(propertiesStr);
+		maxPossibleSpeed = SEVENTY_MPH_IN_KPH;
 		restrictedValues.clear();
 //		setOsAvoidanceDecorator();
 	}
 
 	public OsCarFlagEncoder(int speedBits, double speedFactor, int maxTurnCosts) {
 		super(speedBits, speedFactor, maxTurnCosts);
+		maxPossibleSpeed = SEVENTY_MPH_IN_KPH;
 		restrictedValues.clear();
 //		setOsAvoidanceDecorator();
 	}
