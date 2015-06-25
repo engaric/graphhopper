@@ -488,7 +488,7 @@ function getTopLeftCorners() {
 
     var baseMaps = {
     	"OS Classic": osClassic,
-    	"OS Consumer": osConsumer
+    	"OS Consumer": osConsumer,
     	"OS Leisure": osLeisure
     };
 
