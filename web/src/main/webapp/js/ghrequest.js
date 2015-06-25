@@ -457,7 +457,9 @@ GHRequest.prototype.createPath = function (url) {
     }
     if(document.routeoptions.access[1].checked == true){
     	this.access = "false";
-    } 
+    } else {
+    	this.access = "true";
+    }
     
     if (this.weighting && this.weighting !== "fastest")
         url += "&weighting=" + this.weighting;
