@@ -458,9 +458,6 @@ GHRequest.prototype.createPath = function (url) {
     if(document.routeoptions.access[1].checked == true){
     	this.access = "false";
     } 
-    if(checkedValue.length>0) {
-    	url += "&avoidances=" + checkedValue;
-    }
     
     if (this.weighting && this.weighting !== "fastest")
         url += "&weighting=" + this.weighting;
