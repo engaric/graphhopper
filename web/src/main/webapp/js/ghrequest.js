@@ -481,7 +481,7 @@ GHRequest.prototype.createPath = function (url) {
     if (this.debug)
         url += "&debug=true";
     if (this.access  && this.access !== "true")
-        url += "&access=false";
+        url += "&private=false";
 
     for (var key in this.api_params) {
         url += "&" + key + "=" + this.api_params[key];
