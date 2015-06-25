@@ -167,7 +167,7 @@ public abstract class AbstractOsDpnReaderTest {
         GHRequest ghRequest = new GHRequest(start, end);
         ghRequest.setVehicle("foot");
         if (null != avoid && !Helper.isEmpty(avoid)) {
-            ghRequest.setWeighting("fastavoid");
+            ghRequest.setWeighting("fastest");
             ghRequest.getHints().put("avoidances", avoid);
         }
         GHResponse ghResponse = graphHopper.route(ghRequest);
