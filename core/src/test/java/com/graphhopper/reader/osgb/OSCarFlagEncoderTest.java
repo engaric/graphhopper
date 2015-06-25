@@ -8,6 +8,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.graphhopper.reader.OSMWay;
+import com.graphhopper.routing.util.CarFlagEncoder;
 import com.graphhopper.routing.util.DefaultEdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.routing.util.OsCarFlagEncoder;
@@ -67,5 +69,25 @@ public class OSCarFlagEncoderTest extends AbstractOsItnReaderTest
 		assertEquals(5, graph.getNodes());
 		checkSimpleNodeNetwork(graph);
 		checkAccessNodeNetwork(graph, osCarEncoder, true);
+	}
+	
+	@Test
+	/**
+	 * Tests that the max speed for an OS car is 70mph.
+	 * 
+	 * Note that the 70mph is factored to be divisible by five such that it fits the current factor 5 speed encoding.
+	 * @throws IOException
+	 */
+	public void testMaxSpeedForCaris70mph() throws IOException {
+		
+		final int factoredMPHinKPH = (CarFlagEncoder.SEVENTY_MPH_IN_KPH/5)*5;
+		
+        OSMWay way = new OSMWay(1);
+        way.setTag("highway", "motorway");
+        way.setTag("maxspeed", "120");
+        long allowed = osCarEncoder.acceptWay(way);
+        long encoded = osCarEncoder.handleWayTags(way, allowed, 0);
+        assertEquals(factoredMPHinKPH, osCarEncoder.getSpeed(encoded), 1e-1);
+
 	}
 }

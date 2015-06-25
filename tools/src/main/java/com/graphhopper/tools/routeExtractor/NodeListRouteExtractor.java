@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -27,40 +28,10 @@ import com.graphhopper.reader.osgb.itn.OSITNElement;
 import com.graphhopper.reader.osgb.itn.OSITNWay;
 
 public class NodeListRouteExtractor extends AbstractProblemRouteExtractor {
+	
+	private final static Logger LOGGER = Logger.getLogger(NodeListRouteExtractor.class.getName());
 
     private String nodeListString;
-
-    // private TLongSet nodeList = null;
-
-    // private final ProcessVisitor<RoutingElement> extractWayIdLinkedToNodeList
-    // = new ProcessVisitor<RoutingElement>() {
-    // @Override
-    // void processVisitor(final RoutingElement item) {
-    // if (item.isType(OSMElement.WAY)) {
-    // final Way way = (Way) item;
-    // final TLongList nodes = way.getNodes();
-    // final long start = nodes.get(0);
-    // final long end = nodes.get(nodes.size() - 1);
-    // final TLongProcedure addWayIfNodeExists = new WayNodeProcess(end, item,
-    // start) {
-    // @Override
-    // public boolean execute(final long testNode) {
-    // if ((testNode == start) || (testNode == end)) {
-    // // ADD THE OTHER END IN TO OUR new collection
-    // final long otherEnd = testNode == start ? end : start;
-    // otherEndOfWayNodeList.add(otherEnd);
-    //
-    // fullWayList.add(item.getId());
-    //
-    // return false;
-    // }
-    // return true;
-    // }
-    // };
-    // nodeList.forEach(addWayIfNodeExists);
-    // }
-    // }
-    // };
 
     protected abstract class NodeIdListProcedure implements TLongProcedure {
         protected final TLongList nodeIds;
@@ -90,7 +61,7 @@ public class NodeListRouteExtractor extends AbstractProblemRouteExtractor {
                     if (item.isType(OSMElement.WAY)) {
                         final OSITNWay way = (OSITNWay) item;
                         if (way.getNodes().contains(testNode)) {
-                            System.out.println("\tWay found joining one of our nodes. Id: " + way.getId());
+                            LOGGER.info("\tWay found joining one of our nodes. Id: " + way.getId());
                             // Add the way to our list of ways
                             fullWayList.add(way.getId());
 
@@ -126,7 +97,6 @@ public class NodeListRouteExtractor extends AbstractProblemRouteExtractor {
                     return true;
                 }
             };
-            //            System.out.println("Iterate over " + origFullNodeList.size());
             fullWayList.forEach(addWayIfNodeExists);
 
         }
@@ -142,35 +112,15 @@ public class NodeListRouteExtractor extends AbstractProblemRouteExtractor {
         prepareOutputMethods();
 
         final File itnFile = new File(workingStore);
-        // Add the specified nodes to our list
         addRoadNodes();
-        // findWaysOnRoad(itnFile);
-
-        // findWaysLinkedAtSpecifiedNodes(itnFile);
         findWaysLinkedAtJunctionOfBothRoads(itnFile);
         findRelationsAtJunctionOfBothRoads(itnFile);
-        // addRoadLinksWithDirectedNodeFids(itnFile);
-        //
-        // addRoadRouteInformationForRoadLinkFids(itnFile);
-        //
-        // addRoadsWithNetworkMemberRoadLinkFids(itnFile);
-        //
-        // findNodesOfRoad(itnFile);
-
-        // if (null != workingLinkRoad) {
         findLinkedWayIDs(itnFile);
-        // Find the road links
         findRoadLinksForWays(itnFile);
         findNodesOnBothWays(itnFile);
         origFullNodeList.forEach(nodeOutput);
-        //         findWaysLinkedAtJunctionOfBothRoads(itnFile);
         fullWayList.forEach(wayOutput);
-        //         findRelationsAtJunctionOfBothRoads(itnFile);
         relationList.forEach(relOutput);
-        // } else {
-        // fullNodeList.forEach(nodeOutput);
-        // fullWayList.forEach(wayOutput);
-        // }
 
         outputWriter = new PrintWriter(outputFileName);
 
@@ -184,7 +134,7 @@ public class NodeListRouteExtractor extends AbstractProblemRouteExtractor {
     }
 
     private void addRoadNodes() {
-        System.out.println("Add road nodes");
+        LOGGER.info("Add road nodes");
         String[] nodeStrings = nodeListString.split(",");
         origFullNodeList = new TLongArrayList(nodeStrings.length);
         for (int i = 0; i < nodeStrings.length; i++) {
@@ -193,35 +143,22 @@ public class NodeListRouteExtractor extends AbstractProblemRouteExtractor {
     }
 
     private void findWaysOnRoad(final File itnFile) {
-        System.err.println("STAGE ONE - findWaysOnRoad");
+        LOGGER.info("STAGE ONE - findWaysOnRoad");
         fileProcessProcessor.setInnerProcess(extractWayIds);
         process(itnFile, fileProcessProcessor);
     }
     private void findRoadLinksForWays(final File itnFile) {
-        System.err.println("STAGE TWOish - findRoadLinksForWays");
+        LOGGER.info("STAGE TWOish - findRoadLinksForWays");
         fileProcessProcessor.setInnerProcess(extractRoadLinksProcessVisitor);
         process(itnFile, fileProcessProcessor);
     }
 
     private void findLinkedWayIDs(final File itnFile) {
-        System.err.println("STAGE THREE - findLinkedWayIDs");
+        LOGGER.info("STAGE THREE - findLinkedWayIDs");
         origFullNodeList = fullNodeList;
         origFullWayList = fullWayList;
         fullNodeList = new TLongArrayList(200);
         fullWayList = new TLongArrayList(100);
-        // workingRoadName = workingLinkRoad;
         findWaysOnRoad(itnFile);
     }
-
-    // protected void findWaysLinkedAtSpecifiedNodes(final File itnFile) {
-    // fullWayList = new TLongArrayList(30);
-    // fullNodeList = origFullNodeList;
-    // fileProcessProcessor.setInnerProcess(extractWayIdLinkedToNodeList);
-    // process(itnFile, fileProcessProcessor);
-    // }
-    // protected void findRelationsAtJunctionOfBothRoads(final File itnFile) {
-    // relationList = new TLongArrayList(30);
-    // fileProcessProcessor.setInnerProcess(extractRelationsAtJunctionOfBothRoads);
-    // process(itnFile, fileProcessProcessor);
-    // }
 }

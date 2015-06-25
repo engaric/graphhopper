@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -36,12 +37,9 @@ import com.graphhopper.reader.osgb.itn.OSITNElement;
 import com.graphhopper.reader.osgb.itn.OSITNWay;
 import com.graphhopper.reader.osgb.itn.OsItnInputFile;
 import com.graphhopper.util.Helper;
-//import com.graphhopper.tools.OsITNProblemRouteExtractor.ProcessFileVisitor;
-//import com.graphhopper.tools.OsITNProblemRouteExtractor.ProcessVisitor;
-//import com.graphhopper.tools.OsITNProblemRouteExtractor.WayNodeProcess;
 
 abstract public class AbstractProblemRouteExtractor {
-    private OsItnInputFile file;
+	private final static Logger LOGGER = Logger.getLogger(AbstractProblemRouteExtractor.class.getName()); 
     protected String workingStore;
     protected TLongSet testNodeSet = new TLongHashSet(30);
     protected TLongCollection fullWayList = new TLongArrayList(100);
@@ -49,7 +47,14 @@ abstract public class AbstractProblemRouteExtractor {
     protected final TLongCollection otherEndOfWayNodeList = new TLongArrayList(200);
     protected final TLongCollection roadFidList = new TLongHashSet(200);
     protected Set<String> notHighwaySet = new HashSet<String>();
-
+    protected TLongCollection origFullNodeList;
+    protected TLongCollection origFullWayList;
+    protected TLongProcedure nodeOutput;
+    protected TLongProcedure wayOutput;
+    protected TLongArrayList relationList;
+    protected TLongProcedure relOutput;
+    protected PrintWriter outputWriter;
+    
     protected abstract class WayNodeProcess implements TLongProcedure {
         protected final long end;
         protected final RoutingElement item;
@@ -60,7 +65,6 @@ abstract public class AbstractProblemRouteExtractor {
             this.item = item;
             this.start = start;
         }
-
     }
 
     public abstract class ProcessVisitor<T> {
@@ -74,8 +78,11 @@ abstract public class AbstractProblemRouteExtractor {
             innerProcess = process;
         }
     }
-
-
+    
+    public AbstractProblemRouteExtractor(String fileOrDirName) {
+        workingStore = fileOrDirName;
+    }
+    abstract public void process(final String outputFileName) throws TransformerException, ParserConfigurationException, SAXException, XPathExpressionException, XMLStreamException, IOException, MismatchedDimensionException, FactoryException, TransformException;
 
     protected  ProcessFileVisitor<RoutingElement> fileProcessProcessor = new ProcessFileVisitor<RoutingElement>() {
 
@@ -84,6 +91,8 @@ abstract public class AbstractProblemRouteExtractor {
             OsItnInputFile in = null;
             try {
                 in = new OsItnInputFile(file);
+                in.setAbstractFactory(new OsItnUnfilteredRoutingElementFactory());
+                
                 in.setWorkerThreads(1).open();
                 RoutingElement item;
                 while ((item = in.getNext()) != null) {
@@ -94,7 +103,6 @@ abstract public class AbstractProblemRouteExtractor {
             }
         }
     };
-
 
     protected final ProcessVisitor<RoutingElement> extractNodeIds = new ProcessVisitor<RoutingElement>() {
 
@@ -109,8 +117,6 @@ abstract public class AbstractProblemRouteExtractor {
                     final TLongList nodes = way.getNodes();
                     final long startNode = nodes.get(0);
                     final long endNode = nodes.get(nodes.size() - 1);
-                    // System.out.println("Add start: " + startNode + " end: " +
-                    // endNode);
                     fullNodeList.add(startNode);
                     fullNodeList.add(endNode);
                 }
@@ -175,26 +181,12 @@ abstract public class AbstractProblemRouteExtractor {
         @Override
         void processVisitor(final File element) throws XMLStreamException, IOException, ParserConfigurationException, SAXException, TransformerException, XPathExpressionException {
             final OsItnInputFile itn = new OsItnInputFile(element);
-            final InputStream bis = itn.getInputStream();
-            final TLongArrayList fidList = new TLongArrayList(relationList);
-            System.out.println("Output " + fullWayList.size() + " ways ");
-            fidList.addAll(fullWayList);
-            System.out.println("Output " + origFullNodeList.size() + " nodes ");
-            fidList.addAll(origFullNodeList);
-            // ADD IN OUR ADDITIONAL NODE LIST HERE
-            System.out.println("Output " + otherEndOfWayNodeList.size() + " otherEndOfWayNodeList nodes ");
-            fidList.addAll(otherEndOfWayNodeList);
-            System.out.println("Output " + roadFidList.size() + " roads ");
-            roadFidList.forEach(new TLongProcedure(){
-
-                @Override
-                public boolean execute(long value) {
-                    System.out.println("Fid is " + value);
-                    return true;
-                }});
-            fidList.addAll(roadFidList);
-
-            outputListedFids(fidList, bis);
+            try {
+                 outputListedFids(populateFidList(), itn.getInputStream());
+            }
+            finally {
+            	itn.close();
+            }
         };
 
         private void outputListedFids(final TLongArrayList fidList, final InputStream bis) throws XMLStreamException, NumberFormatException, IOException {
@@ -224,6 +216,37 @@ abstract public class AbstractProblemRouteExtractor {
                 lastLine = line;
             }
         }
+        
+        private TLongArrayList populateFidList() {
+        	final TLongArrayList fidList = new TLongArrayList();
+            
+        	if(null != relationList) {
+        		fidList.addAll(relationList);
+            }
+           
+            if(null != fullWayList && !fullWayList.isEmpty()) {
+            	LOGGER.info("Output " + fullWayList.size() + " ways ");
+            	fidList.addAll(fullWayList);
+            }
+            
+            if(null != origFullNodeList && !origFullNodeList.isEmpty()) {
+            	LOGGER.info("Output " + origFullNodeList.size() + " nodes ");
+            	fidList.addAll(origFullNodeList);
+            }
+            
+            if(null != otherEndOfWayNodeList && !otherEndOfWayNodeList.isEmpty()) {
+            	LOGGER.info("Output " + otherEndOfWayNodeList.size() + " otherEndOfWayNodeList nodes ");
+            	fidList.addAll(otherEndOfWayNodeList);
+            }
+            
+            if(null != roadFidList && !roadFidList.isEmpty()) {
+	          LOGGER.info("Output " + roadFidList.size() + " roads ");
+	          fidList.addAll(roadFidList);
+            }
+
+            LOGGER.info("fidList size: " + fidList.size());
+            return fidList;
+        }
 
         private boolean isEndBlock(final String curLine) {
             boolean endBlock = false;
@@ -239,24 +262,11 @@ abstract public class AbstractProblemRouteExtractor {
         }
     };
 
-    protected TLongCollection origFullNodeList;
-    protected TLongCollection origFullWayList;
-    protected TLongProcedure nodeOutput;
-    protected TLongProcedure wayOutput;
-    protected TLongArrayList relationList;
-    protected TLongProcedure relOutput;
-    protected PrintWriter outputWriter;
-
-    public AbstractProblemRouteExtractor(String fileOrDirName) {
-        workingStore = fileOrDirName;
-    }
-    abstract public void process(final String outputFileName) throws TransformerException, ParserConfigurationException, SAXException, XPathExpressionException, XMLStreamException, IOException, MismatchedDimensionException, FactoryException, TransformException;
-
     protected void prepareOutputMethods() {
         nodeOutput = new TLongProcedure() {
             @Override
             public boolean execute(final long arg0) {
-                System.err.println("node:" + arg0);
+                LOGGER.info("node:" + arg0);
                 return true;
             }
         };
@@ -264,7 +274,7 @@ abstract public class AbstractProblemRouteExtractor {
         wayOutput = new TLongProcedure() {
             @Override
             public boolean execute(final long arg0) {
-                System.err.println("way:" + arg0);
+                LOGGER.info("way:" + arg0);
                 return true;
             }
         };
@@ -272,23 +282,21 @@ abstract public class AbstractProblemRouteExtractor {
         relOutput = new TLongProcedure() {
             @Override
             public boolean execute(final long arg0) {
-                System.err.println("rel:" + arg0);
+                LOGGER.info("rel:" + arg0);
                 return true;
             }
         };
     }
 
-
-
     protected void findRelationsAtJunctionOfBothRoads(final File itnFile) {
-        System.out.println("findRelationsAtJunctionOfBothRoads");
+        LOGGER.info("findRelationsAtJunctionOfBothRoads");
         relationList = new TLongArrayList(30);
         fileProcessProcessor.setInnerProcess(extractRelationsAtJunctionOfBothRoads);
         process(itnFile, fileProcessProcessor);
     }
 
     protected void findWaysLinkedAtJunctionOfBothRoads(final File itnFile) {
-        System.out.println("findWaysLinkedAtJunctionOfBothRoads");
+        LOGGER.info("findWaysLinkedAtJunctionOfBothRoads");
         fullWayList = new TLongArrayList(30);
         fullNodeList = origFullNodeList;
         fileProcessProcessor.setInnerProcess(extractWayIdLinkedToNodes);
@@ -296,7 +304,7 @@ abstract public class AbstractProblemRouteExtractor {
     }
 
     protected void findNodesOnBothWays(final File itnFile) {
-        System.err.println("STAGE FOUR - findNodesOnBothWays");
+        LOGGER.info("STAGE FOUR - findNodesOnBothWays");
         fileProcessProcessor.setInnerProcess(extractNodeIds);
         process(itnFile, fileProcessProcessor);
         origFullNodeList.retainAll(fullNodeList);
@@ -330,14 +338,7 @@ abstract public class AbstractProblemRouteExtractor {
     protected void prepareNameRelation(final Relation relation, final TLongCollection wayList) {
         final ArrayList<? extends RelationMember> members = relation.getMembers();
         for (final RelationMember relationMember : members) {
-            // System.out.println("\t Add way member: " + relationMember.ref());
             wayList.add(relationMember.ref());
         }
     }
-
-    private void prepareWaysWithRelationInfo(final Relation relation) {
-        // TODO Auto-generated method stub
-
-    }
-
 }
