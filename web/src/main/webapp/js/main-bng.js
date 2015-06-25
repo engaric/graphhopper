@@ -1253,7 +1253,7 @@ function addInstruction(main, instr, instrIndex, lngLat) {
 
     if (sign !== "continue") {
         var indiPic = "<img class='pic' style='vertical-align: middle' src='" +
-                window.location.pathname + "img/" + sign + ".png'/>";
+                window.location.pathname.replace('index.html','') + "img/" + sign + ".png'/>";
         str = "<td class='instr_pic'>" + indiPic + "</td>" + str;
     } else
         str = "<td class='instr_pic'/>" + str;
