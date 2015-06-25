@@ -455,6 +455,12 @@ GHRequest.prototype.createPath = function (url) {
     if(checkedValue.length>0) {
     	url += "&avoidances=" + checkedValue;
     }
+    if(document.routeoptions.access[1].checked == true){
+    	this.access = "false";
+    } 
+    if(checkedValue.length>0) {
+    	url += "&avoidances=" + checkedValue;
+    }
     
     if (this.weighting && this.weighting !== "fastest")
         url += "&weighting=" + this.weighting;
@@ -474,6 +480,8 @@ GHRequest.prototype.createPath = function (url) {
         url += "&elevation=true";
     if (this.debug)
         url += "&debug=true";
+    if (this.access  && this.access !== "true")
+        url += "&access=false";
 
     for (var key in this.api_params) {
         url += "&" + key + "=" + this.api_params[key];
