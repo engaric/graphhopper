@@ -453,12 +453,6 @@ GHRequest.prototype.createPath = function (url) {
     	this.weighting = "fastest";
     }
     if(checkedValue.length>0) {
-    	if(this.weighting==="fastest") {
-    		this.weighting = "fastavoid";
-    	}
-    	else {
-    		this.weighting="shortavoid";
-    	}
     	url += "&avoidances=" + checkedValue;
     }
     

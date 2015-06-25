@@ -924,39 +924,44 @@ public class GraphHopper implements GraphHopperAPI
 		String weighting = weightingMap.getWeighting();
 		Weighting result;
 
+		String avoidanceString = weightingMap.get("avoidances","");
+		System.err.println("AVOID:" + avoidanceString);
+		boolean avoidancesEnabled = avoidanceString.length()>0;
 		if ("shortest".equalsIgnoreCase(weighting))
 		{
-			result = new ShortestWeighting();
+			if(avoidancesEnabled) {
+				AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
+						.getExtension();
+				String[] avoidances = avoidanceString.split(",");
+				result = new ShortestWithAvoidancesWeighting(encoder, avoidanceExtension, avoidances);
+			} else {
+				result = new ShortestWeighting();
+			}
 		} else if ("fastest".equalsIgnoreCase(weighting) || weighting.isEmpty())
 		{
-			if (encoder.supports(PriorityWeighting.class))
-				result = new PriorityWeighting(encoder);
-			else
-				result = new FastestWeighting(encoder);
-		} else if ("fastavoid".equalsIgnoreCase(weighting))
-		{
-			String avoidanceString = weightingMap.get("avoidances", "cliff");
-			String[] avoidances = avoidanceString.split(",");
-			if (encoder.supports(PriorityWeighting.class))
-			{
-				AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
-						.getExtension();
-				result = new PriorityWithAvoidancesWeighting(encoder, avoidanceExtension,
-						avoidances);
-			} else
-			{
-				AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
-						.getExtension();
-				result = new FastestWithAvoidancesWeighting(encoder, avoidanceExtension, avoidances);
+			if (encoder.supports(PriorityWeighting.class)) {
+				if(avoidancesEnabled) {
+					AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
+							.getExtension();
+					String[] avoidances = avoidanceString.split(",");
+					result = new PriorityWithAvoidancesWeighting(encoder, avoidanceExtension, avoidances);
+				}
+				else {
+					result = new PriorityWeighting(encoder);
+				}
 			}
-		} else if ("shortavoid".equalsIgnoreCase(weighting))
-		{
-			AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
-					.getExtension();
-			String avoidanceString = weightingMap.get("avoidances", "cliff");
-			String[] avoidances = avoidanceString.split(",");
-			result = new ShortestWithAvoidancesWeighting(encoder, avoidanceExtension, avoidances);
-		} else
+			else {
+				if(avoidancesEnabled) {
+					AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
+							.getExtension();
+					String[] avoidances = avoidanceString.split(",");
+					result = new FastestWithAvoidancesWeighting(encoder, avoidanceExtension,
+							avoidances);
+				} else {
+					result = new FastestWeighting(encoder);
+				}
+			}
+		}  else
 		{
 			throw new UnsupportedOperationException(
 					"Weighting "
