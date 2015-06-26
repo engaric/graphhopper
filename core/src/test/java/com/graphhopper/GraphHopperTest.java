@@ -37,8 +37,10 @@ import org.mockito.Mockito;
 
 import com.graphhopper.reader.DataReader;
 import com.graphhopper.routing.AlgorithmOptions;
+import com.graphhopper.routing.util.BanPrivateWeighting;
 import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.routing.util.EscapePrivateWeighting;
 import com.graphhopper.routing.util.FastestWeighting;
 import com.graphhopper.routing.util.FastestWithAvoidancesWeighting;
 import com.graphhopper.routing.util.FlagEncoder;
@@ -612,5 +614,23 @@ public class GraphHopperTest
 		weightingMap = new WeightingMap("shortest").put("avoidances", "cliff");
 		createdWeighting = instance.createWeighting(weightingMap , encoder );
 		assertEquals(ShortestWithAvoidancesWeighting.class, createdWeighting.getClass());
+    }
+    
+    @Test
+    public void testCreatePrivateWeightingWithPriority() {
+    	instance = new GraphHopper();
+        GraphStorage graph = Mockito.mock(GraphStorage.class);
+        Weighting weighting = Mockito.mock(Weighting.class);
+        FlagEncoder encoder = Mockito.mock(FlagEncoder.class);
+		instance.setGraph(graph );
+		GHRequest request = new GHRequest();
+		Weighting privateWeighting = instance.createPrivateWeighting(weighting, request , graph, encoder);
+		assertEquals(EscapePrivateWeighting.class, privateWeighting.getClass());
+		
+		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, encoder);
+		assertEquals(BanPrivateWeighting.class, privateWeighting.getClass());
+		
+		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, encoder);
+		assertEquals(weighting.getClass(), privateWeighting.getClass());
     }
 }
