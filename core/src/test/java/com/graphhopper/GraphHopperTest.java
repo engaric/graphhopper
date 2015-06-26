@@ -621,16 +621,20 @@ public class GraphHopperTest
     	instance = new GraphHopper();
         GraphStorage graph = Mockito.mock(GraphStorage.class);
         Weighting weighting = Mockito.mock(Weighting.class);
-        FlagEncoder encoder = Mockito.mock(FlagEncoder.class);
+        FlagEncoder supportedEncoder = Mockito.mock(FlagEncoder.class);
+        FlagEncoder unsupportedEncoder = Mockito.mock(FlagEncoder.class);
+        when(supportedEncoder.supports(EscapePrivateWeighting.class)).thenReturn(true);
+        when(unsupportedEncoder.supports(EscapePrivateWeighting.class)).thenReturn(false);
 		instance.setGraph(graph );
 		GHRequest request = new GHRequest();
-		Weighting privateWeighting = instance.createPrivateWeighting(weighting, request , graph, encoder);
+		Weighting privateWeighting = instance.createPrivateWeighting(weighting, request , graph, supportedEncoder);
 		assertEquals(EscapePrivateWeighting.class, privateWeighting.getClass());
 		
-		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, encoder);
+		request.getHints().put("private", "false");
+		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, supportedEncoder);
 		assertEquals(BanPrivateWeighting.class, privateWeighting.getClass());
 		
-		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, encoder);
+		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, unsupportedEncoder);
 		assertEquals(weighting.getClass(), privateWeighting.getClass());
     }
 }
