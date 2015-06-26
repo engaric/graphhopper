@@ -57,12 +57,16 @@ public class GHServletModule extends ServletModule
 		bind(IPFilter.class).toInstance(
 				new IPFilter(args.get("jetty.whiteips", ""), args.get("jetty.blackips", "")));
 
+		// Convert all parameters to lower case
+		filter("*").through(LowerCaseParameterFilter.class, params);
+		bind(LowerCaseParameterFilter.class).in(Singleton.class);
+
 		serve("/i18n", "/i18n/").with(I18NServlet.class);
 		bind(I18NServlet.class).in(Singleton.class);
 
 		serve("/info", "/info/").with(InfoServlet.class);
 		bind(InfoServlet.class).in(Singleton.class);
-		//
+
 		serve("/route", "/route/").with(GraphHopperServlet.class);
 		bind(GraphHopperServlet.class).in(Singleton.class);
 
@@ -74,7 +78,7 @@ public class GHServletModule extends ServletModule
 		serve("/nearest", "/nearest/").with(NearestServlet.class);
 		bind(NearestServlet.class).in(Singleton.class);
 
-		// Serve files that don't contain cetain file extensions
+		// Serve files that don't contain certain file extensions
 		serveRegex(INVALID_REGEX1).with(InvalidRequestServlet.class);
 		bind(InvalidRequestServlet.class).in(Singleton.class);
 	}
