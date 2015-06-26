@@ -65,12 +65,12 @@ public class GHBaseServlet extends HttpServlet
 	protected boolean internalErrorsAllowed;
 
 	protected void writeJson( HttpServletRequest req, HttpServletResponse res, JSONObject json )
-	        throws JSONException, IOException
+			throws JSONException, IOException
 	{
 		String type = getParam(req, "type", "json");
 		res.setCharacterEncoding("UTF-8");
 		boolean debug = getBooleanParam(req, "debug", false)
-		        || getBooleanParam(req, "pretty", false);
+				|| getBooleanParam(req, "pretty", false);
 		if ("jsonp".equals(type))
 		{
 			res.setContentType("application/javascript");
@@ -178,8 +178,8 @@ public class GHBaseServlet extends HttpServlet
 	}
 
 	protected List<GHPoint> getPoints( HttpServletRequest req, String key )
-	        throws InvalidParameterException
-	{
+			throws InvalidParameterException
+			{
 		String[] pointsAsStr = getParams(req, key);
 		final List<GHPoint> infoPoints = new ArrayList<GHPoint>(pointsAsStr.length);
 		for (String str : pointsAsStr)
@@ -190,18 +190,19 @@ public class GHBaseServlet extends HttpServlet
 				infoPoints.add(point);
 			} else
 			{
+				System.out.println("Throw an exception");
 				throw new InvalidParameterException(
-				        "Point "
-				                + str
-				                + " is not a valid point. Point must be a comma separated coordinate in WGS84 projection.");
+						"Point "
+								+ str
+								+ " is not a valid point. Point must be a comma separated coordinate in WGS84 projection.");
 			}
 		}
 
 		return infoPoints;
-	}
+			}
 
 	protected void processResponseErrors( GHResponse rsp, Map<String, Object> json,
-			boolean internalErrorsAllowed )
+	        boolean internalErrorsAllowed )
 	{
 		if (rsp.hasErrors())
 		{
@@ -232,7 +233,7 @@ public class GHBaseServlet extends HttpServlet
 	}
 
 	protected String createGPXString( HttpServletRequest req, HttpServletResponse res,
-			GHResponse rsp )
+	        GHResponse rsp )
 	{
 		boolean includeElevation = getBooleanParam(req, "elevation", false);
 		res.setCharacterEncoding("UTF-8");

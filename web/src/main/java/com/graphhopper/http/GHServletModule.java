@@ -33,12 +33,15 @@ public class GHServletModule extends ServletModule
 	protected Map<String, String> params = new HashMap<String, String>();
 	protected final CmdArgs args;
 
+	public static String INVALID_REGEX1 = "^((?![.]html|css|js|png|gif).)*$";
+	public static String INVALID_REGEX2 = "([^\\/])";
+
 	public GHServletModule( CmdArgs args )
 	{
 		this.args = args;
 		params.put("mimeTypes", "text/html," + "text/plain," + "text/xml,"
-		        + "application/xhtml+xml," + "text/css," + "application/json,"
-		        + "application/javascript," + "image/svg+xml");
+				+ "application/xhtml+xml," + "text/css," + "application/json,"
+				+ "application/javascript," + "image/svg+xml");
 	}
 
 	@Override
@@ -52,7 +55,7 @@ public class GHServletModule extends ServletModule
 
 		filter("*").through(IPFilter.class);
 		bind(IPFilter.class).toInstance(
-		        new IPFilter(args.get("jetty.whiteips", ""), args.get("jetty.blackips", "")));
+				new IPFilter(args.get("jetty.whiteips", ""), args.get("jetty.blackips", "")));
 
 		serve("/i18n", "/i18n/").with(I18NServlet.class);
 		bind(I18NServlet.class).in(Singleton.class);
@@ -72,7 +75,7 @@ public class GHServletModule extends ServletModule
 		bind(NearestServlet.class).in(Singleton.class);
 
 		// Serve files that don't contain cetain file extensions
-		serveRegex("^((?![.]html|css|js|png|gif).)*$").with(InvalidRequestServlet.class);
+		serveRegex(INVALID_REGEX1).with(InvalidRequestServlet.class);
 		bind(InvalidRequestServlet.class).in(Singleton.class);
 	}
 }
