@@ -176,6 +176,7 @@ public class BikeCommonFlagEncoder extends AbstractFlagEncoder
         setHighwaySpeed("secondary_link", 18);
         setHighwaySpeed("tertiary", 18);
         setHighwaySpeed("tertiary_link", 18);
+        setHighwaySpeed("nohighway",6);
 
         // special case see tests and #191
         setHighwaySpeed("motorway", 18);

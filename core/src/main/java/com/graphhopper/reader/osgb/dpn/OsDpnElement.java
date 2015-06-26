@@ -224,6 +224,9 @@ public abstract class OsDpnElement implements RoutingElement {
         case "Ferry Crossing":
             typeName = "ferry";
             break;
+        case "No Physical Manifestation":
+        	typeName = "nohighway";
+        	break;
         default:
             break;
         }
