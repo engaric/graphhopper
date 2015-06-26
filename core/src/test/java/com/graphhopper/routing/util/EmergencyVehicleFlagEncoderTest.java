@@ -187,7 +187,7 @@ public class EmergencyVehicleFlagEncoderTest
         way.setTag("maxspeed", "500");
         long allowed = encoder.acceptWay(way);
         long encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(100, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(110, encoder.getSpeed(encoded), 1e-1);
 
         way = new OSMWay(1);
         way.setTag("highway", "primary");
