@@ -15,6 +15,7 @@ public class GraphHopperComponentIdentification implements
 	public static final ComponentIdentifier ADD_WAYPOINT= new ComponentByXPATH("//*[@class='pointAdd']");
 	public static final  ComponentIdentifier ROUTE_TYPE_CAR = new ComponentID("car");
 	public static final  ComponentIdentifier ROUTE_TYPE_BIKE = new ComponentID("bike");
+	public static final  ComponentIdentifier ROUTE_TYPE_EMERGENCY=new ComponentID("emv");
 	public static final  ComponentIdentifier ROUTE_TYPE_MOUNTAINBIKE = new ComponentByXPATH("//*[@id='mtb']");
 	public static final  ComponentIdentifier ROUTE_TYPE_WALK = new ComponentID("foot");
 	public static final  ComponentIdentifier ROUTE_SEARCH = new ComponentID("searchButton");
