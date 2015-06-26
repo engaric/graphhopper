@@ -30,7 +30,7 @@ import com.graphhopper.util.Helper;
 /**
  * Defines bit layout for cars. (speed, access, ferries, ...)
  * <p>
- * 
+ *
  * @author Peter Karich
  * @author Nop
  */
@@ -65,7 +65,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 	public CarFlagEncoder( String propertiesStr )
 	{
 		this((int) parseLong(propertiesStr, "speedBits", 5), parseDouble(propertiesStr,
-		        "speedFactor", 5), parseBoolean(propertiesStr, "turnCosts", false) ? 3 : 0);
+				"speedFactor", 5), parseBoolean(propertiesStr, "turnCosts", false) ? 3 : 0);
 		this.setBlockFords(parseBoolean(propertiesStr, "blockFords", true));
 	}
 
@@ -167,7 +167,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 		vehicleQualifierTypeExclusions.add("Local Buses"); // Added from analysing the actual data
 		vehicleQualifierTypeExclusions.add("Escorted Traffic");
 		vehicleQualifierTypeExclusions.add("Loading And Unloading"); // Added from analysing the
-																	 // actual data
+		                                                             // actual data
 
 		vehicleQualifierTypeInclusions.add("Motor Vehicles");
 		vehicleQualifierTypeInclusions.add("All Vehicles");
@@ -228,7 +228,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 		// first two bits are reserved for route handling in superclass
 		shift = super.defineWayBits(index, shift);
 		speedEncoder = new EncodedDoubleValue("Speed", shift, speedBits, speedFactor,
-		        defaultSpeedMap.get("secondary"), maxPossibleSpeed);
+				defaultSpeedMap.get("secondary"), maxPossibleSpeed);
 		return shift + speedEncoder.getBits();
 	}
 
@@ -242,7 +242,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 			speed = defaultSpeedMap.get(highwayValue);
 			if (speed == null)
 				throw new IllegalStateException(toString() + ", no speed found for: "
-				        + highwayValue + ", tags: " + way);
+						+ highwayValue + ", tags: " + way);
 
 			if (highwayValue.equals("track"))
 			{
@@ -271,7 +271,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 					motorcarTag = way.getTag("motor_vehicle");
 
 				if (motorcarTag == null && !way.hasTag("foot") && !way.hasTag("bicycle")
-				        || "yes".equals(motorcarTag))
+						|| "yes".equals(motorcarTag))
 					return acceptBit | ferryBit;
 			}
 			return 0;
@@ -334,7 +334,6 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 				String maxSpeed = environmentMaxSpeedMap.get(environment);
 				if (!Helper.isEmpty(maxSpeed))
 				{
-					// System.out.println(">>>>>>>>>>>>>>> Set max speed to " + maxSpeed);
 					way.setTag("maxspeed", maxSpeed);
 				}
 			}
@@ -350,14 +349,14 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 				encoded = setBool(encoded, K_ROUNDABOUT, true);
 
 			boolean isOneway = way.hasTag("oneway", oneways) || way.hasTag("vehicle:backward")
-			        || way.hasTag("vehicle:forward") || way.hasTag("motor_vehicle:backward")
-			        || way.hasTag("motor_vehicle:forward");
+					|| way.hasTag("vehicle:forward") || way.hasTag("motor_vehicle:backward")
+					|| way.hasTag("motor_vehicle:forward");
 
 			if (isOneway || isRoundabout)
 			{
 				boolean isBackward = way.hasTag("oneway", "-1")
-				        || way.hasTag("vehicle:forward", "no")
-				        || way.hasTag("motor_vehicle:forward", "no");
+						|| way.hasTag("vehicle:forward", "no")
+						|| way.hasTag("motor_vehicle:forward", "no");
 				if (isBackward)
 					encoded |= backwardBit;
 				else
@@ -368,7 +367,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 		} else
 		{
 			encoded = handleFerryTags(way, defaultSpeedMap.get("living_street"),
-			        defaultSpeedMap.get("service"), defaultSpeedMap.get("residential"));
+					defaultSpeedMap.get("service"), defaultSpeedMap.get("residential"));
 			encoded |= directionBitMask;
 		}
 

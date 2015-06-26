@@ -453,13 +453,12 @@ GHRequest.prototype.createPath = function (url) {
     	this.weighting = "fastest";
     }
     if(checkedValue.length>0) {
-    	if(this.weighting==="fastest") {
-    		this.weighting = "fastavoid";
-    	}
-    	else {
-    		this.weighting="shortavoid";
-    	}
     	url += "&avoidances=" + checkedValue;
+    }
+    if(document.routeoptions.access[1].checked == true){
+    	this.access = "false";
+    } else {
+    	this.access = "true";
     }
     
     if (this.weighting && this.weighting !== "fastest")
@@ -480,6 +479,8 @@ GHRequest.prototype.createPath = function (url) {
         url += "&elevation=true";
     if (this.debug)
         url += "&debug=true";
+    if (this.access  && this.access !== "true")
+        url += "&private=false";
 
     for (var key in this.api_params) {
         url += "&" + key + "=" + this.api_params[key];

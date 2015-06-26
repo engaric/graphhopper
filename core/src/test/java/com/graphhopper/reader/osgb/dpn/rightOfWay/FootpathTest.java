@@ -32,7 +32,6 @@ public class FootpathTest {
     public void testVisitWayAttribute() {
         visitor.visitWayAttribute("footpath", way);
         verify(way).setTag("designation", "public_footpath");
-        verify(way).setTag("highway", "footway");
         verify(way).setTag("foot", "yes");
         verifyNoMoreInteractions(way);
     }

@@ -1,7 +1,6 @@
 package com.graphhopper.routing.util;
 
 import com.graphhopper.reader.Way;
-import com.graphhopper.routing.EscapePrivateWeighting;
 
 public class OsCarFlagEncoder extends CarFlagEncoder {
 	

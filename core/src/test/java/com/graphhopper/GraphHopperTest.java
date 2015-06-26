@@ -22,6 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,11 +33,26 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.graphhopper.reader.DataReader;
 import com.graphhopper.routing.AlgorithmOptions;
+import com.graphhopper.routing.util.BanPrivateWeighting;
 import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.routing.util.EscapePrivateWeighting;
+import com.graphhopper.routing.util.FastestWeighting;
+import com.graphhopper.routing.util.FastestWithAvoidancesWeighting;
+import com.graphhopper.routing.util.FlagEncoder;
+import com.graphhopper.routing.util.PriorityWeighting;
+import com.graphhopper.routing.util.PriorityWithAvoidancesWeighting;
+import com.graphhopper.routing.util.ShortestWeighting;
+import com.graphhopper.routing.util.ShortestWithAvoidancesWeighting;
+import com.graphhopper.routing.util.Weighting;
+import com.graphhopper.routing.util.WeightingMap;
+import com.graphhopper.storage.AvoidanceAttributeExtension;
+import com.graphhopper.storage.GraphExtension;
+import com.graphhopper.storage.GraphStorage;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.CmdArgs;
 import com.graphhopper.util.Helper;
@@ -542,5 +558,83 @@ public class GraphHopperTest
         assertEquals(5, rsp.getPoints().getSize());
         assertEquals(5, rsp.getInstructions().size());
         assertEquals(Instruction.REACHED_VIA, rsp.getInstructions().get(1).getSign());
+    }
+    
+    @Test
+    public void testCreateWeightingWithoutPriority() {
+    	instance = new GraphHopper();
+        GraphStorage graph = Mockito.mock(GraphStorage.class);
+		instance.setGraph(graph );
+        GraphExtension avoidanceExtension = Mockito.mock(AvoidanceAttributeExtension.class);
+		when(graph.getExtension()).thenReturn(avoidanceExtension );
+        FlagEncoder encoder = Mockito.mock(FlagEncoder.class);
+		WeightingMap weightingMap = new WeightingMap("fastest");
+		Weighting createdWeighting = instance.createWeighting(weightingMap , encoder );
+		assertEquals(FastestWeighting.class, createdWeighting.getClass());
+		
+		weightingMap = new WeightingMap("shortest");
+		createdWeighting = instance.createWeighting(weightingMap , encoder );
+		assertEquals(ShortestWeighting.class, createdWeighting.getClass());
+		
+		weightingMap = new WeightingMap("fastest").put("avoidances", "cliff");
+		System.err.println("WEIGHTING" + weightingMap.get("avoidances", ""));
+		createdWeighting = instance.createWeighting(weightingMap , encoder );
+		assertEquals(FastestWithAvoidancesWeighting.class, createdWeighting.getClass());
+    
+		
+		weightingMap = new WeightingMap("shortest").put("avoidances", "cliff");
+		createdWeighting = instance.createWeighting(weightingMap , encoder );
+		assertEquals(ShortestWithAvoidancesWeighting.class, createdWeighting.getClass());
+    }
+    
+    @Test
+    public void testCreateWeightingWithPriority() {
+    	instance = new GraphHopper();
+        GraphStorage graph = Mockito.mock(GraphStorage.class);
+		instance.setGraph(graph );
+        GraphExtension avoidanceExtension = Mockito.mock(AvoidanceAttributeExtension.class);
+		when(graph.getExtension()).thenReturn(avoidanceExtension );
+        FlagEncoder encoder = Mockito.mock(FlagEncoder.class);
+        
+        when(encoder.supports(PriorityWeighting.class)).thenReturn(true);
+		WeightingMap weightingMap = new WeightingMap("fastest");
+		Weighting createdWeighting = instance.createWeighting(weightingMap , encoder );
+		assertEquals(PriorityWeighting.class, createdWeighting.getClass());
+		
+		weightingMap = new WeightingMap("shortest");
+		createdWeighting = instance.createWeighting(weightingMap , encoder );
+		assertEquals(ShortestWeighting.class, createdWeighting.getClass());
+		
+		weightingMap = new WeightingMap("fastest").put("avoidances", "cliff");
+		System.err.println("WEIGHTING" + weightingMap.get("avoidances", ""));
+		createdWeighting = instance.createWeighting(weightingMap , encoder );
+		assertEquals(PriorityWithAvoidancesWeighting.class, createdWeighting.getClass());
+    
+		
+		weightingMap = new WeightingMap("shortest").put("avoidances", "cliff");
+		createdWeighting = instance.createWeighting(weightingMap , encoder );
+		assertEquals(ShortestWithAvoidancesWeighting.class, createdWeighting.getClass());
+    }
+    
+    @Test
+    public void testCreatePrivateWeightingWithPriority() {
+    	instance = new GraphHopper();
+        GraphStorage graph = Mockito.mock(GraphStorage.class);
+        Weighting weighting = Mockito.mock(Weighting.class);
+        FlagEncoder supportedEncoder = Mockito.mock(FlagEncoder.class);
+        FlagEncoder unsupportedEncoder = Mockito.mock(FlagEncoder.class);
+        when(supportedEncoder.supports(EscapePrivateWeighting.class)).thenReturn(true);
+        when(unsupportedEncoder.supports(EscapePrivateWeighting.class)).thenReturn(false);
+		instance.setGraph(graph );
+		GHRequest request = new GHRequest();
+		Weighting privateWeighting = instance.createPrivateWeighting(weighting, request , graph, supportedEncoder);
+		assertEquals(EscapePrivateWeighting.class, privateWeighting.getClass());
+		
+		request.getHints().put("private", "false");
+		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, supportedEncoder);
+		assertEquals(BanPrivateWeighting.class, privateWeighting.getClass());
+		
+		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, unsupportedEncoder);
+		assertEquals(weighting.getClass(), privateWeighting.getClass());
     }
 }

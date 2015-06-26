@@ -39,16 +39,17 @@ import com.graphhopper.reader.osgb.dpn.OsDpnReader;
 import com.graphhopper.reader.osgb.hn.OsHnReader;
 import com.graphhopper.reader.osgb.itn.OsItnReader;
 import com.graphhopper.routing.AlgorithmOptions;
-import com.graphhopper.routing.EscapePrivateWeighting;
 import com.graphhopper.routing.Path;
 import com.graphhopper.routing.QueryGraph;
 import com.graphhopper.routing.RoutingAlgorithm;
 import com.graphhopper.routing.RoutingAlgorithmFactory;
 import com.graphhopper.routing.RoutingAlgorithmFactorySimple;
 import com.graphhopper.routing.ch.PrepareContractionHierarchies;
+import com.graphhopper.routing.util.BanPrivateWeighting;
 import com.graphhopper.routing.util.DefaultEdgeFilter;
 import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.routing.util.EscapePrivateWeighting;
 import com.graphhopper.routing.util.FastestWeighting;
 import com.graphhopper.routing.util.FastestWithAvoidancesWeighting;
 import com.graphhopper.routing.util.FlagEncoder;
@@ -924,39 +925,44 @@ public class GraphHopper implements GraphHopperAPI
 		String weighting = weightingMap.getWeighting();
 		Weighting result;
 
+		String avoidanceString = weightingMap.get("avoidances","");
+		System.err.println("AVOID:" + avoidanceString);
+		boolean avoidancesEnabled = avoidanceString.length()>0;
 		if ("shortest".equalsIgnoreCase(weighting))
 		{
-			result = new ShortestWeighting();
+			if(avoidancesEnabled) {
+				AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
+						.getExtension();
+				String[] avoidances = avoidanceString.split(",");
+				result = new ShortestWithAvoidancesWeighting(encoder, avoidanceExtension, avoidances);
+			} else {
+				result = new ShortestWeighting();
+			}
 		} else if ("fastest".equalsIgnoreCase(weighting) || weighting.isEmpty())
 		{
-			if (encoder.supports(PriorityWeighting.class))
-				result = new PriorityWeighting(encoder);
-			else
-				result = new FastestWeighting(encoder);
-		} else if ("fastavoid".equalsIgnoreCase(weighting))
-		{
-			String avoidanceString = weightingMap.get("avoidances", "cliff");
-			String[] avoidances = avoidanceString.split(",");
-			if (encoder.supports(PriorityWeighting.class))
-			{
-				AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
-						.getExtension();
-				result = new PriorityWithAvoidancesWeighting(encoder, avoidanceExtension,
-						avoidances);
-			} else
-			{
-				AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
-						.getExtension();
-				result = new FastestWithAvoidancesWeighting(encoder, avoidanceExtension, avoidances);
+			if (encoder.supports(PriorityWeighting.class)) {
+				if(avoidancesEnabled) {
+					AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
+							.getExtension();
+					String[] avoidances = avoidanceString.split(",");
+					result = new PriorityWithAvoidancesWeighting(encoder, avoidanceExtension, avoidances);
+				}
+				else {
+					result = new PriorityWeighting(encoder);
+				}
 			}
-		} else if ("shortavoid".equalsIgnoreCase(weighting))
-		{
-			AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
-					.getExtension();
-			String avoidanceString = weightingMap.get("avoidances", "cliff");
-			String[] avoidances = avoidanceString.split(",");
-			result = new ShortestWithAvoidancesWeighting(encoder, avoidanceExtension, avoidances);
-		} else
+			else {
+				if(avoidancesEnabled) {
+					AvoidanceAttributeExtension avoidanceExtension = (AvoidanceAttributeExtension) graph
+							.getExtension();
+					String[] avoidances = avoidanceString.split(",");
+					result = new FastestWithAvoidancesWeighting(encoder, avoidanceExtension,
+							avoidances);
+				} else {
+					result = new FastestWeighting(encoder);
+				}
+			}
+		}  else
 		{
 			throw new UnsupportedOperationException(
 					"Weighting "
@@ -977,14 +983,19 @@ public class GraphHopper implements GraphHopperAPI
 	}
 	
 	/**
-	 * Potentially wraps the specified weighting into a EscapePrivateWeighting instance.
+	 * Potentially wraps the specified weighting into a Weighting which specifies how it handles roads marked as private access.
+	 * This will be a EscapePrivateWeighting or a BanPrivateWeighting
 	 * @param includeNoThrough 
 	 */
-	public Weighting createEscapePrivateWeighting( Weighting weighting, GHRequest request , Graph graph, FlagEncoder encoder )
+	public Weighting createPrivateWeighting( Weighting weighting, GHRequest request , Graph graph, FlagEncoder encoder )
 	{
 		boolean includeNoThrough = checkForNoThroughAccess(request);
-		if (includeNoThrough && encoder.supports(EscapePrivateWeighting.class))
-			return new EscapePrivateWeighting(graph, encoder, weighting);
+		if(encoder.supports(EscapePrivateWeighting.class)) {
+			if (includeNoThrough)
+				return new EscapePrivateWeighting(graph, encoder, weighting);
+			else 
+				return new BanPrivateWeighting(encoder, weighting);
+		}
 		return weighting;
 	}
 
@@ -1099,7 +1110,7 @@ public class GraphHopper implements GraphHopperAPI
 			return Collections.emptyList();
 		}
 		weighting = createTurnWeighting(weighting, queryGraph, encoder);
-		weighting = createEscapePrivateWeighting(weighting, request, queryGraph, encoder);
+		weighting = createPrivateWeighting(weighting, request, queryGraph, encoder);
 
 		double weightLimit = request.getHints().getDouble("defaultWeightLimit", defaultWeightLimit);
 		String algoStr = request.getAlgorithm().isEmpty() ? AlgorithmOptions.DIJKSTRA_BI : request

@@ -1,7 +1,5 @@
-package com.graphhopper.routing;
+package com.graphhopper.routing.util;
 
-import com.graphhopper.routing.util.FlagEncoder;
-import com.graphhopper.routing.util.Weighting;
 import com.graphhopper.storage.Graph;
 import com.graphhopper.util.EdgeIterator;
 import com.graphhopper.util.EdgeIteratorState;
