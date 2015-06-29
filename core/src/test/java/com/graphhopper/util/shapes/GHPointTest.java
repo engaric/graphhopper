@@ -19,6 +19,7 @@
 package com.graphhopper.util.shapes;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -27,7 +28,16 @@ import static org.junit.Assert.*;
  */
 public class GHPointTest
 {
-    @Test
+    private static final String EPSG_27700 = "EPSG:27700";
+    private static final String WGS_84 = "EPSG:4326";
+    private static final String BNG = "BNG";
+    
+    /* latitude of BNG easting = 0 in WGS84*/
+	private static final double LAT_ANGLE = 49.76680727257757;
+	/* longitude of BNG northing = 0 in WGS84*/
+	private static final double LON_ANGLE = -7.557159804822196;
+
+	@Test
     public void testIsValid()
     {
         GHPoint instance = new GHPoint();
@@ -36,5 +46,33 @@ public class GHPointTest
         assertFalse(instance.isValid());
         instance.lon = 1;
         assertTrue(instance.isValid());
+    }
+    
+    @Test
+    public void testParse() {
+    	GHPoint parsedPoint = GHPoint.parse("1,2");
+    	assertEquals(1, parsedPoint.getLat(), 0);
+    	assertEquals(2, parsedPoint.getLon(), 0);
+    }
+    
+    @Test
+    public void testParseWithSrsDefault() {
+    	GHPoint parsedPoint = GHPoint.parse("1,2", WGS_84.toLowerCase());
+    	assertEquals(1, parsedPoint.getLat(), 0);
+    	assertEquals(2, parsedPoint.getLon(), 0);
+    }
+    
+    @Test
+    public void testParseWithSrsEPSG27700() {
+    	GHPoint parsedPoint = GHPoint.parse("0,0", EPSG_27700.toLowerCase());
+    	assertEquals(LAT_ANGLE, parsedPoint.getLat(), 0);
+    	assertEquals(LON_ANGLE, parsedPoint.getLon(), 0);
+    }
+    
+    @Test
+    public void testParseWithSrsBNG() {
+    	GHPoint parsedPoint = GHPoint.parse("0,0", BNG.toLowerCase());
+    	assertEquals(LAT_ANGLE, parsedPoint.getLat(), 0);
+    	assertEquals(LON_ANGLE, parsedPoint.getLon(), 0);
     }
 }
