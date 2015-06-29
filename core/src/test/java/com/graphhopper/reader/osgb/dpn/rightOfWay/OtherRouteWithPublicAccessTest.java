@@ -32,6 +32,8 @@ public class OtherRouteWithPublicAccessTest {
     public void testVisitWayAttribute() {
         visitor.visitWayAttribute("otherroutewithpublicaccess", way);
         verify(way).setTag("foot", "yes");
+        verify(way).setTag("bicycle", "no");
+        verify(way).setTag("horse", "no");
         verifyNoMoreInteractions(way);
     }
 

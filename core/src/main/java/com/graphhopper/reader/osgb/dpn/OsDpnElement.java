@@ -216,7 +216,8 @@ public abstract class OsDpnElement implements RoutingElement {
             setTag("service", "alley");
             break;
         case "Private Road":
-            typeName = "private";
+            typeName = "unclassified";
+            setTag("access", "no");
             break;
         case "Path":
             typeName = "path";
@@ -227,6 +228,9 @@ public abstract class OsDpnElement implements RoutingElement {
         case "No Physical Manifestation":
         	typeName = "nohighway";
         	break;
+        case "Track":
+        	typeName = "track";
+        	break;	
         default:
             break;
         }

@@ -16,7 +16,6 @@ public class PermissiveBridleWay extends AbstractOsToOsmAttibuteMappingVisitor {
     @Override
     public void applyAttributes(RoutingElement way)
     {
-        way.setTag("highway", "bridleway");
         way.setTag("horse", "permissive");
         way.setTag("bicycle", "permissive");
         way.setTag("foot", "permissive");

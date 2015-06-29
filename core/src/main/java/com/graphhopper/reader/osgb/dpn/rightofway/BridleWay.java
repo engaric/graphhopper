@@ -16,7 +16,6 @@ public class BridleWay extends AbstractOsToOsmAttibuteMappingVisitor {
     public void applyAttributes(RoutingElement way)
     {
         way.setTag("designation", "public_bridleway");
-
         way.setTag("foot", "yes");
         way.setTag("horse", "yes");
         way.setTag("bicycle", "yes");

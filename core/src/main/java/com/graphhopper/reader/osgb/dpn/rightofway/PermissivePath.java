@@ -15,6 +15,8 @@ public class PermissivePath extends AbstractOsToOsmAttibuteMappingVisitor {
     @Override
     public void applyAttributes(RoutingElement way) {
         way.setTag("foot", "permissive");
+        way.setTag("horse", "no");
+        way.setTag("bicycle", "no");
     }
 
 }
