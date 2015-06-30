@@ -66,6 +66,8 @@ public enum ApiResource
 	 */
 	private void checkMandatoryParameters(HttpServletRequest request)
 			throws MissingParameterException {
+		if	(0==this.getMandatoryValues().length) 
+			return;
 		String value = this.getMandatoryValues()[0];
 		boolean mandatoryValueExists = checkMandatoryValue(request, value);
 		if (mandatoryValueExists && this.getMandatoryValues().length > 1)
