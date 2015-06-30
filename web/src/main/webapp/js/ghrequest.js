@@ -460,9 +460,12 @@ GHRequest.prototype.createPath = function (url) {
     } else {
     	this.access = "true";
     }
+    this.srs = document.routeoptions.srs.value;
     
     if (this.weighting && this.weighting !== "fastest")
         url += "&weighting=" + this.weighting;
+    if (this.srs && this.srs != "BNG")
+    	url += "&srs=" + this.srs;
     if (this.locale && this.locale !== "en")
         url += "&locale=" + this.locale;
     // dijkstra, dijkstrabi, astar, astarbi
