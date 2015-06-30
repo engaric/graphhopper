@@ -25,22 +25,24 @@ public class GraphHopperComponentIdentification implements
 	public static final ComponentIdentifier  MAP=new ComponentByXPATH("//*[@id='map']");
 	public static final ComponentIdentifier  ZOOM_OUT=new ComponentByXPATH("//*[@title='Zoom out']");
 	public static final ComponentIdentifier  ZOOM_IN=new ComponentByXPATH("//*[@title='Zoom in']");
-	public static final ComponentIdentifier dropDown =new ComponentByXPATH("//span/div/span/div[*]/p/strong");
-	public static final ComponentIdentifier settingsButton =new ComponentByXPATH("//*[@id='settings-btn']");
-	public static final ComponentIdentifier avoidance_ARoad=new ComponentByXPATH("//*[@name='avoidances[]'][@value='aroad']");
-	public static final ComponentIdentifier avoidance_Boulders=new ComponentByXPATH("//*[@name='avoidances[]'][@value='boulders']");
-	public static final ComponentIdentifier avoidance_Cliff=new ComponentByXPATH("//*[@name='avoidances[]'][@value='cliff']");
-	public static final ComponentIdentifier avoidance_InlandWater=new ComponentByXPATH("//*[@name='avoidances[]'][@value='inlandwater']");
-	public static final ComponentIdentifier avoidance_Marsh=new ComponentByXPATH("//*[@name='avoidances[]'][@value='marsh']");
-	public static final ComponentIdentifier avoidance_QuarryOrPit=new ComponentByXPATH("//*[@name='avoidances[]'][@value='quarryorpit']");
-	public static final ComponentIdentifier avoidance_Scree=new ComponentByXPATH("//*[@name='avoidances[]'][@value='scree']");
-	public static final ComponentIdentifier avoidance_Rock=new ComponentByXPATH("//*[@name='avoidances[]'][@value='rock']");
-	public static final ComponentIdentifier avoidance_Mud=new ComponentByXPATH("//*[@name='avoidances[]'][@value='mud']");
-	public static final ComponentIdentifier avoidance_Sand=new ComponentByXPATH("//*[@name='avoidances[]'][@value='sand']");
-	public static final ComponentIdentifier avoidance_Shingle=new ComponentByXPATH("//*[@name='avoidances[]'][@value='shingle']");
-	public static final ComponentIdentifier fastest_RButton=new ComponentByXPATH("//input[@value='fastest']");
-	public static final ComponentIdentifier shortest_RButton=new ComponentByXPATH("//input[@value='shortest']");
-	public static final ComponentIdentifier error_Message= new ComponentByXPATH("//*[@class='error']");
-	
+	public static final ComponentIdentifier DROPDOWN =new ComponentByXPATH("//span/div/span/div[*]/p/strong");
+	public static final ComponentIdentifier SETTINGSBUTTON =new ComponentByXPATH("//*[@id='settings-btn']");
+	public static final ComponentIdentifier AVOIDANCE_AROAD=new ComponentByXPATH("//*[@name='avoidances[]'][@value='aroad']");
+	public static final ComponentIdentifier AVOIDANCE_BOULDERS=new ComponentByXPATH("//*[@name='avoidances[]'][@value='boulders']");
+	public static final ComponentIdentifier AVOIDANCE__CLIFF=new ComponentByXPATH("//*[@name='avoidances[]'][@value='cliff']");
+	public static final ComponentIdentifier AVOIDANCE__INLANDWATERr=new ComponentByXPATH("//*[@name='avoidances[]'][@value='inlandwater']");
+	public static final ComponentIdentifier AVOIDANCE__MARSH=new ComponentByXPATH("//*[@name='avoidances[]'][@value='marsh']");
+	public static final ComponentIdentifier AVOIDANCE__QUARRYORPIT=new ComponentByXPATH("//*[@name='avoidances[]'][@value='quarryorpit']");
+	public static final ComponentIdentifier AVOIDANCE__SCREE=new ComponentByXPATH("//*[@name='avoidances[]'][@value='scree']");
+	public static final ComponentIdentifier AVOIDANCE__ROCK=new ComponentByXPATH("//*[@name='avoidances[]'][@value='rock']");
+	public static final ComponentIdentifier AVOIDANCE__MUD=new ComponentByXPATH("//*[@name='avoidances[]'][@value='mud']");
+	public static final ComponentIdentifier AVOIDANCE__SAND=new ComponentByXPATH("//*[@name='avoidances[]'][@value='sand']");
+	public static final ComponentIdentifier AVOIDANCE_SHINGLE=new ComponentByXPATH("//*[@name='avoidances[]'][@value='shingle']");
+	public static final ComponentIdentifier FASTEST_RBUTTON=new ComponentByXPATH("//input[@value='fastest']");
+	public static final ComponentIdentifier SHORTEST_RBUTTON=new ComponentByXPATH("//input[@value='shortest']");
+	public static final ComponentIdentifier ERROR_MESSAGE= new ComponentByXPATH("//*[@class='error']");
+	public static final ComponentIdentifier PRIVATE_ACCESS_ALLOWED = new ComponentByXPATH("//*[@name='access' and @value='allow']");
+	public static final ComponentIdentifier PRIVATE_ACCESS_NOTALLOWED = new ComponentByXPATH("//*[@name='access' and @value='disallow']");
+
 	
 }

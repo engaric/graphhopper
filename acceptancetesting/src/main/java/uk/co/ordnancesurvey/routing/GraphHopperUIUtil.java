@@ -159,7 +159,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			break;
 
 		}
-		clickElement(settingsButton);
+		clickElement(SETTINGSBUTTON);
 
 		if (!avoidances.equals("")) {
 			for (int i = 0; i < avoidances.split(",").length; i++) {
@@ -167,40 +167,40 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				switch (avoidance.toLowerCase().trim()) {
 
 				case "aroad":
-					clickElement(avoidance_ARoad);
+					clickElement(AVOIDANCE_AROAD);
 					break;
 
 				case "boulders":
-					clickElement(avoidance_Boulders);
+					clickElement(AVOIDANCE_BOULDERS);
 					break;
 				case "cliff":
-					clickElement(avoidance_Cliff);
+					clickElement(AVOIDANCE__CLIFF);
 					break;
 				case "inlandwater":
-					clickElement(avoidance_InlandWater);
+					clickElement(AVOIDANCE__INLANDWATERr);
 					break;
 				case "marsh":
-					clickElement(avoidance_Marsh);
+					clickElement(AVOIDANCE__MARSH);
 					break;
 				case "quarryorpit":
-					clickElement(avoidance_QuarryOrPit);
+					clickElement(AVOIDANCE__QUARRYORPIT);
 					break;
 				case "scree":
-					clickElement(avoidance_Scree);
+					clickElement(AVOIDANCE__SCREE);
 					break;
 				case "rock":
-					clickElement(avoidance_Rock);
+					clickElement(AVOIDANCE__ROCK);
 					break;
 				case "mud":
-					clickElement(avoidance_Mud);
+					clickElement(AVOIDANCE__MUD);
 					break;
 
 				case "sand":
-					clickElement(avoidance_Sand);
+					clickElement(AVOIDANCE__SAND);
 					break;
 
 				case "shingle":
-					clickElement(avoidance_Shingle);
+					clickElement(AVOIDANCE_SHINGLE);
 					break;
 
 				default:
@@ -209,22 +209,22 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			}
 
 			if (routeOption.equalsIgnoreCase("shortavoid")) {
-				clickElement(shortest_RButton);
+				clickElement(SHORTEST_RBUTTON);
 			}
 
 			else {
-				clickElement(fastest_RButton);
+				clickElement(FASTEST_RBUTTON);
 			}
 
 		}
 
 		else {
 			if (routeOption.equalsIgnoreCase("shortest")) {
-				clickElement(shortest_RButton);
+				clickElement(SHORTEST_RBUTTON);
 			}
 
 			else {
-				clickElement(fastest_RButton);
+				clickElement(FASTEST_RBUTTON);
 			}
 		}
 
@@ -249,7 +249,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			else {
 				waypoint = new ComponentID(i + "_searchBox");
 				typeIntoField(waypoint, point);
-				clickElement(dropDown);
+				clickElement(DROPDOWN);
 			}
 		}
 
@@ -905,12 +905,24 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			case "foot":
 				clickElement(ROUTE_TYPE_WALK);
 				break;
+			case "emv":
+				clickElement(ROUTE_TYPE_EMERGENCY);
+				break;
 			default:
 				clickElement(ROUTE_TYPE_CAR);
 				break;
 
 			}
-			clickElement(settingsButton);
+			clickElement(SETTINGSBUTTON);
+			if(Boolean.parseBoolean(requestParameters.get("private").get(0)))
+			{
+				clickElement(PRIVATE_ACCESS_ALLOWED);
+				
+			}
+			else
+			{
+				clickElement(PRIVATE_ACCESS_NOTALLOWED);
+			}
 
 			if (!avoidances.equals("")) {
 				for (int i = 0; i < avoidances.split(",").length; i++) {
@@ -918,40 +930,40 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					switch (avoidance.toLowerCase().trim()) {
 
 					case "aroad":
-						clickElement(avoidance_ARoad);
+						clickElement(AVOIDANCE_AROAD);
 						break;
 
 					case "boulders":
-						clickElement(avoidance_Boulders);
+						clickElement(AVOIDANCE_BOULDERS);
 						break;
 					case "cliff":
-						clickElement(avoidance_Cliff);
+						clickElement(AVOIDANCE__CLIFF);
 						break;
 					case "inlandwater":
-						clickElement(avoidance_InlandWater);
+						clickElement(AVOIDANCE__INLANDWATERr);
 						break;
 					case "marsh":
-						clickElement(avoidance_Marsh);
+						clickElement(AVOIDANCE__MARSH);
 						break;
 					case "quarryorpit":
-						clickElement(avoidance_QuarryOrPit);
+						clickElement(AVOIDANCE__QUARRYORPIT);
 						break;
 					case "scree":
-						clickElement(avoidance_Scree);
+						clickElement(AVOIDANCE__SCREE);
 						break;
 					case "rock":
-						clickElement(avoidance_Rock);
+						clickElement(AVOIDANCE__ROCK);
 						break;
 					case "mud":
-						clickElement(avoidance_Mud);
+						clickElement(AVOIDANCE__MUD);
 						break;
 
 					case "sand":
-						clickElement(avoidance_Sand);
+						clickElement(AVOIDANCE__SAND);
 						break;
 
 					case "shingle":
-						clickElement(avoidance_Shingle);
+						clickElement(AVOIDANCE_SHINGLE);
 						break;
 
 					default:
@@ -960,22 +972,22 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				}
 
 				if (weighting.equalsIgnoreCase("shortavoid")) {
-					clickElement(shortest_RButton);
+					clickElement(SHORTEST_RBUTTON);
 				}
 
 				else {
-					clickElement(fastest_RButton);
+					clickElement(FASTEST_RBUTTON);
 				}
 
 			}
 
 			else {
 				if (weighting.equalsIgnoreCase("shortest")) {
-					clickElement(shortest_RButton);
+					clickElement(SHORTEST_RBUTTON);
 				}
 
 				else {
-					clickElement(fastest_RButton);
+					clickElement(FASTEST_RBUTTON);
 				}
 			}
 
@@ -1000,8 +1012,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				else {
 					waypoint = new ComponentID(i + "_searchBox");
 					typeIntoField(waypoint, point);
-					waitFor(dropDown);
-					clickElement(dropDown);
+					waitFor(DROPDOWN);
+					clickElement(DROPDOWN);
 				}
 			}
 
@@ -1015,14 +1027,23 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	}
 
 	public void verifyErrorMessage(String responseMessage) {
-
+		String type;
+		if(requestParameters.containsKey("type")){
+			type=requestParameters.get("type").get(0);
+		}
+		else
+		{
+			type= IntegrationTestProperties.getTestProperty("routeType");
+		}
 		switch (testOn) {
 		case "Web":
 			navigateTo(sb.toString());
 
 			break;
 		case "Service":
-			if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
+			
+
+			if (type.equalsIgnoreCase("gpx")) {
 				GPHServiceUtil.verifyMessage(responseMessage);
 			} else {
 				GPHJSONUtil.verifyMessage(responseMessage);
@@ -1034,7 +1055,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			navigateTo(sb.toString());
 
-			if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
+			if (type.equalsIgnoreCase("gpx")) {
 				GPHServiceUtil.verifyMessage(responseMessage);
 			} else {
 				GPHJSONUtil.verifyMessage(responseMessage);
@@ -1046,8 +1067,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	private void verifyUIErrorMessage(String responseMessage) {
 
 		Assert.assertTrue("Web Interface: Actual Error Message"
-				+ getTextValue(error_Message) + " is not matching with :"
-				+ responseMessage, getTextValue(error_Message)
+				+ getTextValue(ERROR_MESSAGE) + " is not matching with :"
+				+ responseMessage, getTextValue(ERROR_MESSAGE)
 				.equalsIgnoreCase(responseMessage));
 
 	}
@@ -1129,4 +1150,13 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		
 	}
 
-}
+	public void privateAccess() {
+
+			
+		}
+		
+	}
+
+
+
+
