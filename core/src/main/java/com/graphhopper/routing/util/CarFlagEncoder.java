@@ -49,10 +49,13 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 
 	/**
 	 * 1mph = 1.60934kph
+	 * Note that in order to correctly use the observed speeds, speed buckets must be 7 and the factor must be 1.
 	 */
-	public static final int SEVENTY_MPH_IN_KPH = (int) parseSpeed("70mph");
-	public static final int SIXTY_MPH_IN_KPH = (int) parseSpeed("60mph");;
-	public static final int THIRTY_MPH_IN_KPH = (int) parseSpeed("30mph");;
+	public static final int LEGAL_MAX_MOTORWAY_SPEED_MPH_IN_KPH = (int) parseSpeed("70mph");
+	public static final int OBSERVED_AVG_MOTORWAY_SPEED_MPH_IN_KPH = (int) parseSpeed("68mph");
+	public static final int OBSERVED_AVG_DUAL_CARRIAGEWAY_SPEED_MPH_IN_KPH = (int) parseSpeed("67mph");
+	public static final int OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH = (int) parseSpeed("47mph");
+	public static final int OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH = (int) parseSpeed("30mph");;
 
 	/**
 	 * Should be only instantied via EncodingManager
@@ -172,51 +175,52 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 		vehicleQualifierTypeInclusions.add("Motor Vehicles");
 		vehicleQualifierTypeInclusions.add("All Vehicles");
 
-		environmentMaxSpeedMap.put("Urban:Single Carriageway", "" + THIRTY_MPH_IN_KPH);
+		environmentMaxSpeedMap.put("Urban:Single Carriageway", "" + OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
 	}
 
 	private void addNationalUKSpeedMapping()
 	{
-		defaultSpeedMap.put("GB:motorway", SEVENTY_MPH_IN_KPH);
-		defaultSpeedMap.put("GB:nsl_dual", SEVENTY_MPH_IN_KPH);
-		defaultSpeedMap.put("GB:nsl_single", SIXTY_MPH_IN_KPH);
+		defaultSpeedMap.put("GB:motorway", OBSERVED_AVG_MOTORWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("GB:nsl_dual", OBSERVED_AVG_DUAL_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("GB:nsl_single", OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("GB:urban", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
 	}
 
 	private void addRoadTypeUKSpeedMapping()
 	{
-		defaultSpeedMap.put("Motorway", SEVENTY_MPH_IN_KPH);
-		defaultSpeedMap.put("A Road", SIXTY_MPH_IN_KPH);
-		defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+		defaultSpeedMap.put("Motorway", OBSERVED_AVG_MOTORWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("A Road", OBSERVED_AVG_DUAL_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("B Road", OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Minor Road", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Local Street", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
 		// defaultSpeedMap.put("Alley", 35);
-		defaultSpeedMap.put("A Road-Single Carriageway", SIXTY_MPH_IN_KPH);
-		defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+		defaultSpeedMap.put("A Road-Single Carriageway", OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("B Road", OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Minor Road", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Local Street", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
 		// defaultSpeedMap.put("Alley", 35);
-		defaultSpeedMap.put("Motorway", SEVENTY_MPH_IN_KPH);
-		defaultSpeedMap.put("A Road", SIXTY_MPH_IN_KPH);
-		defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+		defaultSpeedMap.put("Motorway", OBSERVED_AVG_MOTORWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("A Road", OBSERVED_AVG_DUAL_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("B Road", OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Minor Road", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Local Street", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
 		// defaultSpeedMap.put("Alley", 35);
-		defaultSpeedMap.put("A Road-Dual Carriageway", SIXTY_MPH_IN_KPH);
-		defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+		defaultSpeedMap.put("A Road-Dual Carriageway", OBSERVED_AVG_DUAL_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("B Road", OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Minor Road", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Local Street", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
 		// defaultSpeedMap.put("Alley", 35);
-		defaultSpeedMap.put("Motorway-Slip Road", SEVENTY_MPH_IN_KPH);
-		defaultSpeedMap.put("A Road-Slip Road", SIXTY_MPH_IN_KPH);
-		defaultSpeedMap.put("B Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Minor Road", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Local Street", THIRTY_MPH_IN_KPH);
+		defaultSpeedMap.put("Motorway-Slip Road", OBSERVED_AVG_MOTORWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("A Road-Slip Road", OBSERVED_AVG_DUAL_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("B Road", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Minor Road", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Local Street", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
 		// defaultSpeedMap.put("Alley", 35);
-		defaultSpeedMap.put("Motorway-Roundabout", SEVENTY_MPH_IN_KPH);
-		defaultSpeedMap.put("A Road-Roundabout", SIXTY_MPH_IN_KPH);
-		defaultSpeedMap.put("B Road-Roundabout", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Minor Road-Roundabout", THIRTY_MPH_IN_KPH);
-		defaultSpeedMap.put("Local Street-Roundabout", THIRTY_MPH_IN_KPH);
+		defaultSpeedMap.put("Motorway-Roundabout", OBSERVED_AVG_MOTORWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("A Road-Roundabout", OBSERVED_AVG_DUAL_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("B Road-Roundabout", OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Minor Road-Roundabout", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
+		defaultSpeedMap.put("Local Street-Roundabout", OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH);
 	}
 
 	/**
@@ -327,16 +331,7 @@ public class CarFlagEncoder extends AbstractFlagEncoder
 			// get assumed speed from highway type
 			double speed = getSpeed(way);
 
-			// set the max speed tag for the environment
-			String environment = way.getTag("environment");
-			if (!Helper.isEmpty(environment))
-			{
-				String maxSpeed = environmentMaxSpeedMap.get(environment);
-				if (!Helper.isEmpty(maxSpeed))
-				{
-					way.setTag("maxspeed", maxSpeed);
-				}
-			}
+			
 			speed = applyMaxSpeed(way, speed, true);
 			// limit speed to max 30 km/h if bad surface
 			if (speed > 30 && way.hasTag("surface", badSurfaceSpeedMap))

@@ -21,19 +21,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.junit.Test;
 
 import com.graphhopper.reader.OSMNode;
 import com.graphhopper.reader.OSMWay;
 
 /**
- *
- * @author Peter Karich
+ * @author Stuart Adam
+ * @author Mat Brett
  */
 public class EmergencyVehicleFlagEncoderTest
 {
-    private final EncodingManager em = new EncodingManager("EMV,BIKE",8);
+    private final EncodingManager em = new EncodingManager("EMV|speedBits=7|speedFactor=1|turnCosts=0,BIKE",8);
     private final EmergencyVehicleFlagEncoder encoder = (EmergencyVehicleFlagEncoder) em.getEncoder("EMV");
+    private final int speedFactor = 1;
     
     @Test
     public void testAccess()
@@ -187,26 +193,26 @@ public class EmergencyVehicleFlagEncoderTest
         way.setTag("maxspeed", "500");
         long allowed = encoder.acceptWay(way);
         long encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(110, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(112, encoder.getSpeed(encoded), 1e-1);
 
         way = new OSMWay(1);
         way.setTag("highway", "primary");
         way.setTag("maxspeed:backward", "10");
         way.setTag("maxspeed:forward", "20");
         encoded = encoder.handleWayTags(way, encoder.acceptWay(way), 0);
-        assertEquals(10, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(9, encoder.getSpeed(encoded), 1e-1);
 
         way = new OSMWay(1);
         way.setTag("highway", "primary");
         way.setTag("maxspeed:forward", "20");
         encoded = encoder.handleWayTags(way, encoder.acceptWay(way), 0);
-        assertEquals(20, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(18, encoder.getSpeed(encoded), 1e-1);
 
         way = new OSMWay(1);
         way.setTag("highway", "primary");
         way.setTag("maxspeed:backward", "20");
         encoded = encoder.handleWayTags(way, encoder.acceptWay(way), 0);
-        assertEquals(20, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(18, encoder.getSpeed(encoded), 1e-1);
     }
 
     @Test
@@ -218,7 +224,7 @@ public class EmergencyVehicleFlagEncoderTest
         way.setTag("maxspeed", "110");
         long allowed = encoder.acceptWay(way);
         long encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(100, encoder.getSpeed(encoded), 1e-1);
+        assertEquals(99, encoder.getSpeed(encoded), 1e-1);
 
         way.clearTags();
         way.setTag("highway", "residential");
@@ -249,57 +255,76 @@ public class EmergencyVehicleFlagEncoderTest
         }
     }
     
+    /**
+     * Convenience method which builds an OSMWay, enriches it with tags, then returns it.
+     * @return
+     */
+    private OSMWay wayMaker(Map<String, String> tags) {
+    	 OSMWay way = new OSMWay(1);
+    	 
+    	 Iterator<Entry<String, String>> it = tags.entrySet().iterator();
+    	    while (it.hasNext()) {
+    	        Map.Entry<String, String> pair = (Map.Entry<String, String>)it.next();
+    	        way.setTag((String) pair.getKey(),pair.getValue());
+    	        it.remove(); 
+    	    }
+    	    
+    	    return way;
+    }
+    
+    /**
+     * Extracted test body for testing that the maximum speeds for roads is considered to be its observed limit if that limit is less than the 
+     * maximum speed given for the grade of road.
+     * @param tags
+     */
+    private void testMaxRoadSpeed(int maxSpeedInKPH, Map<String, String> tags) {
+    	OSMWay way = wayMaker(tags);
+    	 long allowed = encoder.acceptWay(way);
+         long encoded = encoder.handleWayTags(way, allowed, 0);
+         assertEquals(factorSpeed(maxSpeedInKPH, speedFactor), encoder.getSpeed(encoded), 1e-1);
+    }
+    
+	private int truncateMaxRoadSpeedToLegalMaximum()
+    {
+	    int maxLegalSpeed = CarFlagEncoder.OBSERVED_AVG_MOTORWAY_SPEED_MPH_IN_KPH;
+	    int maxPossibleSpeed = encoder.maxPossibleSpeed;
+		return maxPossibleSpeed > maxLegalSpeed ? maxLegalSpeed: maxPossibleSpeed;
+    }
+	
+	private int factorSpeed(int speed, int factor) {
+		return ((speed/factor)*factor);
+	}
+    
     @Test
-    public void testMaxSpeedType()
-    {
-        // limit bigger than default road speed
-        OSMWay way = new OSMWay(1);
-        way.setTag("highway", "primary");
-        way.setTag("maxspeed:type", "GB:nsl_dual");
-        long allowed = encoder.acceptWay(way);
-        long encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(truncateSpeedToMax(), encoder.getSpeed(encoded), 1e-1);
-
-        way.clearTags();
-        way.setTag("highway", "secondary");
-        way.setTag("maxspeed:type", "GB:nsl_single");
-        allowed = encoder.acceptWay(way);
-        encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(factorSpeed(CarFlagEncoder.SIXTY_MPH_IN_KPH), encoder.getSpeed(encoded), 1e-1);
-
-        way.clearTags();
-        way.setTag("highway", "motorway");
-        way.setTag("maxspeed:type", "GB:motorway");
-        allowed = encoder.acceptWay(way);
-        encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(truncateSpeedToMax(), encoder.getSpeed(encoded), 1e-1);
-
-        way.clearTags();
-        way.setTag("highway", "secondary");
-        way.setTag("maxspeed", "30 mph");
-        way.setTag("maxspeed:type", "GB:nsl_single");
-        allowed = encoder.acceptWay(way);
-        encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(factorSpeed(CarFlagEncoder.THIRTY_MPH_IN_KPH), encoder.getSpeed(encoded), 1e-1);
-
-        try
-        {
-            encoder.setSpeed(0, -1);
-            assertTrue(false);
-        } catch (IllegalArgumentException ex)
-        {
-        }
+    public void testMaxRoadSpeedMotorway() {
+    	Map<String, String> tags = new HashMap<String, String>();
+    	 tags.put("highway", "motorway");
+         tags.put("maxspeed:type", "GB:motorway");
+         testMaxRoadSpeed(truncateMaxRoadSpeedToLegalMaximum(), tags);
     }
-
-	private int truncateSpeedToMax()
-    {
-	    int factorSpeed = factorSpeed(CarFlagEncoder.SEVENTY_MPH_IN_KPH);
-		return factorSpeed>encoder.maxPossibleSpeed?encoder.maxPossibleSpeed:factorSpeed;
+    
+    @Test
+    public void testMaxRoadSpeedDualCarriageway() {
+    	Map<String, String> tags = new HashMap<String, String>();
+    	 tags.put("highway", "primary");
+         tags.put("maxspeed:type", "GB:nsl_dual");
+         testMaxRoadSpeed(CarFlagEncoder.OBSERVED_AVG_DUAL_CARRIAGEWAY_SPEED_MPH_IN_KPH, tags);
     }
-
-	private int factorSpeed(int speed )
-    {
-	    return Math.round(speed/5)*5;
+    
+    @Test
+    public void testMaxRoadSpeedSingleCarriageway() {
+    	Map<String, String> tags = new HashMap<String, String>();
+    	 tags.put("highway", "secondary");
+         tags.put("maxspeed:type", "GB:nsl_single");
+         testMaxRoadSpeed(CarFlagEncoder.OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH, tags);
+    }
+    
+    @Test
+    public void testMaxRoadSpeedUrbanRoad() {
+    	Map<String, String> tags = new HashMap<String, String>();
+    	 tags.put("highway", "secondary");
+         tags.put("maxspeed:type", "GB:urban");
+         testMaxRoadSpeed(CarFlagEncoder.OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH, tags);
     }
 
     @Test
@@ -334,50 +359,6 @@ public class EmergencyVehicleFlagEncoderTest
         assertTrue(encoder.isForward(flags));
         assertFalse(encoder.isBackward(flags));
         assertTrue(encoder.isBool(flags, FlagEncoder.K_ROUNDABOUT));
-    }
-
-    @Test
-    public void testRailway()
-    {
-        OSMWay way = new OSMWay(1);
-        way.setTag("highway", "secondary");
-        way.setTag("railway", "rail");
-        // disallow rail
-        assertTrue(encoder.acceptWay(way) == 0);
-
-        way.clearTags();
-        way.setTag("highway", "path");
-        way.setTag("railway", "abandoned");
-        assertTrue(encoder.acceptWay(way) == 0);
-
-        // on disallowed highway, railway is allowed, sometimes incorrectly mapped
-        way.setTag("highway", "track");
-        assertTrue(encoder.acceptWay(way) > 0);
-
-        // this is fully okay as sometimes old rails are on the road
-        way.setTag("highway", "primary");
-        way.setTag("railway", "historic");
-        assertTrue(encoder.acceptWay(way) > 0);
-
-        way.setTag("motorcar", "no");
-        assertTrue(encoder.acceptWay(way) == 0);
-
-        way = new OSMWay(1);
-        way.setTag("highway", "secondary");
-        way.setTag("railway", "tram");
-        // but allow tram to be on the same way
-        assertTrue(encoder.acceptWay(way) > 0);
-
-        way = new OSMWay(1);
-        way.setTag("route", "shuttle_train");
-        way.setTag("motorcar", "yes");
-        way.setTag("bicycle", "no");
-        way.setTag("duration", "35");
-        way.setTag("estimated_distance", 50000);
-        // accept
-        assertTrue(encoder.acceptWay(way) > 0);
-        // calculate speed from estimated_distance and duration
-        assertEquals(60, encoder.getSpeed(encoder.handleFerryTags(way, 20, 30, 40)), 1e-1);
     }
 
     @Test

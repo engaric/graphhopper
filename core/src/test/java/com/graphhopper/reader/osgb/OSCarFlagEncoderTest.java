@@ -13,6 +13,7 @@ import com.graphhopper.routing.util.CarFlagEncoder;
 import com.graphhopper.routing.util.DefaultEdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.routing.util.OsCarFlagEncoder;
+import com.graphhopper.routing.util.SpeedParserUtil;
 import com.graphhopper.storage.GraphHopperStorage;
 
 public class OSCarFlagEncoderTest extends AbstractOsItnReaderTest
@@ -25,10 +26,10 @@ public class OSCarFlagEncoderTest extends AbstractOsItnReaderTest
 	{
 		if (turnCosts)
 		{
-			osCarEncoder = new OsCarFlagEncoder("speedBits=5|speedfactor=5|turncosts=3");
+			osCarEncoder = new OsCarFlagEncoder("speedBits=7|speedfactor=1|turncosts=3");
 		} else
 		{
-			osCarEncoder = new OsCarFlagEncoder("speedBits=5|speedfactor=5|turncosts=0");
+			osCarEncoder = new OsCarFlagEncoder("speedBits=7|speedfactor=1|turncosts=0");
 		}
 
 		carOutEdges = new DefaultEdgeFilter(osCarEncoder, false, true);
@@ -73,21 +74,19 @@ public class OSCarFlagEncoderTest extends AbstractOsItnReaderTest
 	
 	@Test
 	/**
-	 * Tests that the max speed for an OS car is 70mph.
+	 * Tests that the max speed for an OS car is pegged back to 70mph irrespective of whatever speed is given as the max speed for a way.
 	 * 
-	 * Note that the 70mph is factored to be divisible by five such that it fits the current factor 5 speed encoding.
 	 * @throws IOException
 	 */
 	public void testMaxSpeedForCaris70mph() throws IOException {
 		
-		final int factoredMPHinKPH = (CarFlagEncoder.SEVENTY_MPH_IN_KPH/5)*5;
+		final int maxSpeedInKPH = CarFlagEncoder.LEGAL_MAX_MOTORWAY_SPEED_MPH_IN_KPH;
 		
         OSMWay way = new OSMWay(1);
         way.setTag("highway", "motorway");
-        way.setTag("maxspeed", "120");
+        way.setTag("maxspeed", "135");
         long allowed = osCarEncoder.acceptWay(way);
         long encoded = osCarEncoder.handleWayTags(way, allowed, 0);
-        assertEquals(factoredMPHinKPH, osCarEncoder.getSpeed(encoded), 1e-1);
-
+        assertEquals(maxSpeedInKPH, osCarEncoder.getSpeed(encoded), 1e-1);
 	}
 }

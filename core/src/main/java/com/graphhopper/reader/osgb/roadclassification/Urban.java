@@ -8,8 +8,8 @@ public class Urban extends AbstractOsToOsmAttibuteMappingVisitor
 	@Override
     public void applyAttributes( RoutingElement way )
     {
-		if(!way.hasTag("maxspeed")) {
-			way.setTag("maxspeed", "30 mph");
+		if(way.hasTag("maxspeed:type","GB:nsl_single")) {
+			way.setTag("maxspeed:type", "GB:urban");
 		}
     }
 }
