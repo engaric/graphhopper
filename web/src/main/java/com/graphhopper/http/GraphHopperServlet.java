@@ -244,7 +244,9 @@ public class GraphHopperServlet extends GHBaseServlet
 			ghRsp = new GHResponse().addError(e);
 		} finally
 		{
-			transformResponseCoords(ghRsp, srs);
+			if(!ghRsp.hasErrors()) {
+				transformResponseCoords(ghRsp, srs);
+			}
 			float took = sw.stop().getSeconds();
 			String infoStr = httpReq.getRemoteAddr() + " " + httpReq.getLocale() + " "
 					+ httpReq.getHeader("User-Agent");
