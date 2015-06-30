@@ -11,9 +11,9 @@ public enum ApiResource
 {
 	ROUTE("route", new String[] { "point", "vehicle" }, new String[] { "point", "vehicle",
 			"locale", "instructions", "weighting", "algorithm", "points_encoded", "debug",
-			"pretty", "calc_points", "type", "avoidances", "private" }), NEAREST("nearest",
-					new String[] { "point" }, new String[] { "point" }), INFO("info", new String[] {},
-							new String[] {});
+			"pretty", "calc_points", "type", "avoidances", "private", "srs" }), NEAREST("nearest",
+					new String[] { "point"}, new String[] { "point", "srs" }), INFO("info", new String[] {},
+							new String[] {"srs"});
 
 	public String[] getMandatoryValues()
 	{
@@ -55,7 +55,19 @@ public enum ApiResource
 	public void checkAllRequestParameters( HttpServletRequest request )
 			throws MissingParameterException, NoSuchParameterException, InvalidParameterException
 	{
-		// Check if the mandatory parameter exists in the request
+		checkMandatoryParameters(request);
+		checkValidParameters(request);
+	}
+
+	/**
+	 *  Check if the mandatory parameter exists in the request
+	 * @param request
+	 * @throws MissingParameterException
+	 */
+	private void checkMandatoryParameters(HttpServletRequest request)
+			throws MissingParameterException {
+		if	(0==this.getMandatoryValues().length) 
+			return;
 		String value = this.getMandatoryValues()[0];
 		boolean mandatoryValueExists = checkMandatoryValue(request, value);
 		if (mandatoryValueExists && this.getMandatoryValues().length > 1)
@@ -67,9 +79,6 @@ public enum ApiResource
 		{
 			throw new MissingParameterException(value);
 		}
-
-		// Now check for all the valid parameters for the resource
-		checkValidParameters(request);
 	}
 
 	/**

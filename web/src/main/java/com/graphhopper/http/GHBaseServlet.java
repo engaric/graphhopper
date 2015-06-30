@@ -63,6 +63,10 @@ public class GHBaseServlet extends HttpServlet
 	@Inject
 	@Named("internalErrorsAllowed")
 	protected boolean internalErrorsAllowed;
+	
+	@Inject
+	@Named("defaultSrs")
+	protected String defaultSRS = "EPSG:4326";
 
 	protected void writeJson( HttpServletRequest req, HttpServletResponse res, JSONObject json )
 			throws JSONException, IOException
@@ -181,10 +185,19 @@ public class GHBaseServlet extends HttpServlet
 			throws InvalidParameterException
 			{
 		String[] pointsAsStr = getParams(req, key);
+		String[] srs = getParams(req, "srs");
 		final List<GHPoint> infoPoints = new ArrayList<GHPoint>(pointsAsStr.length);
 		for (String str : pointsAsStr)
 		{
-			GHPoint point = GHPoint.parse(str);
+			GHPoint point;
+			String useSrs;
+			if(srs.length>0) 
+				useSrs = srs[0];
+			else 
+				useSrs = defaultSRS;
+			
+			point = GHPoint.parse(str,useSrs);
+			
 			if (point != null)
 			{
 				infoPoints.add(point);
@@ -194,7 +207,9 @@ public class GHBaseServlet extends HttpServlet
 				throw new InvalidParameterException(
 						"Point "
 								+ str
-								+ " is not a valid point. Point must be a comma separated coordinate in WGS84 projection.");
+								+ " is not a valid point. Point must be a comma separated coordinate in "
+								+ useSrs
+								+ " projection.");
 			}
 		}
 

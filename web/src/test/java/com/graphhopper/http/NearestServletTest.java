@@ -73,6 +73,7 @@ public class NearestServletTest
                 bind(Boolean.class).annotatedWith(Names.named("internalErrorsAllowed")).toInstance(
                         false);
                 bind(Boolean.class).annotatedWith(Names.named("jsonpAllowed")).toInstance(false);
+                bind(String.class).annotatedWith(Names.named("defaultSrs")).toInstance("WGS84");
             }
         });
 
