@@ -246,7 +246,7 @@ public class CarFlagEncoderTest
         way.setTag("maxspeed:type", "GB:nsl_single");
         allowed = encoder.acceptWay(way);
         encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(factorSpeed(CarFlagEncoder.SIXTY_MPH_IN_KPH), encoder.getSpeed(encoded), 1e-1);
+        assertEquals(factorSpeed(CarFlagEncoder.OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH), encoder.getSpeed(encoded), 1e-1);
 
         way.clearTags();
         way.setTag("highway", "motorway");
@@ -261,7 +261,7 @@ public class CarFlagEncoderTest
         way.setTag("maxspeed:type", "GB:nsl_single");
         allowed = encoder.acceptWay(way);
         encoded = encoder.handleWayTags(way, allowed, 0);
-        assertEquals(factorSpeed(CarFlagEncoder.THIRTY_MPH_IN_KPH), encoder.getSpeed(encoded), 1e-1);
+        assertEquals(factorSpeed(CarFlagEncoder.OBSERVED_AVG_URBAN_ROAD_SPEED_MPH_IN_KPH), encoder.getSpeed(encoded), 1e-1);
 
         try
         {
@@ -274,7 +274,7 @@ public class CarFlagEncoderTest
 
 	private int truncateSpeedToMax()
     {
-	    int factorSpeed = factorSpeed(CarFlagEncoder.SEVENTY_MPH_IN_KPH);
+	    int factorSpeed = factorSpeed(CarFlagEncoder.LEGAL_MAX_MOTORWAY_SPEED_MPH_IN_KPH);
 		return factorSpeed>encoder.maxPossibleSpeed?encoder.maxPossibleSpeed:factorSpeed;
     }
 

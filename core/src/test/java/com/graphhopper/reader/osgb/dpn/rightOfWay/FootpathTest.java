@@ -33,6 +33,8 @@ public class FootpathTest {
         visitor.visitWayAttribute("footpath", way);
         verify(way).setTag("designation", "public_footpath");
         verify(way).setTag("foot", "yes");
+        verify(way).setTag("bicycle", "no");
+        verify(way).setTag("horse", "no");
         verifyNoMoreInteractions(way);
     }
 

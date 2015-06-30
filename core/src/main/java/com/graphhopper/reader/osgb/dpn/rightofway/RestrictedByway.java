@@ -16,7 +16,6 @@ public class RestrictedByway extends AbstractOsToOsmAttibuteMappingVisitor {
     public void applyAttributes(RoutingElement way)
     {
         way.setTag("designation", "restricted_byway");
-        way.setTag("highway", "track");
         way.setTag("motor_vehicle", "no");
         way.setTag("foot", "yes");
         way.setTag("horse", "yes");

@@ -33,7 +33,6 @@ public class BywayOpenToAllTrafficTest {
     public void testVisitWayAttribute() throws Exception {
         visitor.visitWayAttribute("bywayopentoalltraffic", way);
         verify(way).setTag("designation", "byway_open_to_all_traffic");
-        verify(way).setTag("highway", "track");
         verify(way).setTag("foot", "yes");
         verify(way).setTag("horse", "yes");
         verify(way).setTag("bicycle", "yes");

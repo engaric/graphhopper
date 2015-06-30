@@ -167,9 +167,14 @@ public class UpdateServlet extends GHBaseServlet
 		for (String str : pointsAsStr)
 		{
 			String[] fromStrs = str.split(",");
+			String[] srs = getParams(req, "srs");
 			if (fromStrs.length == 2)
 			{
-				GHPoint place = GHPoint.parse(str);
+				GHPoint place;
+				if(srs.length>0)
+					place = GHPoint.parse(str, srs[0]);
+				else 
+					place = GHPoint.parse(str, defaultSRS);
 				if (place != null)
 					infoPoints.add(place);
 			}

@@ -17,6 +17,15 @@
  */
 package com.graphhopper.util.shapes;
 
+import org.geotools.referencing.CRS;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+
+import uk.co.ordnancesurvey.api.srs.LatLong;
+import uk.co.ordnancesurvey.api.srs.OpenCoordConverter;
+
 import com.graphhopper.util.NumHelper;
 
 /**
@@ -24,6 +33,8 @@ import com.graphhopper.util.NumHelper;
  */
 public class GHPoint
 {
+	private static final String BNG = "bng";
+	private static final String WGS_84 = "WGS84";
 	public double lat = Double.NaN;
 	public double lon = Double.NaN;
 
@@ -108,4 +119,31 @@ public class GHPoint
 		}
 		return null;
 	}
+
+	/**
+	 * 
+	 * @param string
+	 * @param srs  default is WGS_84 to match the non 
+	 * @return
+	 */
+	public static GHPoint parse( String str, String srs )
+    {
+	    if(srs.equalsIgnoreCase(WGS_84)) {
+	    	return parse(str);
+	    }
+	    try
+        {
+	    	String[] fromStrs = str.split(",");
+	    	double sourceXCoordinate = Double.parseDouble(fromStrs[0]);
+			double sourceYCoordinate = Double.parseDouble(fromStrs[1]);
+	        CoordinateReferenceSystem outputCRS = OpenCoordConverter.wgs84CoordRefSystem;
+	        CoordinateReferenceSystem inputCRS = srs.equals(BNG)||srs.equals(OpenCoordConverter.BNG_CRS_CODE)?OpenCoordConverter.bngCoordRefSystem:CRS.decode(srs);
+	        LatLong transformFromSourceCRSToTargetCRS = OpenCoordConverter.transformFromSourceCRSToTargetCRS(inputCRS, outputCRS, sourceXCoordinate, sourceYCoordinate, true);
+	        return new GHPoint(transformFromSourceCRSToTargetCRS.getLatAngle(), transformFromSourceCRSToTargetCRS.getLongAngle());
+        } catch (FactoryException | MismatchedDimensionException | TransformException e)
+        {
+        	// Fall through to return a null below
+        }
+	    return null;
+    }
 }

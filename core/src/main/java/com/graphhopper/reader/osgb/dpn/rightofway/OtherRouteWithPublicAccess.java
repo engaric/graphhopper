@@ -7,7 +7,7 @@ import com.graphhopper.reader.osgb.AbstractOsToOsmAttibuteMappingVisitor;
  * Description: A route that is the responsibility of local highway authorities and maintained at public expense.
  * All ORPAs have rights for pedestrians. Beyond that, any particular ORPA may, or may not, have rights for cyclists and equestrians,
  * and may or may not have rights for motor vehicles. Other Routes with Public Access (ORPA) are sometimes known as unclassified
- * unsurfaced roads (or unclassified country roads).
+ * unsurfaced roads (or unclassified country roads).  Given we cannot tell if horse or bicycle is allowed we will have to say no. 
  *
  * Confirmed Allowable users: Pedestrians *
  *
@@ -20,5 +20,7 @@ public class OtherRouteWithPublicAccess extends AbstractOsToOsmAttibuteMappingVi
     public void applyAttributes(RoutingElement way)
     {
         way.setTag("foot", "yes");
+        way.setTag("bicycle", "no");
+        way.setTag("horse", "no");
     }
 }

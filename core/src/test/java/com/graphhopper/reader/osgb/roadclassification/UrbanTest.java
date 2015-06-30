@@ -15,7 +15,6 @@ import com.graphhopper.reader.osgb.OsToOsmAttributeMappingVisitor;
 
 public class UrbanTest
 {
-	private static final String _30_MPH = "30 mph";
 	static OsToOsmAttributeMappingVisitor visitor;
 	@Mock
 	Way way;
@@ -35,9 +34,10 @@ public class UrbanTest
 	@Test
 	public void testVisitWayAttribute()
 	{
+		when(way.hasTag("maxspeed:type", "GB:nsl_single")).thenReturn(true);
 		visitor.visitWayAttribute("Urban".toLowerCase().replace(" ", "").replace("–", ""), way);
-		verify(way).hasTag("maxspeed");
-		verify(way).setTag("maxspeed", _30_MPH);
+		verify(way).hasTag("maxspeed:type", "GB:nsl_single");
+		verify(way).setTag("maxspeed:type", "GB:urban");
 		verifyNoMoreInteractions(way);
 	}
 	
@@ -45,10 +45,10 @@ public class UrbanTest
 	public void testVisitWayAttributeWhenNationalSpeedLimitSet()
 	{
 		when(way.hasTag("maxspeed")).thenReturn(false);
-		when(way.hasTag("maxspeed:type")).thenReturn(true);
+		when(way.hasTag("maxspeed:type", "GB:nsl_single")).thenReturn(true);
 		visitor.visitWayAttribute("Urban".toLowerCase().replace(" ", "").replace("–", ""), way);
-		verify(way).hasTag("maxspeed");
-		verify(way).setTag("maxspeed", _30_MPH);
+		verify(way).hasTag("maxspeed:type", "GB:nsl_single");
+		verify(way).setTag("maxspeed:type", "GB:urban");
 		verifyNoMoreInteractions(way);
 	}
 }

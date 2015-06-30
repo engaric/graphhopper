@@ -17,6 +17,8 @@ public class Footpath extends AbstractOsToOsmAttibuteMappingVisitor {
     {
         way.setTag("designation", "public_footpath");
         way.setTag("foot", "yes");
+        way.setTag("bicycle", "no");
+        way.setTag("horse", "no");
     }
 
 }

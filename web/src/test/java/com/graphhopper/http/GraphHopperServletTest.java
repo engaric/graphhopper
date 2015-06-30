@@ -2,6 +2,7 @@ package com.graphhopper.http;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +47,7 @@ import com.graphhopper.storage.GraphStorage;
 import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.BBox;
+import com.graphhopper.util.shapes.GHPoint;
 
 public class GraphHopperServletTest
 {
@@ -93,6 +94,7 @@ public class GraphHopperServletTest
 	private PointList pointList;
 
 	private final String[] POINTS = { "50.728198,-3.534516", "50.726807,-3.530156" };
+	private final String[] BNG_POINTS = { "0,0", "1,-1" };
 	private final String UNPARSABLE_POINT = "50A.45";
 
 	private final String[] LOCALES = { "bg", "ca", "cz", "de_DE", "el", "en_US", "es", "fa", "fil",
@@ -143,6 +145,7 @@ public class GraphHopperServletTest
 				bind(Boolean.class).annotatedWith(Names.named("internalErrorsAllowed")).toInstance(
 				        false);
 				bind(Boolean.class).annotatedWith(Names.named("jsonpAllowed")).toInstance(false);
+				bind(String.class).annotatedWith(Names.named("defaultSrs")).toInstance("WGS84");
 			}
 		});
 
@@ -712,6 +715,84 @@ public class GraphHopperServletTest
 		        httpServletResponse);
 		assertEquals(buildErrorMessageString(WRONG_AVOIDANCE, "avoidances", AVOIDANCES), ghResponse
 		        .getErrors().get(0).getMessage());
+	}
+	
+	@Test 
+	public void testGetPointsDefaultSrs() throws InvalidParameterException {
+		allParameters.put("point", POINTS);
+		allParameters.put("vehicle", new String[] { VEHICLES[0] });
+		allParameters.put("locale", new String[] { LOCALES[0] });
+
+		allParameters.put("avoidances", new String[] { WRONG_AVOIDANCE });
+		when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
+		List<GHPoint> points = graphHopperServlet.getPoints(httpServletRequest, "point");
+		int idx = 0;
+		for (GHPoint ghPoint : points) {
+			assertEquals("Since using internal srs all points should match" , POINTS[idx++],ghPoint.toString());
+		}
+	}
+	
+	@Test 
+	public void testGetPointsModifiedDefaultSrs() throws InvalidParameterException {
+		allParameters.put("point", POINTS);
+		allParameters.put("vehicle", new String[] { VEHICLES[0] });
+		allParameters.put("locale", new String[] { LOCALES[0] });
+
+		allParameters.put("avoidances", new String[] { WRONG_AVOIDANCE });
+		when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
+		graphHopperServlet.defaultSRS = "EPSG:27700";
+		List<GHPoint> points = graphHopperServlet.getPoints(httpServletRequest, "point");
+		int idx = 0;
+		String[] convertedPoints = new String[POINTS.length];
+		for (int i = 0; i < POINTS.length; i++) {
+			convertedPoints[i] = GHPoint.parse(POINTS[i], "EPSG:27700").toString();
+		}
+		
+		for (GHPoint ghPoint : points) {
+			assertEquals("Since using modified srs all points should match converted form" , convertedPoints[idx++],ghPoint.toString());
+		}
+	}
+	
+	@Test 
+	public void testGetPointsWithRequestSrs() throws InvalidParameterException {
+		allParameters.put("point", POINTS);
+		allParameters.put("vehicle", new String[] { VEHICLES[0] });
+		allParameters.put("locale", new String[] { LOCALES[0] });
+		allParameters.put("srs", new String[] {"EPSG:27700"});
+
+		allParameters.put("avoidances", new String[] { WRONG_AVOIDANCE });
+		when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
+		List<GHPoint> points = graphHopperServlet.getPoints(httpServletRequest, "point");
+		int idx = 0;
+		String[] convertedPoints = new String[POINTS.length];
+		for (int i = 0; i < POINTS.length; i++) {
+			convertedPoints[i] = GHPoint.parse(POINTS[i], "EPSG:27700").toString();
+		}
+		
+		for (GHPoint ghPoint : points) {
+			assertEquals("Since using modified srs all points should match converted form" , convertedPoints[idx++],ghPoint.toString());
+		}
+	}
+	
+	@Test 
+	public void testGetPointsWithInvalidRequestSrs() {
+		allParameters.put("point", POINTS);
+		allParameters.put("vehicle", new String[] { VEHICLES[0] });
+		allParameters.put("locale", new String[] { LOCALES[0] });
+		String invalidSRS = "EPSG:UNKNOWN";
+		allParameters.put("srs", new String[] {invalidSRS});
+
+		allParameters.put("avoidances", new String[] { WRONG_AVOIDANCE });
+		when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
+		try {
+			List<GHPoint> points = graphHopperServlet.getPoints(httpServletRequest, "point");
+			fail("Should have thrown error as srs is invalid");
+		} catch (InvalidParameterException ipe) {
+			assertEquals("Point " + POINTS[0]
+								+ " is not a valid point. Point must be a comma separated coordinate in "
+								+ invalidSRS
+								+ " projection.", ipe.getStatusMessage());
+		}
 	}
 
 	private void expectResponseBBox()

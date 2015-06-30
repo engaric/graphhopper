@@ -32,7 +32,6 @@ public class RestrictedBywayTest {
     public void testVisitWayAttribute() throws Exception {
         visitor.visitWayAttribute("restrictedbyway", way);
         verify(way).setTag("designation", "restricted_byway");
-        verify(way).setTag("highway", "track");
         verify(way).setTag("motor_vehicle", "no");
         verify(way).setTag("foot", "yes");
         verify(way).setTag("horse", "yes");

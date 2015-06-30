@@ -33,6 +33,8 @@ public class PermissivePathTest {
     public void testVisitWayAttribute() throws Exception {
         visitor.visitWayAttribute("permissivepath", way);
         verify(way).setTag("foot", "permissive");
+        verify(way).setTag("bicycle", "no");
+        verify(way).setTag("horse", "no");
         verifyNoMoreInteractions(way);
     }
 }

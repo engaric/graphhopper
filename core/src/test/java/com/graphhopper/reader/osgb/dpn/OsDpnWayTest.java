@@ -832,7 +832,8 @@ public class OsDpnWayTest {
     @Test
     public void testPrivate() throws XMLStreamException, FactoryException, TransformException {
         OsDpnWay way = getOsDpnWay(privateRoad);
-        assertTrue(way.hasTag("highway", "private"));
+        assertTrue(way.hasTag("highway", "unclassified"));
+        assertTrue(way.hasTag("access", "no"));
     }
 
     @Test

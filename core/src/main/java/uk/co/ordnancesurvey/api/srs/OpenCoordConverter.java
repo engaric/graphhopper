@@ -16,12 +16,12 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class OpenCoordConverter {
 	/* Coordinate reference systems */
-	private static CoordinateReferenceSystem bngCoordRefSystem;
-	private static CoordinateReferenceSystem wgs84CoordRefSystem;
+	public static CoordinateReferenceSystem bngCoordRefSystem;
+	public static CoordinateReferenceSystem wgs84CoordRefSystem;
 	
 	/* EPSG codes for coordinate reference systems */
-	private static final String BNG_CRS_CODE = "EPSG:27700";
-	private static final String WGS84_CRS_CODE = "EPSG:4326";
+	public static final String BNG_CRS_CODE = "EPSG:27700";
+	public static final String WGS84_CRS_CODE = "EPSG:4326";
 
 	static {
 		try {
@@ -82,7 +82,7 @@ public class OpenCoordConverter {
 	 * @throws MismatchedDimensionException
 	 * @throws TransformException
 	 */
-	private static LatLong transformFromSourceCRSToTargetCRS(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem targetCRS, 
+	public static LatLong transformFromSourceCRSToTargetCRS(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem targetCRS, 
 			double sourceXCoordinate, double sourceyCoordinate, boolean lenient) throws FactoryException, MismatchedDimensionException, TransformException {
 		
 		if(null == sourceCRS || null == targetCRS) {

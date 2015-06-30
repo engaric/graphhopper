@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.graphhopper.reader.osgb.AbstractOsItnReaderTest;
 import com.graphhopper.reader.osgb.AbstractOsReader;
+import com.graphhopper.routing.util.CarFlagEncoder;
 import com.graphhopper.routing.util.DefaultEdgeFilter;
 import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
@@ -264,17 +265,17 @@ public class OsItnReaderTest extends AbstractOsItnReaderTest {
         final EdgeIterator iter = explorer.setBaseNode(0);
         assertTrue(iter.next());
         assertEquals("OTHER ROAD (A337)", iter.getName());
-        assertEquals(95, carEncoder.getSpeed(iter.getFlags()), 1e-1);
+        assertEquals(CarFlagEncoder.OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH, carEncoder.getSpeed(iter.getFlags()), 1e-1);
         iter.next();
         assertEquals("OTHER ROAD (A337)", iter.getName());
-        assertEquals(95, carEncoder.getSpeed(iter.getFlags()), 1e-1);
+        assertEquals(CarFlagEncoder.OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH, carEncoder.getSpeed(iter.getFlags()), 1e-1);
         iter.next();
         assertEquals("BONHAY ROAD (A337)", iter.getName());
-        assertEquals(95, carEncoder.getSpeed(iter.getFlags()), 1e-1);
+        assertEquals(CarFlagEncoder.OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH, carEncoder.getSpeed(iter.getFlags()), 1e-1);
         iter.next();
         assertEquals("BONHAY ROAD (A337)", iter.getName());
         final long flags = iter.getFlags();
-        assertEquals(95.0, carEncoder.getSpeed(flags), 1e-1);
+        assertEquals(CarFlagEncoder.OBSERVED_AVG_SINGLE_CARRIAGEWAY_SPEED_MPH_IN_KPH, carEncoder.getSpeed(flags), 1e-1);
         assertFalse(iter.next());
     }
 
