@@ -78,9 +78,13 @@ public class DefaultModule extends AbstractModule
             boolean internalErrorsAllowed = args.getBool("web.detailedErrors", false);
             if (!internalErrorsAllowed)
                 logger.info("detailed errors disabled");
+            
+            String defaultSrs = args.get("web.defaultSrs", "EPSG:4326");
+            logger.info("Default SRS=" + defaultSrs);
 
             bind(Boolean.class).annotatedWith(Names.named("jsonpAllowed")).toInstance(jsonpAllowed);
             bind(Boolean.class).annotatedWith(Names.named("internalErrorsAllowed")).toInstance(internalErrorsAllowed);
+            bind(String.class).annotatedWith(Names.named("defaultSrs")).toInstance(defaultSrs);
         } catch (Exception ex)
         {
             throw new IllegalStateException("Couldn't load graph", ex);

@@ -34,7 +34,7 @@ import com.graphhopper.util.NumHelper;
 public class GHPoint
 {
 	private static final String BNG = "bng";
-	private static final String WGS_84 = "EPSG:4326";
+	private static final String WGS_84 = "WGS84";
 	public double lat = Double.NaN;
 	public double lon = Double.NaN;
 

@@ -29,7 +29,8 @@ import static org.junit.Assert.*;
 public class GHPointTest
 {
     private static final String EPSG_27700 = "EPSG:27700";
-    private static final String WGS_84 = "EPSG:4326";
+    private static final String WGS_84 = "WGS84";
+    private static final String WGS_84_AS_EPSG = "EPSG:4326";
     private static final String BNG = "BNG";
     
     /* latitude of BNG easting = 0 in WGS84*/
@@ -63,7 +64,14 @@ public class GHPointTest
     }
     
     @Test
-    public void testParseWithSrsEPSG27700() {
+    public void testParseWithSrsEpsg4326() {
+    	GHPoint parsedPoint = GHPoint.parse("1,2", WGS_84_AS_EPSG.toLowerCase());
+    	assertEquals(1, parsedPoint.getLat(), 0);
+    	assertEquals(2, parsedPoint.getLon(), 0);
+    }
+    
+    @Test
+    public void testParseWithSrsEpsg27700() {
     	GHPoint parsedPoint = GHPoint.parse("0,0", EPSG_27700.toLowerCase());
     	assertEquals(LAT_ANGLE, parsedPoint.getLat(), 0);
     	assertEquals(LON_ANGLE, parsedPoint.getLon(), 0);
