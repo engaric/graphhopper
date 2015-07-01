@@ -20,6 +20,7 @@ package com.graphhopper.util.shapes;
 import org.geotools.referencing.CRS;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -140,10 +141,16 @@ public class GHPoint
 	        CoordinateReferenceSystem inputCRS = srs.equalsIgnoreCase(BNG)||srs.equalsIgnoreCase(OpenCoordConverter.BNG_CRS_CODE)?OpenCoordConverter.bngCoordRefSystem:CRS.decode(srs);
 	        LatLong transformFromSourceCRSToTargetCRS = OpenCoordConverter.transformFromSourceCRSToTargetCRS(inputCRS, outputCRS, sourceXCoordinate, sourceYCoordinate, true);
 	        return new GHPoint(transformFromSourceCRSToTargetCRS.getLatAngle(), transformFromSourceCRSToTargetCRS.getLongAngle());
-        } catch (FactoryException | MismatchedDimensionException | TransformException e)
+        } catch (TransformException | IllegalArgumentException e)
         {
-        	// Fall through to return a null below
-        }
-	    return null;
+        	throw new IllegalArgumentException("Point "
+					+ str
+					+ " is not a valid point. Point must be a comma separated coordinate in "
+					+ srs
+					+ " projection.");
+        } catch (FactoryException e)
+        {
+	       throw new IllegalArgumentException("Srs " + srs + " is not a valid srs for input.");
+        } 
     }
 }

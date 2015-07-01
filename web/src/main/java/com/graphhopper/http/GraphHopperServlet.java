@@ -63,6 +63,7 @@ import com.graphhopper.util.TranslationMap;
 import com.graphhopper.util.shapes.BBox;
 import com.graphhopper.util.shapes.GHPoint;
 import com.graphhopper.util.shapes.GHPoint3D;
+import com.graphhopper.util.shapes.GHResponseCoordinateTransformer;
 
 /**
  * Servlet to use GraphHopper in a remote client application like mobile or browser. Note: If type
@@ -115,6 +116,7 @@ public class GraphHopperServlet extends GHBaseServlet
 
 		GHResponse ghRsp = null;
 		List<GHPoint> infoPoints = null;
+		GHResponseCoordinateTransformer transformer =null;
 
 		try
 		{
@@ -124,6 +126,10 @@ public class GraphHopperServlet extends GHBaseServlet
 
 			// we can reduce the path length based on the maximum differences to the original
 			// coordinates
+			
+			if(outputSrs.length()>0) {
+				transformer = new GHResponseCoordinateTransformer(srs);
+			}
 
 			if (!new CaseInsensitiveStringListValidator()
 			.isValid(localeStr, TranslationMap.LOCALES))
@@ -242,11 +248,14 @@ public class GraphHopperServlet extends GHBaseServlet
 			}
 		} catch (Exception e)
 		{
+			if (e instanceof IllegalArgumentException) {
+				e = new InvalidParameterException(e.getMessage());
+			} 
 			ghRsp = new GHResponse().addError(e);
 		} finally
 		{
 			if(!ghRsp.hasErrors()  && !writeGPX) {
-				transformResponseCoords(ghRsp, outputSrs);
+				transformer.transformCoordinates(ghRsp);
 			}
 			float took = sw.stop().getSeconds();
 			String infoStr = httpReq.getRemoteAddr() + " " + httpReq.getLocale() + " "
@@ -301,30 +310,6 @@ public class GraphHopperServlet extends GHBaseServlet
 		}
 
 		return ghRsp;
-	}
-
-	private void transformResponseCoords(GHResponse ghRsp, String srs) {
-		PointList points = ghRsp.getPoints();
-		PointList transformedPoints = new PointList(points.getSize(), points.is3D());
-		CoordinateReferenceSystem targetCRS;
-		try {
-			targetCRS = CRS.decode(srs);
-			GHPoint transformedPoint;
-			for (GHPoint3D ghPoint3D : points) {
-				LatLong transformedCoordinate = OpenCoordConverter.transformFromSourceCRSToTargetCRS(OpenCoordConverter.wgs84CoordRefSystem, targetCRS, ghPoint3D.getLat(), ghPoint3D.getLon(), true);
-				if(points.is3D()) 
-					transformedPoint = new GHPoint3D(transformedCoordinate.getLatAngle(), transformedCoordinate.getLongAngle(), ghPoint3D.getElevation());
-				else 
-					transformedPoint = new GHPoint(transformedCoordinate.getLatAngle(), transformedCoordinate.getLongAngle());
-				
-				transformedPoints.add(transformedPoint);
-			}
-			
-			ghRsp.setPoints(transformedPoints);
-		} catch (FactoryException | MismatchedDimensionException | TransformException e) {
-			e.printStackTrace();
-		}
-		
 	}
 
 	private String buildBooleanErrorMessageString( String paramValue, String paramName )
