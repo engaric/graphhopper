@@ -111,6 +111,7 @@ public class GraphHopperServlet extends GHBaseServlet
 		String avoidancesString = getParam(httpReq, "avoidances", null);
 		String noThroughAccessString = getParam(httpReq, "private", "true");
 		String srs = getParam(httpReq, "srs", "bng");
+		String outputSrs = getParam(httpReq, "output_srs", srs);
 
 		GHResponse ghRsp = null;
 		List<GHPoint> infoPoints = null;
@@ -244,8 +245,8 @@ public class GraphHopperServlet extends GHBaseServlet
 			ghRsp = new GHResponse().addError(e);
 		} finally
 		{
-			if(!ghRsp.hasErrors()) {
-				transformResponseCoords(ghRsp, srs);
+			if(!ghRsp.hasErrors()  && !writeGPX) {
+				transformResponseCoords(ghRsp, outputSrs);
 			}
 			float took = sw.stop().getSeconds();
 			String infoStr = httpReq.getRemoteAddr() + " " + httpReq.getLocale() + " "
