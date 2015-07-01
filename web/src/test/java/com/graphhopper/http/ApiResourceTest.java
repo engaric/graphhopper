@@ -126,7 +126,7 @@ public class ApiResourceTest
 		} catch (NoSuchParameterException e)
 		{
 			assertEquals(
-			        "Parameter bogus is not a valid parameter for resource route. Valid parameters for requested resource are point, vehicle, locale, instructions, weighting, algorithm, points_encoded, debug, pretty, calc_points, type, avoidances, private, srs.",
+			        "Parameter bogus is not a valid parameter for resource route. Valid parameters for requested resource are point, vehicle, locale, instructions, weighting, algorithm, points_encoded, debug, pretty, calc_points, type, avoidances, private, srs, output_srs.",
 			        e.getMessage());
 		}
 	}
@@ -187,7 +187,7 @@ public class ApiResourceTest
 		} catch (NoSuchParameterException e)
 		{
 			assertEquals(
-			        "Parameter bogus is not a valid parameter for resource nearest. Valid parameters for requested resource are point, srs.",
+			        "Parameter bogus is not a valid parameter for resource nearest. Valid parameters for requested resource are point, srs, output_srs.",
 			        e.getMessage());
 		}
 	}
