@@ -111,7 +111,7 @@ public class GraphHopperServlet extends GHBaseServlet
 		String prettyString = getParam(httpReq, "pretty", "true");
 		String avoidancesString = getParam(httpReq, "avoidances", null);
 		String noThroughAccessString = getParam(httpReq, "private", "true");
-		String srs = getParam(httpReq, "srs", "bng");
+		String srs = getParam(httpReq, "srs", defaultSRS);
 		String outputSrs = getParam(httpReq, "output_srs", srs);
 
 		GHResponse ghRsp = null;

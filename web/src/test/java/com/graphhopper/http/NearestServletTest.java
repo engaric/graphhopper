@@ -101,6 +101,9 @@ public class NearestServletTest
         nearestServlet.doGet(httpServletRequest, httpServletResponse);
 
         writer.flush();
+        System.err.println(FileUtils
+                .readFileToString(new File("httpServletResponseContents"), "UTF-8")
+                );
         assertTrue(FileUtils
                 .readFileToString(new File("httpServletResponseContents"), "UTF-8")
                 .contains(
