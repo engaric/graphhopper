@@ -1,4 +1,4 @@
-Feature: Verify Error Messages from a routing service
+Feature: Verify Error Messages for a Peak District routing service
    As a user
    I want to get a valid Error message and status code for a invalid route request
 
@@ -9,7 +9,7 @@ Feature: Verify Error Messages from a routing service
     Given I have route <point> as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have <vehicle> as "car"
+    And I have <vehicle> as "foot"
     And I have <weighting> as "fastest"
     And I have <locale> as "en_GB"
     And I have <debug> as "true"
@@ -63,26 +63,13 @@ Feature: Verify Error Messages from a routing service
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                     | statusCode |
       | car         |            | fastest   | json           | At least 2 points has to be specified, but was:1 | 400        |
 
-  @ErrorMessages
-  Scenario Outline: Incorrect Parameter Value "point"
-    Given I have route point as
-      | pointA       | pointB              |
-      | 292530,92635 | -3.523895,50.723364 |
-    And I have vehicle as "<vehicleType>"
-    And I have weighting as "<routeType>"
-    And I have type as "<responseFormat>"
-    When I request for a route
-    Then I should be able to verify the response message as "<errorMessage>"
-    Then I should be able to verify the statuscode as "<statusCode>"
-
-    Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                          | statusCode |
-      | car         |            | fastest   | json           | Cannot find point 0: 292530.0,92635.0 | 400        |
-
   # Parameter :  Invalid Parameter Name
   @ErrorMessages
   Scenario Outline: Incorrect Parameter Name "points"
-    Given I have route points as
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.729961,-3.524853 | 50.723364,-3.523895 |
+    And I have route points as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
@@ -93,8 +80,8 @@ Feature: Verify Error Messages from a routing service
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                                                                                                                                        | statusCode |
-      | car         |            | fastest   | json           | Parameter points is not a valid parameter for resource route. Valid parameters for requested resource are point, vehicle, locale, instructions, weighting, algorithm, points_encoded, debug, pretty, calc_points, type, avoidances. | 400        |
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                                                                                                                                                                                                              | statusCode |
+      | car         |            | fastest   | json           | Parameter points is not a valid parameter for resource route. Valid parameters for requested resource are point, vehicle, locale, instructions, weighting, algorithm, points_encoded, debug, pretty, calc_points, type, avoidances, private, srs, output_srs. | 400        |
 
   # Parameter :  point
   @ErrorMessages
@@ -110,13 +97,13 @@ Feature: Verify Error Messages from a routing service
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                 | statusCode |
       | car         |            | fastest   | json           | No point parameter provided. | 400        |
 
-  # Parameter :  avoidances
-  @ErrorMessages
-  Scenario Outline: Invalid Parameter Value for "avoidances"
+  # Parameter :  vehicle
+  @ErrorMessages @Smoke
+  Scenario Outline: Missing Parameter "vehicle"
     Given I have route point as
       | pointA              | pointB              |
-      | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "<vehicleType>"
+      | 53.298525,-1.679533 | 53.203145,-1.799292 |
+    And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -124,16 +111,17 @@ Feature: Verify Error Messages from a routing service
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                     | statusCode |
-      | car         | trees      | fastest   | json           | Parameter blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point. | 400        |
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                   | statusCode |
+      | foot        |            | fastest   | json           | No vehicle parameter provided. | 400        |
 
   # Parameter :  weighting
-  @ErrorMessages
+  @ErrorMessages @Smoke
   Scenario Outline: Invalid Parameter Value for "weighting"
     Given I have route point as
       | pointA              | pointB              |
-      | 50.729961,-3.524853 | 50.723364,-3.523895 |
+      | 53.298525,-1.679533 | 53.203145,-1.799292 |
     And I have vehicle as "<vehicleType>"
+    And I have avoidances as "<avoidances>"
     And I have weighting as "<routeType>"
     And I have type as "<responseFormat>"
     When I request for a route
@@ -142,7 +130,7 @@ Feature: Verify Error Messages from a routing service
 
     Examples: 
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                 | statusCode |
-      | car         |            | quick     | json           | Weighting faster not supported. Valid weightings are shorted, fastest, fastavoid, shortavoid | 400        |
+      | foot        |            | quick     | json           | quick is not a valid value for parameter weighting. Valid values are fastest or shortest | 400        |
 
   # Parameter :  locale
   @ErrorMessages
@@ -159,8 +147,8 @@ Feature: Verify Error Messages from a routing service
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | locale | responseFormat | errorMessage                                                                                                                                                                                                        | statusCode |
-      | car         |            | fastest   | en     | json           | en is not a valid value for parameter locale. Valid values are bg, ca, cz, de_DE, el, en_US, es, fa, fil, fi, fr, gl, he, hu_HU, it, ja, ne, nl, pl_PL, pt_BR, pt_PT, ro, ru, si, sk, sv_SE, tr, uk, vi_VI or zh_CN | 400        |
+      | vehicleType | avoidances | routeType | locale | responseFormat | errorMessage                                                                                                                                                                                                               | statusCode |
+      | car         |            | fastest   | en     | json           | en is not a valid value for parameter locale. Valid values are bg, ca, cz, de_DE, el, en_US, es, fa, fil, fi, fr, gl, he, hu_HU, it, ja, ne, nl, pl_PL, pt_BR, pt_PT, ro, ru, si, sk, sv_SE, tr, uk, vi_VI, zh_CN or en_GB | 400        |
 
   # Parameter :  instructions
   @ErrorMessages
@@ -177,8 +165,8 @@ Feature: Verify Error Messages from a routing service
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | instructions | responseFormat | errorMessage                                                                               | statusCode |
-      | car         |            | fastest   | msg("box")   | json           | msg("box") is not a valid value for parameter instructions. Valid values are true or false | 400        |
+      | vehicleType | avoidances | routeType | instructions | responseFormat | errorMessage                                                                             | statusCode |
+      | car         |            | fastest   | msg(box)     | json           | msg(box) is not a valid value for parameter instructions. Valid values are true or false | 400        |
 
   # Parameter :  algorithm
   @ErrorMessages
@@ -195,31 +183,9 @@ Feature: Verify Error Messages from a routing service
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | algorithm | responseFormat | errorMessage                                                                                                                 | statusCode |
-      | car         |            | fastest   | xyz       | json           | xyz is not a valid value for parameter algorithm. Valid values are astar, astarbi, dijkstra, dijkstrabi or dijkstraOneToMany | 400        |
-      | car         |            | fastest   | select*   | json           | select* blah is not a valid parameter for resource nearest. Valid parameters for requested resource are point.               | 400        |
-
-  #
-  # Parameter :  algorithm
-  @ErrorMessages
-  Scenario Outline: Valid Parameter Values for "algorithm"
-    Given I have route point as
-      | pointA              | pointB              |
-      | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "<vehicleType>"
-    And I have algorithm as "<algorithm>"
-    And I have weighting as "<routeType>"
-    And I have type as "<responseFormat>"
-    When I request for a route
-    Then I should be able to verify the http response message as "OK"
-    Then I should be able to verify the http statuscode as "200"
-
-    Examples: 
-      | vehicleType | avoidances | routeType | algorithm  | responseFormat |
-      | car         |            | fastest   | dijkstra   | json           |
-      | car         |            | fastest   | astar      | json           |
-      | car         |            | fastest   | astarbi    | json           |
-      | car         |            | fastest   | dijkstrabi | json           |
+      | vehicleType | avoidances | routeType | algorithm | responseFormat | errorMessage                                                                                                                     | statusCode |
+      | car         |            | fastest   | xyz       | json           | xyz is not a valid value for parameter algorithm. Valid values are astar, astarbi, dijkstra, dijkstrabi or dijkstraOneToMany     | 400        |
+      | car         |            | fastest   | select*   | json           | select* is not a valid value for parameter algorithm. Valid values are astar, astarbi, dijkstra, dijkstrabi or dijkstraOneToMany | 400        |
 
   # Parameter :  points_encoded
   @ErrorMessages
@@ -236,8 +202,8 @@ Feature: Verify Error Messages from a routing service
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | vehicleType | avoidances | routeType | points_encoded | responseFormat | errorMessage                                                                               | statusCode |
-      | car         |            | fastest   | xyz            | json           | xyz is not a valid value for parameter pointsEncodedString. Valid values are true or false | 400        |
+      | vehicleType | avoidances | routeType | points_encoded | responseFormat | errorMessage                                                                          | statusCode |
+      | car         |            | fastest   | xyz            | json           | xyz is not a valid value for parameter points_encoded. Valid values are true or false | 400        |
 
   # Parameter :  debug
   @ErrorMessages
@@ -274,6 +240,35 @@ Feature: Verify Error Messages from a routing service
     Examples: 
       | vehicleType | avoidances | routeType | calc_points | responseFormat | errorMessage                                                                       | statusCode |
       | car         |            | fastest   | xyz         | json           | xyz is not a valid value for parameter calc_points. Valid values are true or false | 400        |
+
+  @ErrorMessages
+  Scenario Outline: verify valid parameter values for "SRS "
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.729961,-3.524853 | 50.723364,-3.523895 |
+    And I have vehicle as "foot"
+    And I have weighting as "fastest"
+    And I have locale as "en_US"
+    And I have debug as "true"
+    And I have points_encoded as "true"
+    And I have calc_points as "true"
+    And I have instructions as "true"
+    And I have algorithm as "astar"
+    And I have type as "json"
+    And I have type as "<SRS>"
+    When I request for a route
+    Then I should be able to verify the http response message as "OK"
+    Then I should be able to verify the http statuscode as "200"
+
+    Examples: 
+      Then I should be able to verify the response message as "<errorMessage>"
+      Then I should be able to verify the statuscode as "<statusCode>"
+      
+      Examples:
+
+      | SRS | errorMessage                                                                                                  | statusCode |
+      | ABC | Point 50.729961,-3.524853 is not a valid point. Point must be a comma separated coordinate in ABC projection. | 400        |
+      | 123 | Point 50.729961,-3.524853 is not a valid point. Point must be a comma separated coordinate in 123 projection. | 400        |
 
   # Parameter :  Type
   @ErrorMessages
@@ -326,8 +321,8 @@ Feature: Verify Error Messages from a routing service
     #  Then I should be able to verify the http response message as "<httpErrorMessage>"
     #Then I should be able to verify the http statuscode as "<statusCode>"
     Examples: 
-      | pointA              | errorMessage | responseFormat | statusCode |
-      | 51.878966,-0.903849 | e            | json           | 400        |
+      | pointA              | errorMessage                 | responseFormat | statusCode |
+      | 51.878966,-0.903849 | No point parameter provided. | json           | 400        |
 
   #Successful request
   @ErrorMessages
@@ -335,18 +330,18 @@ Feature: Verify Error Messages from a routing service
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "car"
+    And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "<locale>"
     And I have debug as "true"
     And I have points_encoded as "true"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "true"
     And I have algorithm as "astar"
     And I have type as "json"
-    When I request for a route with invalid URI
+    When I request for a route
     Then I should be able to verify the http response message as "OK"
-    Then I should be able to verify the http statuscode as "200"
+    And I should be able to verify the http statuscode as "200"
 
     Examples: 
       | locale |
@@ -381,17 +376,41 @@ Feature: Verify Error Messages from a routing service
       | vi_VI  |
       | zh_CN  |
 
+  # Parameter :  weighting
+  @ErrorMessages @Smoke @Current
+  Scenario Outline: Valid Parameter Values for "weighting"
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.729961,-3.524853 | 50.723364,-3.523895 |
+    And I have vehicle as "foot"
+    And I have weighting as "<weighting>"
+    And I have locale as "en_US"
+    And I have debug as "true"
+    And I have points_encoded as "true"
+    And I have calc_points as "true"
+    And I have instructions as "true"
+    And I have algorithm as "astar"
+    And I have type as "json"
+    When I request for a route
+    Then I should be able to verify the http response message as "OK"
+    Then I should be able to verify the http statuscode as "200"
+
+    Examples: 
+      | weighting | 
+      | fastest   |
+      | shortest  | 
+
   @ErrorMessages
   Scenario Outline: verify valid parameter values for "algorithm "
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "car"
+    And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "en_US"
     And I have debug as "true"
     And I have points_encoded as "true"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "true"
     And I have algorithm as "<algorithm>"
     And I have type as "json"
@@ -400,23 +419,24 @@ Feature: Verify Error Messages from a routing service
     Then I should be able to verify the http statuscode as "200"
 
     Examples: 
-      | algorithm  |
-      | dijkstra   |
-      | astar      |
-      | astarbi    |
-      | dijkstrabi |
+      | algorithm         |
+      | dijkstra          |
+      | astar             |
+      | astarbi           |
+      | dijkstrabi        |
+      | dijkstraOneToMany |
 
   @ErrorMessages
   Scenario Outline: verify valid parameter values for "debug "
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "car"
+    And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "en_US"
     And I have debug as "<debug>"
     And I have points_encoded as "true"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "true"
     And I have algorithm as "astar"
     And I have type as "json"
@@ -434,7 +454,7 @@ Feature: Verify Error Messages from a routing service
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "car"
+    And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "en_US"
     And I have debug as "true"
@@ -457,12 +477,12 @@ Feature: Verify Error Messages from a routing service
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "car"
+    And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "en_US"
     And I have debug as "true"
     And I have points_encoded as "<points_encoded>"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "true"
     And I have algorithm as "astar"
     And I have type as "json"
@@ -480,12 +500,12 @@ Feature: Verify Error Messages from a routing service
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "car"
+    And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "en_US"
     And I have debug as "true"
     And I have points_encoded as "true"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "<instructions>"
     And I have algorithm as "astar"
     And I have type as "json"
@@ -503,12 +523,12 @@ Feature: Verify Error Messages from a routing service
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "car"
+    And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "en_US"
     And I have debug as "true"
     And I have points_encoded as "true"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "true"
     And I have algorithm as "astar"
     And I have type as "<type>"
@@ -522,20 +542,44 @@ Feature: Verify Error Messages from a routing service
       | json |
 
   @ErrorMessages
-  Scenario Outline: with invalid uri and verify resource not available
+  Scenario Outline: verify valid parameter values for "SRS "
     Given I have route point as
       | pointA              | pointB              |
       | 50.729961,-3.524853 | 50.723364,-3.523895 |
-    And I have vehicle as "car"
+    And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "en_US"
     And I have debug as "true"
     And I have points_encoded as "true"
-    And I have points_calc as "true"
+    And I have calc_points as "true"
     And I have instructions as "true"
     And I have algorithm as "astar"
     And I have type as "json"
-    And I prefix the string "<prefixString>" and append the string "<appendString" to service URL
+    And I have type as "<SRS>"
+    When I request for a route
+    Then I should be able to verify the http response message as "OK"
+    Then I should be able to verify the http statuscode as "200"
+
+    Examples: 
+      | SRS   |
+      | WGS84 |
+      | BNG   |
+
+  @ErrorMessages
+  Scenario Outline: with invalid uri and verify resource not available
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.729961,-3.524853 | 50.723364,-3.523895 |
+    And I have vehicle as "foot"
+    And I have weighting as "fastest"
+    And I have locale as "en_US"
+    And I have debug as "true"
+    And I have points_encoded as "true"
+    And I have calc_points as "true"
+    And I have instructions as "true"
+    And I have algorithm as "astar"
+    And I have type as "json"
+    And I prefix the string "<prefixString>" and append the string "<appendString>" to service URL
     When I request for a route
     Then I should be able to verify the http response message as "Not Found"
     Then I should be able to verify the http statuscode as "404"

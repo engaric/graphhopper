@@ -28,9 +28,6 @@ public class GraphHopperHooks {
 
 	DataTable routePointsTable;
 
-	private String serviceAppendString;
-
-	
 	@Before({ "~@WebOnly", "~@SampleScenario" })
 	public void init() {
 		
@@ -228,7 +225,8 @@ public class GraphHopperHooks {
 
 			break;
 		default:
-
+			
+if(null!=routePointsTable){
 			List<List<String>> data = routePointsTable.raw();
 
 			String[] points = new String[data.get(1).size()];
@@ -244,6 +242,14 @@ public class GraphHopperHooks {
 
 			break;
 
+		}
+		
+		
+		else
+		{
+			graphUiUtil.getRouteFromServiceWithParameters();
+			graphUiUtil.getRouteFromUI();
+		}
 		}
 
 	}

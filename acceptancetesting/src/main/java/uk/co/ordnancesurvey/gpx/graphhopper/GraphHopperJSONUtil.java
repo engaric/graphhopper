@@ -90,11 +90,11 @@ public class GraphHopperJSONUtil {
 	}
 
 	public void verifyMessage(String responseMessage) {
-		String actualErrorMessage = parser.getErrorMessage();
+		String actualErrorMessage = parser.getErrorMessage().trim();
 		Assert.assertTrue(" Service : actual error message:"
 				+ actualErrorMessage + " does not match with: "
 				+ responseMessage,
-				responseMessage.equalsIgnoreCase(actualErrorMessage));
+				responseMessage.trim().equalsIgnoreCase(actualErrorMessage));
 
 	}
 
