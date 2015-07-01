@@ -125,7 +125,7 @@ public class GPXParser {
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			XPathExpression expr;
 			try {
-				expr = xpath.compile("gpx/metadata/extensions/error/@message");
+				expr = xpath.compile("gpx/metadata/extensions/message");
 	
 				String ErrorMessage = (String)expr.evaluate(doc, XPathConstants.STRING);
 				gpx.addExtensionData("errorMessage", ErrorMessage);
@@ -136,7 +136,7 @@ public class GPXParser {
 		
 
 			try {
-				expr = xpath.compile("gpx/metadata/extensions/error/@statuscode");
+				expr = xpath.compile("gpx/metadata/extensions/@statuscode");
 	
 				int statusCode = Integer.parseInt((String)expr.evaluate(doc, XPathConstants.STRING));
 				gpx.addExtensionData("statusCode", statusCode);

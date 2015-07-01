@@ -2,6 +2,7 @@ package uk.co.ordnancesurvey.routing;
 
 import static uk.co.ordnancesurvey.webtests.base.ComponentValueSource.INNER_HTML;
 import uk.co.ordnancesurvey.webtests.base.ComponentByXPATH;
+import uk.co.ordnancesurvey.webtests.base.ComponentClass;
 import uk.co.ordnancesurvey.webtests.base.ComponentID;
 import uk.co.ordnancesurvey.webtests.base.ComponentIdentification;
 import uk.co.ordnancesurvey.webtests.base.ComponentIdentifier;
@@ -43,6 +44,6 @@ public class GraphHopperComponentIdentification implements
 	public static final ComponentIdentifier ERROR_MESSAGE= new ComponentByXPATH("//*[@class='error']");
 	public static final ComponentIdentifier PRIVATE_ACCESS_ALLOWED = new ComponentByXPATH("//*[@name='access' and @value='allow']");
 	public static final ComponentIdentifier PRIVATE_ACCESS_NOTALLOWED = new ComponentByXPATH("//*[@name='access' and @value='disallow']");
-
+	public static final ComponentIdentifier  PROJECTION = new ComponentByXPATH("//*[@class='srs']");
 	
 }

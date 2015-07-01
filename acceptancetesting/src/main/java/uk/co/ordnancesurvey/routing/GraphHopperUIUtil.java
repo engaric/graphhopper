@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static uk.co.ordnancesurvey.routing.GraphHopperComponentIdentification.*;
 
-
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
@@ -64,7 +64,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	private final Map<String, String> customHeaders = new HashMap<>();
 
-	private Map<String, ArrayList<String>> requestParameters = new HashMap<String, ArrayList<String>>();
+	private Map<String, ArrayList<String>> requestParameters = new TreeMap<String, ArrayList<String>>(String.CASE_INSENSITIVE_ORDER);
 	GraphHopperJSONUtil GPHJSONUtil = new GraphHopperJSONUtil();
 
 	JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -844,9 +844,21 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 					.getTestProperty("routeType"));
 			requestParameters.put("type", responseType);
 		}
-		ArrayList<String> pointscoding = new ArrayList<String>();
-		pointscoding.add("false");
-		requestParameters.put("points_encoded", pointscoding);
+		
+		if(!requestParameters.containsKey("points_encoded"))
+		{
+			ArrayList<String> pointscoding=new ArrayList<String>();
+			pointscoding.add("false");
+			requestParameters.put("points_encoded", pointscoding);
+		}
+		
+		
+		if (!requestParameters.containsKey("SRS"))
+		{
+			ArrayList<String> SRS=new ArrayList<String>();
+			SRS.add("WGS84");
+			requestParameters.put("SRS", SRS);
+		}
 		for (Entry<String, ArrayList<String>> entry : requestParameters
 				.entrySet()) {
 			String key = entry.getKey();
@@ -891,6 +903,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 				requestParameters.put("type", responseType);
 			}
 
+
 			switch (vehicle) {
 			case "car":
 				clickElement(ROUTE_TYPE_CAR);
@@ -914,6 +927,11 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			}
 			clickElement(SETTINGSBUTTON);
+			
+			if(requestParameters.containsKey("SRS")){
+				typeIntoField(PROJECTION, requestParameters.get("SRS").get(0).toString());
+			}
+			
 			if(Boolean.parseBoolean(requestParameters.get("private").get(0)))
 			{
 				clickElement(PRIVATE_ACCESS_ALLOWED);
@@ -1038,6 +1056,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		switch (testOn) {
 		case "Web":
 			navigateTo(sb.toString());
+			pause(500);
 
 			break;
 		case "Service":
@@ -1054,6 +1073,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		default:
 
 			navigateTo(sb.toString());
+			
+			pause(500);
 
 			if (type.equalsIgnoreCase("gpx")) {
 				GPHServiceUtil.verifyMessage(responseMessage);
@@ -1128,7 +1149,8 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 	}
 
 	public void verifyHttpErrorMessage(String responseMessage) {
-		navigateTo(sb.toString());
+	/*	if(null!=driver)
+			{navigateTo(sb.toString());}*/
 
 		Assert.assertTrue("Actual http Error Message " + actualResponseMsg
 				+ " is not matching with " + responseMessage,
