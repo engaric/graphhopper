@@ -33,8 +33,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.geotools.referencing.CRS;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+
+import uk.co.ordnancesurvey.api.srs.LatLong;
+import uk.co.ordnancesurvey.api.srs.OpenCoordConverter;
 
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
@@ -54,6 +62,7 @@ import com.graphhopper.util.StopWatch;
 import com.graphhopper.util.TranslationMap;
 import com.graphhopper.util.shapes.BBox;
 import com.graphhopper.util.shapes.GHPoint;
+import com.graphhopper.util.shapes.GHPoint3D;
 
 /**
  * Servlet to use GraphHopper in a remote client application like mobile or browser. Note: If type
@@ -235,6 +244,9 @@ public class GraphHopperServlet extends GHBaseServlet
 			ghRsp = new GHResponse().addError(e);
 		} finally
 		{
+			if(!ghRsp.hasErrors()) {
+				transformResponseCoords(ghRsp, srs);
+			}
 			float took = sw.stop().getSeconds();
 			String infoStr = httpReq.getRemoteAddr() + " " + httpReq.getLocale() + " "
 					+ httpReq.getHeader("User-Agent");
@@ -288,6 +300,30 @@ public class GraphHopperServlet extends GHBaseServlet
 		}
 
 		return ghRsp;
+	}
+
+	private void transformResponseCoords(GHResponse ghRsp, String srs) {
+		PointList points = ghRsp.getPoints();
+		PointList transformedPoints = new PointList(points.getSize(), points.is3D());
+		CoordinateReferenceSystem targetCRS;
+		try {
+			targetCRS = CRS.decode(srs);
+			GHPoint transformedPoint;
+			for (GHPoint3D ghPoint3D : points) {
+				LatLong transformedCoordinate = OpenCoordConverter.transformFromSourceCRSToTargetCRS(OpenCoordConverter.wgs84CoordRefSystem, targetCRS, ghPoint3D.getLat(), ghPoint3D.getLon(), true);
+				if(points.is3D()) 
+					transformedPoint = new GHPoint3D(transformedCoordinate.getLatAngle(), transformedCoordinate.getLongAngle(), ghPoint3D.getElevation());
+				else 
+					transformedPoint = new GHPoint(transformedCoordinate.getLatAngle(), transformedCoordinate.getLongAngle());
+				
+				transformedPoints.add(transformedPoint);
+			}
+			
+			ghRsp.setPoints(transformedPoints);
+		} catch (FactoryException | MismatchedDimensionException | TransformException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	private String buildBooleanErrorMessageString( String paramValue, String paramName )

@@ -137,7 +137,7 @@ public class GHPoint
 	    	double sourceXCoordinate = Double.parseDouble(fromStrs[0]);
 			double sourceYCoordinate = Double.parseDouble(fromStrs[1]);
 	        CoordinateReferenceSystem outputCRS = OpenCoordConverter.wgs84CoordRefSystem;
-	        CoordinateReferenceSystem inputCRS = srs.equals(BNG)||srs.equals(OpenCoordConverter.BNG_CRS_CODE)?OpenCoordConverter.bngCoordRefSystem:CRS.decode(srs);
+	        CoordinateReferenceSystem inputCRS = srs.equalsIgnoreCase(BNG)||srs.equalsIgnoreCase(OpenCoordConverter.BNG_CRS_CODE)?OpenCoordConverter.bngCoordRefSystem:CRS.decode(srs);
 	        LatLong transformFromSourceCRSToTargetCRS = OpenCoordConverter.transformFromSourceCRSToTargetCRS(inputCRS, outputCRS, sourceXCoordinate, sourceYCoordinate, true);
 	        return new GHPoint(transformFromSourceCRSToTargetCRS.getLatAngle(), transformFromSourceCRSToTargetCRS.getLongAngle());
         } catch (FactoryException | MismatchedDimensionException | TransformException e)
