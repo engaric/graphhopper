@@ -57,6 +57,28 @@ public class GHPointTest
     }
     
     @Test
+    public void testParseWithInvalidSrs() {
+    	try {
+    		GHPoint.parse("1,2", "RANDOMCODE");
+    		fail("Error should have been thrown");
+    	}
+    	catch(IllegalArgumentException iae) {
+    		assertEquals("Srs RANDOMCODE is not a valid srs for input.", iae.getMessage());
+    	}
+    }
+    
+    @Test
+    public void testParseWithInvalidPoint() {
+    	try {
+    		GHPoint.parse("100000000000000000,2", "BNG");
+    		fail("Error should have been thrown");
+    	}
+    	catch(IllegalArgumentException iae) {
+    		assertEquals("Point 100000000000000000,2 is not a valid point. Point must be a comma separated coordinate in BNG projection.", iae.getMessage());
+    	}
+    }
+    
+    @Test
     public void testParseWithSrsDefault() {
     	GHPoint parsedPoint = GHPoint.parse("1,2", WGS_84.toLowerCase());
     	assertEquals(1, parsedPoint.getLat(), 0);

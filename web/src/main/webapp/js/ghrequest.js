@@ -462,6 +462,10 @@ GHRequest.prototype.createPath = function (url) {
     }
     this.srs = document.routeoptions.srs.value;
     
+    if(this.srs.toLowerCase() !== "wgs84") {
+    	url += "&output_srs=WGS84";
+    } 
+    
     if (this.weighting && this.weighting !== "fastest")
         url += "&weighting=" + this.weighting;
     if (this.srs && this.srs != "BNG")

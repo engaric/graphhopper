@@ -203,7 +203,6 @@ public class GHBaseServlet extends HttpServlet
 				infoPoints.add(point);
 			} else
 			{
-				System.out.println("Throw an exception");
 				throw new InvalidParameterException(
 						"Point "
 								+ str

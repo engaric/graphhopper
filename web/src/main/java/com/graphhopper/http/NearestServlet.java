@@ -41,6 +41,7 @@ import com.graphhopper.util.DistanceCalc;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.shapes.GHPoint;
 import com.graphhopper.util.shapes.GHPoint3D;
+import com.graphhopper.util.shapes.GHResponseCoordinateTransformer;
 
 /**
  * @author svantulden
@@ -58,18 +59,24 @@ public class NearestServlet extends GHBaseServlet
 	{
 		GHResponse ghRsp = null;
 		Map<String, Object> map = new HashMap<>();
+		GHResponseCoordinateTransformer transformer = null;
 		try
 		{
 			ApiResource.NEAREST.checkAllRequestParameters(httpReq);
+			String srs = getParam(httpReq, "srs", defaultSRS);
+			String outputSrs = getParam(httpReq, "output_srs", srs);
 
 			List<GHPoint> infoPoints = getPoints(httpReq, "point");
 			if (infoPoints.size() > 1)
 			{
 				throw new InvalidParameterException(
-				        "Only one point should be specified and it must be a comma separated coordinate in WGS84 projection.");
+				        "Only one point should be specified and it must be a comma separated coordinate in "
+				        + srs
+				        + " projection.");
 			}
-
+			
 			boolean enabledElevation = getBooleanParam(httpReq, "elevation", false);
+			transformer = new GHResponseCoordinateTransformer(outputSrs);
 
 			GHPoint place = infoPoints.get(0);
 			LocationIndex index = hopper.getLocationIndex();
@@ -98,6 +105,8 @@ public class NearestServlet extends GHBaseServlet
 		} catch (NoSuchParameterException | MissingParameterException | InvalidParameterException e)
 		{
 			ghRsp = new GHResponse().addError(e);
+		} catch (IllegalArgumentException iae) {
+			ghRsp = new GHResponse().addError(new InvalidParameterException(iae.getMessage()));
 		}
 
 		if (ghRsp != null && ghRsp.hasErrors())
@@ -106,6 +115,7 @@ public class NearestServlet extends GHBaseServlet
 			writeJsonError(httpRes, SC_BAD_REQUEST, new JSONObject(map));
 		} else
 		{
+			transformer.transformCoordinates(ghRsp);
 			writeJson(httpReq, httpRes, new JSONObject(map));
 		}
 	}
