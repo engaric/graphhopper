@@ -81,6 +81,7 @@ public class ApiResourceTest
 		allParameters.put("avoidances", new String[] { "x" });
 		allParameters.put("private", new String[] { "x" });
 		allParameters.put("srs", new String[] {"x"});
+		allParameters.put("output_srs", new String[] {"x"});
 		when(request.getParameterMap()).thenReturn(allParameters);
 		try
 		{
@@ -112,6 +113,7 @@ public class ApiResourceTest
 		allParameters.put("avoidances", new String[] { "x" });
 		allParameters.put("private", new String[] { "x" });
 		allParameters.put("srs", new String[] { "x" });
+		allParameters.put("output_srs", new String[] {"x"});
 		// incorrect
 		allParameters.put("bogus", new String[] { "x" });
 		when(request.getParameterMap()).thenReturn(allParameters);
@@ -153,6 +155,7 @@ public class ApiResourceTest
 		allParameters.put("point", new String[] { "0" });
 		// valid
 		allParameters.put("srs", new String[] { "x" });
+		allParameters.put("output_srs", new String[] {"x"});
 		when(request.getParameterMap()).thenReturn(allParameters);
 		try
 		{
@@ -171,6 +174,7 @@ public class ApiResourceTest
 		allParameters.put("point", new String[] { "0" });
 		// valid
 		allParameters.put("srs", new String[] { "x" });
+		allParameters.put("output_srs", new String[] {"x"});
 		// incorrect
 		allParameters.put("bogus", new String[] { "x" });
 		when(request.getParameterMap()).thenReturn(allParameters);
