@@ -775,7 +775,7 @@ public class GraphHopperServletTest
 	}
 	
 	@Test 
-	public void testGetPointsWithInvalidRequestSrs() {
+	public void testGetPointsWithInvalidRequestSrs() throws InvalidParameterException {
 		allParameters.put("point", POINTS);
 		allParameters.put("vehicle", new String[] { VEHICLES[0] });
 		allParameters.put("locale", new String[] { LOCALES[0] });
@@ -787,11 +787,9 @@ public class GraphHopperServletTest
 		try {
 			List<GHPoint> points = graphHopperServlet.getPoints(httpServletRequest, "point");
 			fail("Should have thrown error as srs is invalid");
-		} catch (InvalidParameterException ipe) {
-			assertEquals("Point " + POINTS[0]
-								+ " is not a valid point. Point must be a comma separated coordinate in "
-								+ invalidSRS
-								+ " projection.", ipe.getStatusMessage());
+		} catch (IllegalArgumentException ipe) {
+			assertEquals("Srs " + invalidSRS
+								+ " is not a valid srs for input.", ipe.getMessage());
 		}
 	}
 

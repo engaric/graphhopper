@@ -294,7 +294,7 @@ public class GraphHopperServlet extends GHBaseServlet
 				}
 				logger.info("GraphHopperServlet.getGHResponse(" + enableInstructions + ")");
 				Map<String, Object> map = createJson(ghRsp, calcPoints, pointsEncoded,
-						enableElevation, enableInstructions);
+						enableElevation, enableInstructions, outputSrs);
 				Object infoMap = map.get("info");
 				if (infoMap != null)
 					((Map) infoMap).put("took", Math.round(took * 1000));
@@ -347,7 +347,7 @@ public class GraphHopperServlet extends GHBaseServlet
 	}
 
 	protected Map<String, Object> createJson( GHResponse rsp, boolean calcPoints,
-			boolean pointsEncoded, boolean includeElevation, boolean enableInstructions )
+			boolean pointsEncoded, boolean includeElevation, boolean enableInstructions, String outputSrs )
 			{
 		Map<String, Object> json = new HashMap<String, Object>();
 
@@ -379,7 +379,7 @@ public class GraphHopperServlet extends GHBaseServlet
 					jsonPath.put("bbox", rsp.calcRouteBBox(maxBounds2D).toGeoJson());
 				}
 
-				jsonPath.put("points", createPoints(points, pointsEncoded, includeElevation));
+				jsonPath.put("points", createPoints(points, pointsEncoded, includeElevation, outputSrs));
 
 				if (enableInstructions)
 				{
@@ -392,13 +392,19 @@ public class GraphHopperServlet extends GHBaseServlet
 		return json;
 			}
 
-	protected Object createPoints( PointList points, boolean pointsEncoded, boolean includeElevation )
+	protected Object createPoints( PointList points, boolean pointsEncoded, boolean includeElevation, String outputSrs )
 	{
 		if (pointsEncoded)
 			return WebHelper.encodePolyline(points, includeElevation);
 
 		Map<String, Object> jsonPoints = new HashMap<String, Object>();
 		jsonPoints.put("type", "LineString");
+		Map<String, Object> crsObj = new HashMap<String, Object>();
+		crsObj.put("type", "name");
+		Map<String, Object> propObj = new HashMap<String, Object>();
+		propObj.put("name", outputSrs);
+		crsObj.put("properties", propObj );
+		jsonPoints.put("crs", crsObj);
 		jsonPoints.put("coordinates", points.toGeoJson(includeElevation));
 		return jsonPoints;
 	}
