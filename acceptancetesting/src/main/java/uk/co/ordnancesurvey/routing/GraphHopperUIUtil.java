@@ -1056,7 +1056,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		switch (testOn) {
 		case "Web":
 			navigateTo(sb.toString());
-			pause(500);
+			pause(5);
 
 			break;
 		case "Service":
@@ -1074,7 +1074,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			navigateTo(sb.toString());
 			
-			pause(500);
+			pause(5);
 
 			if (type.equalsIgnoreCase("gpx")) {
 				GPHServiceUtil.verifyMessage(responseMessage);
