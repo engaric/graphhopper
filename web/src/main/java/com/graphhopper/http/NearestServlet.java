@@ -102,7 +102,7 @@ public class NearestServlet extends GHBaseServlet
 
 				if (hopper.hasElevation() && enabledElevation)
 					coord.put(snappedPoint.ele);
-
+				addSrsObject(outputSrs, map);
 				map.put("coordinates", coord);
 
 				// Distance from input to snapped point in meters

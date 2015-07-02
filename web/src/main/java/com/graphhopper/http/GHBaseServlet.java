@@ -318,4 +318,13 @@ public class GHBaseServlet extends HttpServlet
 			logger.error("Cannot write message:" + str, ex);
 		}
 	}
+
+	protected void addSrsObject(String outputSrs, Map<String, Object> geoJsonFeature) {
+		Map<String, Object> crsObj = new HashMap<String, Object>();
+		crsObj.put("type", "name");
+		Map<String, Object> propObj = new HashMap<String, Object>();
+		propObj.put("name", outputSrs);
+		crsObj.put("properties", propObj );
+		geoJsonFeature.put("crs", crsObj);
+	}
 }
