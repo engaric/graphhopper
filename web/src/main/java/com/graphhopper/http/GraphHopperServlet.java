@@ -128,7 +128,7 @@ public class GraphHopperServlet extends GHBaseServlet
 			// coordinates
 			
 			if(outputSrs.length()>0) {
-				transformer = new GHResponseCoordinateTransformer(srs);
+				transformer = new GHResponseCoordinateTransformer(outputSrs);
 			}
 
 			if (!new CaseInsensitiveStringListValidator()
