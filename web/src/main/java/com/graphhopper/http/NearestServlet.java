@@ -122,7 +122,6 @@ public class NearestServlet extends GHBaseServlet
 			writeJsonError(httpRes, SC_BAD_REQUEST, new JSONObject(map));
 		} else
 		{
-			transformer.transformCoordinates(ghRsp);
 			writeJson(httpReq, httpRes, new JSONObject(map));
 		}
 	}
