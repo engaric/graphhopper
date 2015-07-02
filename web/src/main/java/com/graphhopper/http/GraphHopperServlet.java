@@ -385,6 +385,7 @@ public class GraphHopperServlet extends GHBaseServlet
 				{
 					InstructionList instructions = rsp.getInstructions();
 					jsonPath.put("instructions", instructions.createJson());
+					addSrsObject(outputSrs, jsonPath);
 				}
 			}
 			json.put("paths", Collections.singletonList(jsonPath));
@@ -399,14 +400,18 @@ public class GraphHopperServlet extends GHBaseServlet
 
 		Map<String, Object> jsonPoints = new HashMap<String, Object>();
 		jsonPoints.put("type", "LineString");
+		addSrsObject(outputSrs, jsonPoints);
+		jsonPoints.put("coordinates", points.toGeoJson(includeElevation));
+		return jsonPoints;
+	}
+
+	private void addSrsObject(String outputSrs, Map<String, Object> geoJsonFeature) {
 		Map<String, Object> crsObj = new HashMap<String, Object>();
 		crsObj.put("type", "name");
 		Map<String, Object> propObj = new HashMap<String, Object>();
 		propObj.put("name", outputSrs);
 		crsObj.put("properties", propObj );
-		jsonPoints.put("crs", crsObj);
-		jsonPoints.put("coordinates", points.toGeoJson(includeElevation));
-		return jsonPoints;
+		geoJsonFeature.put("crs", crsObj);
 	}
 
 	protected void initHints( GHRequest request, Map<String, String[]> parameterMap )
