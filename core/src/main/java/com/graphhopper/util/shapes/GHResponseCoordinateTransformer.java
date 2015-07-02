@@ -43,14 +43,16 @@ public class GHResponseCoordinateTransformer
 		try
 		{
 			GHPoint transformedPoint;
-			for (GHPoint3D ghPoint3D : points)
+			for (GHPoint ghPoint : points)
 			{
 				LatLong transformedCoordinate = OpenCoordConverter
 				        .transformFromSourceCRSToTargetCRS(OpenCoordConverter.wgs84CoordRefSystem,
-				                targetCRS, ghPoint3D.getLat(), ghPoint3D.getLon(), true);
-				if (points.is3D())
+				                targetCRS, ghPoint.getLat(), ghPoint.getLon(), true);
+				if (points.is3D()) {
+					GHPoint3D threedPoint = (GHPoint3D) ghPoint;
 					transformedPoint = new GHPoint3D(transformedCoordinate.getLatAngle(),
-					        transformedCoordinate.getLongAngle(), ghPoint3D.getElevation());
+					        transformedCoordinate.getLongAngle(), threedPoint.getElevation());
+				}
 				else
 					transformedPoint = new GHPoint(transformedCoordinate.getLatAngle(),
 					        transformedCoordinate.getLongAngle());
