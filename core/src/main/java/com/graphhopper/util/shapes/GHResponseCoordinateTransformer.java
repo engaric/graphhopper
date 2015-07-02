@@ -45,17 +45,7 @@ public class GHResponseCoordinateTransformer
 			GHPoint transformedPoint;
 			for (GHPoint ghPoint : points)
 			{
-				LatLong transformedCoordinate = OpenCoordConverter
-				        .transformFromSourceCRSToTargetCRS(OpenCoordConverter.wgs84CoordRefSystem,
-				                targetCRS, ghPoint.getLat(), ghPoint.getLon(), true);
-				if (points.is3D()) {
-					GHPoint3D threedPoint = (GHPoint3D) ghPoint;
-					transformedPoint = new GHPoint3D(transformedCoordinate.getLatAngle(),
-					        transformedCoordinate.getLongAngle(), threedPoint.getElevation());
-				}
-				else
-					transformedPoint = new GHPoint(transformedCoordinate.getLatAngle(),
-					        transformedCoordinate.getLongAngle());
+				transformedPoint = doTransformPoint(ghPoint);
 
 				transformedPoints.add(transformedPoint);
 			}
@@ -67,5 +57,27 @@ public class GHResponseCoordinateTransformer
 		}
 
 	}
+	
+	public GHPoint transformPoint(GHPoint ghPoint) throws FactoryException, TransformException {
+		if(targetCRS.equals(OpenCoordConverter.wgs84CoordRefSystem))
+			return ghPoint;
+		return doTransformPoint(ghPoint);
+	}
 
+	private GHPoint doTransformPoint( GHPoint ghPoint ) throws FactoryException, TransformException
+    {
+	    GHPoint transformedPoint;
+	    LatLong transformedCoordinate = OpenCoordConverter
+	            .transformFromSourceCRSToTargetCRS(OpenCoordConverter.wgs84CoordRefSystem,
+	                    targetCRS, ghPoint.getLat(), ghPoint.getLon(), true);
+	    if (ghPoint instanceof GHPoint3D) {
+	    	GHPoint3D threedPoint = (GHPoint3D) ghPoint;
+	    	transformedPoint = new GHPoint3D(transformedCoordinate.getLatAngle(),
+	    	        transformedCoordinate.getLongAngle(), threedPoint.getElevation());
+	    }
+	    else
+	    	transformedPoint = new GHPoint(transformedCoordinate.getLatAngle(),
+	    	        transformedCoordinate.getLongAngle());
+	    return transformedPoint;
+    }
 }
