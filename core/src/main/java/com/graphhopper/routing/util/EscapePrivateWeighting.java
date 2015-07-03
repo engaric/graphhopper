@@ -37,11 +37,9 @@ public class EscapePrivateWeighting implements Weighting
 	@Override
 	public double calcWeight( EdgeIteratorState edgeState, boolean reverse, int prevOrNextEdgeId )
 	{
-		System.err.println(edgeState.getClass() + ":" + edgeState.toString());
 		double calcWeight = innerWeighting.calcWeight(edgeState, reverse, prevOrNextEdgeId);
 		if(encoder.getLong(edgeState.getFlags(), KEY)>0) {
 			EdgeIteratorState edgeProps=null;
-			System.err.println("EDGE"+ edgeState.getEdge()+":PREVNEXT"  + prevOrNextEdgeId);
 			if(!isStartOrEnd(edgeState) && prevOrNextEdgeId>EdgeIterator.NO_EDGE) {
 				edgeProps = graph.getEdgeProps(prevOrNextEdgeId, Integer.MIN_VALUE);
 			}
@@ -52,7 +50,6 @@ public class EscapePrivateWeighting implements Weighting
 				calcWeight = Double.POSITIVE_INFINITY;
 			}
 		}
-		System.err.println("WEIGHT:" +calcWeight);
 		return calcWeight;
 	}
 
@@ -61,7 +58,6 @@ public class EscapePrivateWeighting implements Weighting
 	    int baseNode = edgeState.getBaseNode();
 		int adjNode = edgeState.getAdjNode();
 		boolean startEnd = baseNode == start  || baseNode == end  || adjNode == start || adjNode == end;
-		System.err.println("STARTEND:" + startEnd + ":" + edgeState.toString());
 		return startEnd;
     }
 
