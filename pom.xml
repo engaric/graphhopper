@@ -46,25 +46,22 @@
 	</properties>
 
 	<scm>
-<!-- 		<connection>scm:git:https://github.com/engaric/graphhopper.git</connection> -->
-<!-- 		<developerConnection>scm:git:https://github.com/engaric/graphhopper.git</developerConnection> -->
 		<connection>scm:git:git@github.com:engaric/graphhopper.git</connection>
 		<developerConnection>scm:git:git@github.com:engaric/graphhopper.git</developerConnection>
-		<!-- <url>git@github.com:engaric/graphhopper.git</url> -->
-		<url>https://github.com/engaric/graphhopper.git</url>
-	  <tag>HEAD</tag>
+		<url>git@github.com:engaric/graphhopper.git</url>
+<!-- 	  <tag>HEAD</tag> -->
   </scm>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>internal.snapshot.repo</id>
 			<name>Semi Official Nexus</name>
-			<url>http://lv515:8081/nexus/content/repositories/snapshots/</url>
+			<url>https://nexus.ordsvy.gov.uk/nexus/content/repositories/snapshots/</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 		<repository>
 			<id>internal.release.repo</id>
 			<name>Semi Official Nexus</name>
-			<url>http://lv515:8081/nexus/content/repositories/releases/</url>
+			<url>https://nexus.ordsvy.gov.uk/nexus/content/repositories/releases/</url>
 		</repository>
 	</distributionManagement>
 	<developers>
