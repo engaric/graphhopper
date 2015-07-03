@@ -46,10 +46,10 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:https://github.com/engaric/graphhopper.git</connection>
-		<developerConnection>scm:git:https://github.com/engaric/graphhopper.git</developerConnection>
-		<!-- <connection>scm:git:git@github.com:engaric/graphhopper.git</connection> -->
-		<!-- <developerConnection>scm:git:git@github.com:engaric/graphhopper.git</developerConnection> -->
+<!-- 		<connection>scm:git:https://github.com/engaric/graphhopper.git</connection> -->
+<!-- 		<developerConnection>scm:git:https://github.com/engaric/graphhopper.git</developerConnection> -->
+		<connection>scm:git:git@github.com:engaric/graphhopper.git</connection>
+		<developerConnection>scm:git:git@github.com:engaric/graphhopper.git</developerConnection>
 		<!-- <url>git@github.com:engaric/graphhopper.git</url> -->
 		<url>https://github.com/engaric/graphhopper.git</url>
 	  <tag>HEAD</tag>
