@@ -377,6 +377,40 @@ Feature: Verify Error Messages for Vehicle Routing Service (Exeter)
       | car         |            | fastest   | GET        | json           | OK                 | 200        |
       | car         |            | fastest   | OPTIONS    | json           | OK                 | 200        |
 
+  @Routing
+  Scenario Outline: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.733653,-3.523541 | 50.732695,-3.520218 |
+    And I have vehicle as "emv"
+    And I have private as "true"
+    And I have srs as "BNG"
+    And I have output_srs as "WGS84"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | errorMessage                             | statusCode |
+      | Cannot find point 0: 50.733653,-3.523541 | 400        |
+
+  @Routing
+  Scenario Outline: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+    Given I have route point as
+      | pointA       | pointB       |
+      | 93778,292579 | 93667,292811 |
+    And I have vehicle as "car"
+    And I have private as "true"
+    And I have srs as "WGS84"
+    And I have output_srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | errorMessage                      | statusCode |
+      | Cannot find point 0: 93778,292579 | 400        |
+
   # Nearest Point : Invalid Parameter Value "point"
   @ErrorMessages
   Scenario Outline: Verify  nearest point of point using NearestPoint API
@@ -622,7 +656,7 @@ Feature: Verify Error Messages for Vehicle Routing Service (Exeter)
     And I have instructions as "true"
     And I have algorithm as "astar"
     And I have type as "json"
-    And I have type as "<SRS>"
+    And I have srs as "<SRS>"
     When I request for a route
     Then I should be able to verify the http response message as "OK"
     Then I should be able to verify the http statuscode as "200"

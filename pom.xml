@@ -5,7 +5,7 @@
 	<groupId>com.graphhopper</groupId>
 	<artifactId>graphhopper-parent</artifactId>
 	<name>GraphHopper Parent Project</name>
-	<version>0.8-SNAPSHOT</version>
+	<version>1.20-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>http://graphhopper.com</url>
 	<inceptionYear>2012</inceptionYear>
@@ -46,13 +46,11 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:https://github.com/engaric/graphhopper.git</connection>
-		<developerConnection>scm:git:https://github.com/engaric/graphhopper.git</developerConnection>
-		<!-- <connection>scm:git:git@github.com:engaric/graphhopper.git</connection> -->
-		<!-- <developerConnection>scm:git:git@github.com:engaric/graphhopper.git</developerConnection> -->
-		<!-- <url>git@github.com:engaric/graphhopper.git</url> -->
-		<url>https://github.com/engaric/graphhopper.git</url>
-	  <tag>HEAD</tag>
+		<connection>scm:git:git@github.com:engaric/graphhopper.git</connection>
+		<developerConnection>scm:git:git@github.com:engaric/graphhopper.git</developerConnection>
+		<url>git@github.com:engaric/graphhopper.git</url>
+<!-- 	  <tag>HEAD</tag> -->
+    <tag>HEAD</tag>
   </scm>
 	<distributionManagement>
 		<snapshotRepository>

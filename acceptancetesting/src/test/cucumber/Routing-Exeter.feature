@@ -1313,7 +1313,8 @@ Feature: Verify a route from A to B
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
-@Routing
+
+  @Routing
   Scenario Outline: Verify  a route for non-emergencey services on a(End on Clinton road-private false )
     Given I have route point as
       | pointA              | pointB              |
@@ -1357,24 +1358,84 @@ Feature: Verify a route from A to B
     And I have private as "true"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc                     | azimuth | direction | time  | distance | avoidance |
-      | 2             | 50.733764,-3.523212 | Turn right onto VICTORIA STREET | 150.0   | SE         | 17884 | 213.6    |           |
+      | wayPointIndex | waypointco          | waypointdesc                    | azimuth | direction | time  | distance | avoidance |
+      | 2             | 50.733764,-3.523212 | Turn right onto VICTORIA STREET | 150.0   | SE        | 17884 | 213.6    |           |
+
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-@Routing
+  @Routing
   Scenario Outline: Verify  a route for non-emergencey services on a(Not to transit through Springfield-private false )
     Given I have route point as
-      | pointA              | pointB              |
-      | 50.73384,-3.522834 | 50.732806,-3.521275|
+      | pointA             | pointB              |
+      | 50.73384,-3.522834 | 50.732806,-3.521275 |
     And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
-   And I have private as "false"
-   When I request for a route
+    And I have private as "false"
+    When I request for a route
     Then I should be able to verify the response message as "Not found"
     Then I should be able to verify the statuscode as "400"
 
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
+
+  # BNG  and WGS84 Projections
+  @Routing
+  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.733653,-3.523541 | 50.732695,-3.520218 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    And I have private as "true"
+    And I have srs as "WGS84"
+    And I have output_srs as "WGS84"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.733764,-3.523212 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
+
+  @Routing
+  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+    Given I have route point as
+      | pointA       | pointB       |
+      | 292575,93781 | 292736,93681 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    And I have private as "true"
+    And I have srs as "BNG"
+    And I have output_srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco                 | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 292602.008429,93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
+
+  @Routing @Current
+  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.733653,-3.523541 | 50.732695,-3.520218 |
+    And I have vehicle as "emv"
+    And I have private as "true"
+    And I have srs as "WGS84"
+    And I have output_srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco                  | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 292602.008429, 93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
+
+  @Routing @Current
+  Scenario: Verify  a route for non-emergencey services on a(Not to transit through Springfield-private false )
+    Given I have route point as
+      | pointA       | pointB       |
+      | 292629,93798 | 292736,93681 |
+    And I have vehicle as "car"
+    And I have private as "true"
+    And I have srs as "BNG"
+    And I have output_srs as "WGS84"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.734191,-3.521511 | Turn right onto CULVERLAND ROAD | 158.0   | SE        | 6009 | 178.6    |           |

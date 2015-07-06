@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -88,14 +90,19 @@ public class NearestServlet extends GHBaseServlet
 			{
 				GHPoint3D snappedPoint = qr.getSnappedPoint();
 				map.put("type", "Point");
-
+				GHPoint outputPoint;
+				try {
+					outputPoint = transformer.transformPoint(snappedPoint);
+				} catch (FactoryException | TransformException e) {
+					throw new InvalidParameterException("Nearest point WGS84:" + snappedPoint.toString() + "is not valid in output srs " + outputSrs);
+				}
 				JSONArray coord = new JSONArray();
-				coord.put(snappedPoint.lon);
-				coord.put(snappedPoint.lat);
+				coord.put(outputPoint.lon);
+				coord.put(outputPoint.lat);
 
 				if (hopper.hasElevation() && enabledElevation)
 					coord.put(snappedPoint.ele);
-
+				addSrsObject(outputSrs, map);
 				map.put("coordinates", coord);
 
 				// Distance from input to snapped point in meters
@@ -115,7 +122,6 @@ public class NearestServlet extends GHBaseServlet
 			writeJsonError(httpRes, SC_BAD_REQUEST, new JSONObject(map));
 		} else
 		{
-			transformer.transformCoordinates(ghRsp);
 			writeJson(httpReq, httpRes, new JSONObject(map));
 		}
 	}

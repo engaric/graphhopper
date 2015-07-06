@@ -134,13 +134,7 @@ public class GHPoint
 	    }
 	    try
         {
-	    	String[] fromStrs = str.split(",");
-	    	double sourceXCoordinate = Double.parseDouble(fromStrs[0]);
-			double sourceYCoordinate = Double.parseDouble(fromStrs[1]);
-	        CoordinateReferenceSystem outputCRS = OpenCoordConverter.wgs84CoordRefSystem;
-	        CoordinateReferenceSystem inputCRS = srs.equalsIgnoreCase(BNG)||srs.equalsIgnoreCase(OpenCoordConverter.BNG_CRS_CODE)?OpenCoordConverter.bngCoordRefSystem:CRS.decode(srs);
-	        LatLong transformFromSourceCRSToTargetCRS = OpenCoordConverter.transformFromSourceCRSToTargetCRS(inputCRS, outputCRS, sourceXCoordinate, sourceYCoordinate, true);
-	        return new GHPoint(transformFromSourceCRSToTargetCRS.getLatAngle(), transformFromSourceCRSToTargetCRS.getLongAngle());
+	    	return doParse(str, srs);
         } catch (TransformException | IllegalArgumentException e)
         {
         	throw new IllegalArgumentException("Point "
@@ -152,5 +146,17 @@ public class GHPoint
         {
 	       throw new IllegalArgumentException("Srs " + srs + " is not a valid srs for input.");
         } 
+    }
+
+	private static GHPoint doParse( String str, String srs ) throws NoSuchAuthorityCodeException,
+            FactoryException, TransformException
+    {
+	    String[] fromStrs = str.split(",");
+	    double sourceXCoordinate = Double.parseDouble(fromStrs[0]);
+	    double sourceYCoordinate = Double.parseDouble(fromStrs[1]);
+	    CoordinateReferenceSystem outputCRS = OpenCoordConverter.wgs84CoordRefSystem;
+	    CoordinateReferenceSystem inputCRS = srs.equalsIgnoreCase(BNG)||srs.equalsIgnoreCase(OpenCoordConverter.BNG_CRS_CODE)?OpenCoordConverter.bngCoordRefSystem:CRS.decode(srs);
+	    LatLong transformFromSourceCRSToTargetCRS = OpenCoordConverter.transformFromSourceCRSToTargetCRS(inputCRS, outputCRS, sourceXCoordinate, sourceYCoordinate, true);
+	    return new GHPoint(transformFromSourceCRSToTargetCRS.getLatAngle(), transformFromSourceCRSToTargetCRS.getLongAngle());
     }
 }
