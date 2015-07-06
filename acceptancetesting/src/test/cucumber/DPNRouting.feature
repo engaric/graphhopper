@@ -1214,18 +1214,15 @@ Feature: Verify a route from A to B
       | vehicleType | avoidances | routeType |
       | foot        |            | fastest   |
 
-      
-      # BNG and WGS 84
-      
-      
-       @Routing 
+  # BNG and WGS 84
+  @Routing
   Scenario Outline: Verify DPN Route without avoidance -(Exmoor National Park )
     Given I have route point as
       | pointA              | pointB              |
       | 51.206305,-3.683483 | 51.195761,-3.848208 |
     And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
-        And I have srs as "WGS84"
+    And I have srs as "WGS84"
     And I have output_srs as "WGS84"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
@@ -1236,56 +1233,55 @@ Feature: Verify a route from A to B
       | vehicleType  | avoidances | routeType |
       | mountainbike |            | fastest   |
 
-
-  @Routing  
+  @Routing
   Scenario Outline: Verify DPN Route without avoidance -(Exmoor National Park )
     Given I have route point as
-      | pointA              | pointB              |
+      | pointA        | pointB        |
       | 282492,146580 | 270956,145684 |
     And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
-        And I have srs as "BNG"
+    And I have srs as "BNG"
     And I have output_srs as "BNG"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco         | waypointdesc             | azimuth | direction | time  | distance | avoidance   |
-      | 4             |281439.280111,146371.327562         | Continue onto Track | 266.0   | W         | 2620 | 3.6    | InlandWater |
+      | wayPointIndex | waypointco                  | waypointdesc        | azimuth | direction | time | distance | avoidance   |
+      | 4             | 281439.280111,146371.327562 | Continue onto Track | 266.0   | W         | 2620 | 3.6      | InlandWater |
 
     Examples: 
       | vehicleType | avoidances | routeType |
       | foot        |            | fastest   |
-      @Routing 
-        Scenario Outline: Verify DPN Route without avoidance -(Exmoor National Park )
+
+  @Routing
+  Scenario Outline: Verify DPN Route without avoidance -(Exmoor National Park )
     Given I have route point as
       | pointA              | pointB              |
       | 51.206305,-3.683483 | 51.195761,-3.848208 |
     And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
-        And I have srs as "WGS84"
+    And I have srs as "WGS84"
     And I have output_srs as "BNG"
     When I request for a route
     Then I should be able to vlerify the waypoints on the route map:
-      | wayPointIndex | waypointco         | waypointdesc             | azimuth | direction | time | distance | avoidance   |
-      | 3             |      282414.462523, 146543.039233          | Continue onto Minor Road | 259.0   | W         | 588882 | 2944.4     | cycleway |
+      | wayPointIndex | waypointco                   | waypointdesc             | azimuth | direction | time   | distance | avoidance |
+      | 3             | 282414.462523, 146543.039233 | Continue onto Minor Road | 259.0   | W         | 588882 | 2944.4   | cycleway  |
 
     Examples: 
       | vehicleType  | avoidances | routeType |
       | mountainbike |            | fastest   |
 
-
-  @Routing 
+  @Routing
   Scenario Outline: Verify DPN Route without avoidance -(Exmoor National Park )
     Given I have route point as
-      | pointA              | pointB              |
-      | 146580,282492 | 145684,270956 |
+      | pointA        | pointB        |
+      | 282492,146580 | 270956,145684 |
     And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
-        And I have srs as "BNG"
+    And I have srs as "BNG"
     And I have output_srs as "WGS84"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco         | waypointdesc             | azimuth | direction | time  | distance | avoidance   |
-      | 4             | 51.215963,-3.73078 | Continue onto Minor Road | 285.0   | W         | 16336 | 22.7     | InlandWater |
+      | wayPointIndex | waypointco          | waypointdesc        | azimuth | direction | time | distance | avoidance   |
+      | 4             | 51.204211,-3.698476 | Continue onto Track | 266.0   | W         | 2620 | 3.6      | InlandWater |
 
     Examples: 
       | vehicleType | avoidances | routeType |
