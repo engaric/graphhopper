@@ -1241,7 +1241,9 @@ Feature: Verify a route from A to B
     And I have srs as "WGS84"
     And I have output_srs as "BNG"
     When I request for a route
+
     Then I should be able to verify the waypoints on the route map:
+
       | wayPointIndex | waypointco                   | waypointdesc             | azimuth | direction | time   | distance | avoidance |
       | 3             | 282414.462523, 146543.039233 | Continue onto Minor Road | 259.0   | W         | 588882 | 2944.4   | cycleway  |
 
