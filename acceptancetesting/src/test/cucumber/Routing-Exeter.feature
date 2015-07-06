@@ -1387,8 +1387,7 @@ Feature: Verify a route from A to B
     Given I have route point as
       | pointA              | pointB              |
       | 50.733653,-3.523541 | 50.732695,-3.520218 |
-    And I have vehicle as "<vehicleType>"
-    And I have weighting as "<routeType>"
+    And I have vehicle as "car"
     And I have private as "true"
     And I have srs as "WGS84"
     And I have output_srs as "WGS84"
@@ -1402,8 +1401,7 @@ Feature: Verify a route from A to B
     Given I have route point as
       | pointA       | pointB       |
       | 292575,93781 | 292736,93681 |
-    And I have vehicle as "<vehicleType>"
-    And I have weighting as "<routeType>"
+    And I have vehicle as "car"
     And I have private as "true"
     And I have srs as "BNG"
     And I have output_srs as "BNG"
@@ -1412,7 +1410,7 @@ Feature: Verify a route from A to B
       | wayPointIndex | waypointco                 | waypointdesc                    | azimuth | direction | time | distance | avoidance |
       | 2             | 292602.008429,93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
-  @Routing @Current
+  @Routing
   Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
     Given I have route point as
       | pointA              | pointB              |
@@ -1426,7 +1424,7 @@ Feature: Verify a route from A to B
       | wayPointIndex | waypointco                  | waypointdesc                    | azimuth | direction | time | distance | avoidance |
       | 2             | 292602.008429, 93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
-  @Routing @Current
+  @Routing
   Scenario: Verify  a route for non-emergencey services on a(Not to transit through Springfield-private false )
     Given I have route point as
       | pointA       | pointB       |

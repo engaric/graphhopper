@@ -478,7 +478,7 @@ Feature: Verify Error Messages for Vehicle Routing Service (Exeter)
       | zh_CN  |
 
   # Parameter :  weighting
-  @ErrorMessages @Smoke @Current
+  @ErrorMessages @Smoke
   Scenario Outline: Valid Parameter Values for "weighting"
     Given I have route point as
       | pointA              | pointB              |
