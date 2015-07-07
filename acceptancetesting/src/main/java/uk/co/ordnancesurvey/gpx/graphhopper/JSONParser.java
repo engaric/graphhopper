@@ -1,7 +1,6 @@
 package uk.co.ordnancesurvey.gpx.graphhopper;
 
-import java.util.HashSet;
-import java.util.Locale;
+import java.util.ArrayList;
 
 import org.alternativevision.gpx.beans.Waypoint;
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ public class JSONParser {
 	private static final Logger LOG = LoggerFactory.getLogger(JSONParser.class);
 
 	String JSONString;
-	HashSet<Waypoint> wayPoints = new HashSet<Waypoint>();
+	ArrayList<Waypoint> wayPoints = new ArrayList<Waypoint>();
 
 	/**
 	 * Adds a WayPoint to the Instructions ArrayList(WayPoint List)
@@ -42,7 +41,7 @@ public class JSONParser {
 	/**
 	 * @return List of WayPoints in a JSON Route String
 	 */
-	public HashSet<Waypoint> getWayPoints() {
+	public ArrayList<Waypoint> getWayPoints() {
 		return wayPoints;
 	}
 
@@ -75,7 +74,7 @@ public class JSONParser {
 		return instructions;
 	}
 
-	public HashSet<Waypoint> getJsonWayPoints() {
+	public ArrayList<Waypoint> getJsonWayPoints() {
 		return getWayPoints();
 	}
 

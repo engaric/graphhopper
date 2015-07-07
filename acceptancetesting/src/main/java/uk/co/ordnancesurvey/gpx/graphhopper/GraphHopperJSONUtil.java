@@ -1,5 +1,6 @@
 package uk.co.ordnancesurvey.gpx.graphhopper;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.alternativevision.gpx.beans.Waypoint;
@@ -39,7 +40,7 @@ public class GraphHopperJSONUtil {
 
 	}
 
-	public boolean isWayPointinPath(Waypoint we, HashSet<Waypoint> wa) {
+	public boolean isWayPointinPath(Waypoint we, ArrayList<Waypoint> wa) {
 		boolean iswaypointinPath = false;
 
 		for (Waypoint waypoint : wa) {
@@ -106,7 +107,7 @@ public class GraphHopperJSONUtil {
 
 	}
 
-	public HashSet<Waypoint> getJsonCoordinatesAsHashSet() {
+	public ArrayList<Waypoint> getJsonCoordinatesAsArrayList() {
 
 		parser.parseCoordinatesFromJson();
 		return parser.getJsonWayPoints();

@@ -377,6 +377,38 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
       | mtb         |            | fastest   | GET        | json           | OK                 | 200        |
       | foot        |            | fastest   | OPTIONS    | json           | OK                 | 200        |
 
+  @Routing
+  Scenario Outline: Invalid Parameter Value for "point in BNG"
+    Given I have route point as
+      | pointA              | pointB              |
+      | 51.206305,-3.683483 | 51.195761,-3.848208 |
+    And I have vehicle as "foot"
+    And I have srs as "BNG"
+    And I have output_srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | errorMessage                             | statusCode |
+      | Cannot find point 0: 51.206305,-3.683483 | 400        |
+
+  @Routing
+  Scenario Outline: Invalid Parameter Value for "point in WGS84"
+    Given I have route point as
+      | pointA        | pointB        |
+      | 146580,282492 | 145684,270956 |
+    And I have vehicle as "mtb"
+    And I have srs as "WGS84"
+    And I have output_srs as "WGS84"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | errorMessage                       | statusCode |
+      | Cannot find point 0: 146580,282492 | 400        |
+
   # Nearest Point : Invalid Parameter Value "point"
   @ErrorMessages
   Scenario Outline: Verify  nearest point of point using NearestPoint API
@@ -672,7 +704,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     And I have algorithm as "astar"
     And I have type as "json"
     And I have srs as "WGS84"
-    And I have private "<private>"
+    And I have private as "<private>"
     When I request for a route
     Then I should be able to verify the http response message as "OK"
     Then I should be able to verify the http statuscode as "200"
@@ -697,7 +729,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     And I have algorithm as "astar"
     And I have type as "json"
     And I have srs as "WGS84"
-    And I have private "<pretty>"
+    And I have pretty as "<pretty>"
     When I request for a route
     Then I should be able to verify the http response message as "OK"
     Then I should be able to verify the http statuscode as "200"
