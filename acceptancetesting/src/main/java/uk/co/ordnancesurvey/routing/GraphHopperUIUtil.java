@@ -580,7 +580,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			else {
 				assertTrue(GPHJSONUtil.isWayPointinPath(trackPoint,
-						GPHJSONUtil.getJsonCoordinatesAsHashSet()));
+						GPHJSONUtil.getJsonCoordinatesAsArrayList()));
 
 			}
 
@@ -604,7 +604,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 			else {
 				assertTrue(!GPHJSONUtil.isWayPointinPath(trackPoint,
-						GPHJSONUtil.getJsonCoordinatesAsHashSet()));
+						GPHJSONUtil.getJsonCoordinatesAsArrayList()));
 
 			}
 
