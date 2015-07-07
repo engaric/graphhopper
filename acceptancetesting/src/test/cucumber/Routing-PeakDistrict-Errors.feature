@@ -704,7 +704,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     And I have algorithm as "astar"
     And I have type as "json"
     And I have srs as "WGS84"
-    And I have private "<private>"
+    And I have private as "<private>"
     When I request for a route
     Then I should be able to verify the http response message as "OK"
     Then I should be able to verify the http statuscode as "200"
@@ -729,7 +729,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     And I have algorithm as "astar"
     And I have type as "json"
     And I have srs as "WGS84"
-    And I have private "<pretty>"
+    And I have pretty as "<pretty>"
     When I request for a route
     Then I should be able to verify the http response message as "OK"
     Then I should be able to verify the http statuscode as "200"
