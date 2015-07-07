@@ -22,6 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -33,11 +34,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.VerificationModeFactory;
 
 import com.graphhopper.reader.DataReader;
 import com.graphhopper.routing.AlgorithmOptions;
 import com.graphhopper.routing.util.BanPrivateWeighting;
+import com.graphhopper.routing.util.DefaultEdgeFilter;
 import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.routing.util.EscapePrivateWeighting;
@@ -46,6 +50,7 @@ import com.graphhopper.routing.util.FastestWithAvoidancesWeighting;
 import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.routing.util.PriorityWeighting;
 import com.graphhopper.routing.util.PriorityWithAvoidancesWeighting;
+import com.graphhopper.routing.util.PrivateEdgeFilter;
 import com.graphhopper.routing.util.ShortestWeighting;
 import com.graphhopper.routing.util.ShortestWithAvoidancesWeighting;
 import com.graphhopper.routing.util.Weighting;
@@ -53,6 +58,7 @@ import com.graphhopper.routing.util.WeightingMap;
 import com.graphhopper.storage.AvoidanceAttributeExtension;
 import com.graphhopper.storage.GraphExtension;
 import com.graphhopper.storage.GraphStorage;
+import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.CmdArgs;
 import com.graphhopper.util.Helper;
@@ -636,5 +642,76 @@ public class GraphHopperTest
 		
 		privateWeighting = instance.createPrivateWeighting(weighting, request , graph, unsupportedEncoder);
 		assertEquals(weighting.getClass(), privateWeighting.getClass());
+    }
+    
+    @Test
+    public void testIgnorePrivateRoadsOnIndexSearchWhenCannotStartOnPrivate() {
+    	LocationIndex locationIndex = buildGraphAndMocks("OSCAR");
+        expectNearestEdgeLookups(locationIndex);
+		GHRequest request = new GHRequest(11.1, 50, 11.3, 51);
+		request.getHints().put("private", "false");
+		request.setVehicle("car");
+		instance.route(request);
+		verifyEdgeFilterOnLookup(locationIndex, PrivateEdgeFilter.class);
+    }
+
+    @Test
+    public void testDontIgnorePrivateRoadsOnIndexSearchWhenCanStartOnPrivateWithCar() {
+    	LocationIndex locationIndex = buildGraphAndMocks("OSCAR");
+        expectNearestEdgeLookups(locationIndex);
+		GHRequest request = new GHRequest(11.1, 50, 11.3, 51);
+		request.getHints().put("private", "true");
+		request.setVehicle("car");
+		instance.route(request);
+		verifyEdgeFilterOnLookup(locationIndex, DefaultEdgeFilter.class);
+    }
+    
+    @Test
+    public void testDontIgnorePrivateRoadsOnIndexSearchWhenCanStartOnPrivateDueToDefaultWithCar() {
+    	LocationIndex locationIndex = buildGraphAndMocks("OSCAR");
+        expectNearestEdgeLookups(locationIndex);
+		GHRequest request = new GHRequest(11.1, 50, 11.3, 51);
+		request.setVehicle("car");
+		instance.route(request);
+		verifyEdgeFilterOnLookup(locationIndex, DefaultEdgeFilter.class);
+    }
+
+    @Test
+    public void testDontIgnorePrivateRoadsOnIndexSearchWhenCanStartOnPrivateWithEmv() {
+    	LocationIndex locationIndex = buildGraphAndMocks("EMV");
+        expectNearestEdgeLookups(locationIndex);
+		GHRequest request = new GHRequest(11.1, 50, 11.3, 51);
+		request.setVehicle("emv");
+		instance.route(request);
+		verifyEdgeFilterOnLookup(locationIndex, DefaultEdgeFilter.class);
+    }
+    
+    private LocationIndex buildGraphAndMocks(String vehicleEncoder )
+    {
+	    instance = new GraphHopper();
+    	instance = new GraphHopper().setStoreOnFlush(true).setEncodingManager(new EncodingManager(vehicleEncoder)).
+                 init(new CmdArgs().
+                         put("osmreader.osm", testOsm3).
+                         put("prepare.minNetworkSize", "1").
+                         put("graph.flagEncoders", vehicleEncoder)).
+                         setGraphHopperLocation(ghLoc);
+        instance.importOrLoad();
+
+    	LocationIndex locationIndex = Mockito.mock(LocationIndex.class);
+		instance.setLocationIndex(locationIndex );
+        GraphStorage graph = Mockito.mock(GraphStorage.class);
+        instance.setGraph(graph);
+	    return locationIndex;
+    }
+    
+    private void expectNearestEdgeLookups( LocationIndex locationIndex )
+    {
+	    QueryResult nearestResponse = Mockito.mock(QueryResult.class);
+		when(locationIndex.findClosest(Matchers.anyDouble(), Matchers.anyDouble(), Matchers.isA(EdgeFilter.class))).thenReturn(nearestResponse );
+    }
+    
+    private void verifyEdgeFilterOnLookup( LocationIndex locationIndex , Class<? extends EdgeFilter> filterClass  )
+    {
+	    verify(locationIndex, VerificationModeFactory.times(2)).findClosest(Matchers.anyDouble(), Matchers.anyDouble(),Matchers.isA(filterClass));
     }
 }

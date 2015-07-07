@@ -26,7 +26,7 @@ public class DefaultEdgeFilter implements EdgeFilter
 {
     private final boolean in;
     private final boolean out;
-    private FlagEncoder encoder;
+    protected FlagEncoder encoder;
 
     /**
      * Creates an edges filter which accepts both direction of the specified vehicle.
@@ -44,7 +44,7 @@ public class DefaultEdgeFilter implements EdgeFilter
     }
 
     @Override
-    public final boolean accept( EdgeIteratorState iter )
+    public boolean accept( EdgeIteratorState iter )
     {
         long flags = iter.getFlags();
         return out && encoder.isForward(flags) || in && encoder.isBackward(flags);
