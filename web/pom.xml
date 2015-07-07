@@ -102,6 +102,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Manifest reader -->
+		<dependency>
+			<groupId>com.jcabi</groupId>
+			<artifactId>jcabi-manifests</artifactId>
+			<version>0.7.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
