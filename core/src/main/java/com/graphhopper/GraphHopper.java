@@ -56,6 +56,7 @@ import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.routing.util.PrepareRoutingSubnetworks;
 import com.graphhopper.routing.util.PriorityWeighting;
 import com.graphhopper.routing.util.PriorityWithAvoidancesWeighting;
+import com.graphhopper.routing.util.PrivateEdgeFilter;
 import com.graphhopper.routing.util.ShortestWeighting;
 import com.graphhopper.routing.util.ShortestWithAvoidancesWeighting;
 import com.graphhopper.routing.util.TraversalMode;
@@ -926,7 +927,6 @@ public class GraphHopper implements GraphHopperAPI
 		Weighting result;
 
 		String avoidanceString = weightingMap.get("avoidances","");
-		System.err.println("AVOID:" + avoidanceString);
 		boolean avoidancesEnabled = avoidanceString.length()>0;
 		if ("shortest".equalsIgnoreCase(weighting))
 		{
@@ -1063,7 +1063,12 @@ public class GraphHopper implements GraphHopperAPI
 		visitedSum.set(0);
 
 		FlagEncoder encoder = encodingManager.getEncoder(vehicle);
-		EdgeFilter edgeFilter = new DefaultEdgeFilter(encoder);
+		EdgeFilter edgeFilter;
+		if(!encoder.supports(EscapePrivateWeighting.class) || checkForNoThroughAccess(request)) {
+			edgeFilter = new DefaultEdgeFilter(encoder);
+		} else {
+			edgeFilter = new PrivateEdgeFilter(encoder);
+		}
 
 		StopWatch sw = new StopWatch().start();
 		List<QueryResult> qResults = new ArrayList<QueryResult>(points.size());
