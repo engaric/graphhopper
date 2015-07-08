@@ -22,6 +22,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.graphhopper.util.CmdArgs;
+import com.jcabi.manifests.Manifests;
 
 /**
  * Replacement of web.xml used only for container deployment. Preferred method is to use GHServer.

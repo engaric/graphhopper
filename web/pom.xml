@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.graphhopper</groupId>
 	<artifactId>graphhopper-web</artifactId>
 	<packaging>war</packaging>
-	<version>1.21-SNAPSHOT</version>
+	<version>1.26-SNAPSHOT</version>
 	<name>GraphHopper Web</name>
 	<description>Example on how to use GraphHopper in a web-based application</description>
 
 	<parent>
 		<groupId>com.graphhopper</groupId>
 		<artifactId>graphhopper-parent</artifactId>
-		<version>1.21-SNAPSHOT</version>
+		<version>1.26-SNAPSHOT</version>
 	</parent>
 	<properties>
 		<jetty.version>8.1.16.v20140903</jetty.version>
@@ -102,6 +101,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Manifest reader -->
+		<dependency>
+			<groupId>com.jcabi</groupId>
+			<artifactId>jcabi-manifests</artifactId>
+			<version>0.7.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -112,6 +118,11 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<attachClasses>true</attachClasses>
+					<archive>
+						<manifestEntries>
+							<release-version>${project.version}</release-version>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -120,7 +131,8 @@
 				<version>2.2</version>
 				<configuration>
 					<url>http://localhost:8080/manager/text</url>
-					<!-- Tomcat manager credentials (need to enable in tomcat-users config file) -->
+					<!-- Tomcat manager credentials (need to enable in tomcat-users config 
+						file) -->
 					<username>admin</username>
 					<password>password</password>
 					<path>/</path>
