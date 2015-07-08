@@ -22,6 +22,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.graphhopper.util.CmdArgs;
+import com.jcabi.manifests.Manifests;
 
 /**
  * Replacement of web.xml used only for container deployment. Preferred method is to use GHServer.
@@ -38,7 +39,7 @@ public class GuiceServletConfig extends GuiceServletContextListener
     {
         try
         {
-            args = CmdArgs.readFromConfig("config.properties", "graphhopper.config");
+            args = CmdArgs.readFromConfig("/home/vagrant/git/graphhopper/config-example.properties", "graphhopper.config");
         } catch (Exception ex)
         {
             throw new RuntimeException(ex);

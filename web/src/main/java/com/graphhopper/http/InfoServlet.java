@@ -17,21 +17,23 @@
  */
 package com.graphhopper.http;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
+
 import com.graphhopper.GraphHopper;
 import com.graphhopper.storage.StorableProperties;
 import com.graphhopper.util.Constants;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.shapes.BBox;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-import org.json.JSONObject;
+import com.jcabi.manifests.Manifests;
 
 /**
  * @author Peter Karich
@@ -73,6 +75,10 @@ public class InfoServlet extends GHBaseServlet
 
         if (!Helper.isEmpty(props.get("prepare.date")))
             json.put("prepare_date", props.get("prepare.date"));
+        
+        //build information
+        Manifests.append(req.getServletContext());
+        json.put("release-version", Manifests.read("release-version"));
 
         writeJson(req, res, json);
     }
