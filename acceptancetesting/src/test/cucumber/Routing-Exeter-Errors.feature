@@ -47,6 +47,25 @@ Feature: Verify Error Messages for Vehicle Routing Service (Exeter)
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                 | statusCode |
       | car         |            | fastest   | json           | Point 50.729961,string is not a valid point. Point must be a comma separated coordinate in WGS84 projection. | 400        |
 
+  # Parameter :  point
+  @ErrorMessages
+  Scenario Outline: Incorrect Parameter Value "point"
+    Given I have route point as
+      | pointA           | pointB              |
+      | 50.729961,string | 50.723364,-3.523895 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    And I have srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                 | statusCode |
+      | car         |            | fastest   | json           | Point 50.729961,string is not a valid point. Point must be a comma separated coordinate in BNG projection. | 400        |
+
+
   @ErrorMessages
   Scenario Outline: Incorrect Parameter Value "point"
     Given I have route point as
