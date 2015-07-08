@@ -75,7 +75,7 @@ public class GraphHopperJSONUtil {
 		w.setDescription(wayPointDescription);
 		w.addExtensionData(ExtensionConstants.DISTANCE, distance);
 		w.addExtensionData(ExtensionConstants.TIME, time);
-		w.addExtensionData("Annotation_text", avoidance.trim());
+		w.addExtensionData("Annotation_text", avoidance.replaceAll(" ", ""));
 		return w;
 
 	}

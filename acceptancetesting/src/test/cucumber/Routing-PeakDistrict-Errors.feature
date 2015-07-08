@@ -4,7 +4,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
 
   #Error Messages
   #Successful request
-  @ErrorMessages
+  @ErrorMessages @Demo
   Scenario Outline: Successful request with all parameters
     Given I have route <point> as
       | pointA              | pointB              |
@@ -31,7 +31,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
       | POinT | VEHiCLE | WEIGHtING | LOCaLE | DEbUG | POINTs_ENCODED | CALc_POINTS | INSTRuCTIONS | ALGOrITHM | TYpE |
 
   # Parameter :  point
-  @ErrorMessages
+  @ErrorMessages @Demo
   Scenario Outline: Incorrect Parameter Value "point"
     Given I have route point as
       | pointA           | pointB              |
