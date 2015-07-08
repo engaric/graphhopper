@@ -74,17 +74,20 @@ public abstract class AbstractAvoidanceDecorator implements EncoderDecorator
 
 	private String getWayName( long wayType, Translation tr )
 	{
-		String wayName = "";
+		StringBuilder wayName = new StringBuilder();
 		for (EdgeAttribute aType : getEdgeAttributesOfInterest())
 		{
 			if ((wayType & aType.getValue()) == aType.getValue())
 			{
-				wayName += " ";
-				wayName += aType.name();
+				wayName.append(aType.name());
+				wayName.append(", ");
 			}
 		}
-
-		return wayName;
+		int length = wayName.length();
+		if(length>0) {
+			wayName.delete(length -2, length);
+		}
+		return wayName.toString();
 	}
 
 	@Override
