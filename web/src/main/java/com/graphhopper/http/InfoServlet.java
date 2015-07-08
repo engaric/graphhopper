@@ -77,8 +77,8 @@ public class InfoServlet extends GHBaseServlet
             json.put("prepare_date", props.get("prepare.date"));
         
         //build information
-        Manifests.append(req.getServletContext());
-        json.put("release-version", Manifests.read("release-version"));
+//        Manifests.append(req.getServletContext());
+//        json.put("release-version", Manifests.read("release-version"));
 
         writeJson(req, res, json);
     }
