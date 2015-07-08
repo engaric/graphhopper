@@ -159,7 +159,7 @@ public class OsAvoidanceDecoratorTest {
         assertEquals(OsAvoidanceDecorator.AvoidanceType.QuarryOrPit.getValue(), wayFlag - OsAvoidanceDecorator.AvoidanceType.Scree.getValue());
         assertEquals(OsAvoidanceDecorator.AvoidanceType.Scree.getValue(), wayFlag  - OsAvoidanceDecorator.AvoidanceType.QuarryOrPit.getValue() );
         InstructionAnnotation annotation = osAvoidances.getAnnotation(wayFlag, null);
-        assertEquals(" QuarryOrPit Scree", annotation.getMessage());
+        assertEquals("QuarryOrPit, Scree", annotation.getMessage());
     }
 
 }
