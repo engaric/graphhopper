@@ -82,9 +82,8 @@ public class InfoServlet extends GHBaseServlet
         
         json.put("", Constants.SNAPSHOT);
         
-        //build information
-//        Manifests.append(req.getServletContext());
-//        json.put("release-version", Manifests.read("release-version"));
+        json.put("import_version", props.get("import_version"));
+        json.put("import_version.type", props.get("import_version.type"));
 
         writeJson(req, res, json);
     }
