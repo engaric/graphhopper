@@ -4,7 +4,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
 
   #Error Messages
   #Successful request
-  @ErrorMessages @Demo
+  @ErrorMessages 
   Scenario Outline: Successful request with all parameters
     Given I have route <point> as
       | pointA              | pointB              |
@@ -657,7 +657,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
       | gpx  |
       | json |
 
-  @ErrorMessages @Current
+  @ErrorMessages 
   Scenario Outline: verify valid parameter values for "SRS "
     Given I have route point as
       | pointA   | pointB   |
