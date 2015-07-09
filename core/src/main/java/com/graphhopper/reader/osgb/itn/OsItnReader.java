@@ -275,6 +275,7 @@ public class OsItnReader extends AbstractOsReader<Long>
 			logger.error(PREPROCESS_FORMAT, itnFile.getName());
 			in = new OsItnInputFile(itnFile);
 			in.setWorkerThreads(workerThreads).open();
+			graphStorage.getProperties().put("itn.data_version", in.getDataVersion());
 			preProcessSingleFile(in);
 		} finally
 		{

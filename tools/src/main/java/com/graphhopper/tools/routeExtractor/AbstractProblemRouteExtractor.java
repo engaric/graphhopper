@@ -250,7 +250,7 @@ abstract public class AbstractProblemRouteExtractor {
 
         private boolean isEndBlock(final String curLine) {
             boolean endBlock = false;
-            switch (curLine) {
+            switch (curLine.trim()) {
             case "</osgb:networkMember>":
             case "</osgb:roadInformationMember>":
             case "</osgb:roadMember>": {
