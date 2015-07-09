@@ -46,6 +46,7 @@ abstract public class AbstractOsInputFile<T extends RoutingElement>  implements 
      * The factory to use to create RoutingElements. eg Itn, Dpn or Hn
      */
     private AbstractRoutingElementFactory<T> abstractFactory;
+	private String dataVersion;
 
     public AbstractOsInputFile(File file, AbstractRoutingElementFactory<T> abstractFactory) throws IOException {
         this(file, abstractFactory, "id");
@@ -65,6 +66,11 @@ abstract public class AbstractOsInputFile<T extends RoutingElement>  implements 
 
     public InputStream getInputStream() {
         return bis;
+    }
+    
+    public String getDataVersion()
+    {
+	    return dataVersion;
     }
 
     public AbstractRoutingElementFactory<T> getAbstractFactory() {
@@ -156,7 +162,7 @@ abstract public class AbstractOsInputFile<T extends RoutingElement>  implements 
             throw new IllegalArgumentException(String.format(
                     "File %s not a valid OS ITN stream", name));
         }
-
+        dataVersion = parser.getAttributeValue(null, idKey);
         eof = false;
     }
 

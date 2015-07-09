@@ -150,7 +150,7 @@ Feature: Verify a route from A to B
 
   # No Turns Restrictions 
   # Below test failing as it is going through no turn and and has been reported in jira as [ROUTE-198]
-  @Routing @KnownIssues
+  @Routing 
   Scenario Outline: Verify  No Turn  Restrictions on a Route (Western Way-Exeter)
     Given I have route point as
       | pointA              | pointB              |

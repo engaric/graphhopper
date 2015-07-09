@@ -275,6 +275,7 @@ public class OsItnReader extends AbstractOsReader<Long>
 			logger.error(PREPROCESS_FORMAT, itnFile.getName());
 			in = new OsItnInputFile(itnFile);
 			in.setWorkerThreads(workerThreads).open();
+			graphStorage.getProperties().put("itn.data_version", in.getDataVersion());
 			preProcessSingleFile(in);
 		} finally
 		{
@@ -818,6 +819,8 @@ public class OsItnReader extends AbstractOsReader<Long>
 				}.setOSMFile(hnPath).setGraphHopperLocation(hnGraphLocation)
 				.setEncodingManager(encodingManager).setCHEnable(false).setAsHnReader();
 				hnGraphHopper.importOrLoad();
+				String value = hnGraphHopper.getGraph().getProperties().get("hn.data_version");
+				graphStorage.getProperties().put("hn.data_version", value);
 				// OsHnReader hnReader = new OsHnReader(hnGraphHopper.getGraph());
 				logger.error("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<=================================================");
 
