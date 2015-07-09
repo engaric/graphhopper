@@ -4,7 +4,7 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
 
   #Error Messages
   #Successful request
-  @ErrorMessages
+  @ErrorMessages @Demo
   Scenario Outline: Successful request with all parameters
     Given I have route <point> as
       | pointA              | pointB              |
@@ -46,6 +46,23 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     Examples: 
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                 | statusCode |
       | foot        |            | fastest   | json           | Point 50.729961,string is not a valid point. Point must be a comma separated coordinate in WGS84 projection. | 400        |
+
+  @ErrorMessages
+  Scenario Outline: Incorrect Parameter Value "point"
+    Given I have route point as
+      | pointA           | pointB              |
+      | 50.729961,string | 50.723364,-3.523895 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    And I have srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                               | statusCode |
+      | foot        |            | fastest   | json           | Point 50.729961,string is not a valid point. Point must be a comma separated coordinate in BNG projection. | 400        |
 
   @ErrorMessages
   Scenario Outline: Incorrect Parameter Value "point"
@@ -304,8 +321,8 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | errorMessage                                  | statusCode |
-      | Srs ABC is not a valid output_srs for output. | 400        |
+      | errorMessage                           | statusCode |
+      | Srs abc is not a valid srs for output. | 400        |
 
   @ErrorMessages
   Scenario Outline: Invalid Parameter Value for "private "
@@ -390,8 +407,8 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | errorMessage                             | statusCode |
-      | Cannot find point 0: 51.206305,-3.683483 | 400        |
+      | errorMessage                                              | statusCode |
+      | Cannot find point 0: 49.766808346389624,-7.55644832086991 | 400        |
 
   @Routing
   Scenario Outline: Invalid Parameter Value for "point in WGS84"
@@ -406,8 +423,8 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     Then I should be able to verify the statuscode as "<statusCode>"
 
     Examples: 
-      | errorMessage                       | statusCode |
-      | Cannot find point 0: 146580,282492 | 400        |
+      | errorMessage                           | statusCode |
+      | Cannot find point 0: 146580.0,282492.0 | 400        |
 
   # Nearest Point : Invalid Parameter Value "point"
   @ErrorMessages
@@ -640,11 +657,11 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
       | gpx  |
       | json |
 
-  @ErrorMessages
+  @ErrorMessages @Current
   Scenario Outline: verify valid parameter values for "SRS "
     Given I have route point as
-      | pointA              | pointB              |
-      | 53.410574,-1.825276 | 53.277655,-1.805662 |
+      | pointA   | pointB   |
+      | <pointA> | <pointB> |
     And I have vehicle as "foot"
     And I have weighting as "fastest"
     And I have locale as "en_US"
@@ -660,9 +677,9 @@ Feature: Verify Error Messages for non-vehicle Routing service (Peak District)
     Then I should be able to verify the http statuscode as "200"
 
     Examples: 
-      | SRS   |
-      | WGS84 |
-      | BNG   |
+      | SRS   | pointA              | pointB              |
+     # | WGS84 | 53.410574,-1.825276 | 53.277655,-1.805662 |
+      | BNG   | 282492,146580      | 270956,145684       |
 
   @ErrorMessages
   Scenario Outline: verify valid parameter values for "output_srs "
