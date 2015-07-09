@@ -39,7 +39,7 @@ public class GuiceServletConfig extends GuiceServletContextListener
     {
         try
         {
-            args = CmdArgs.readFromConfig("/home/vagrant/git/graphhopper/config-example.properties", "graphhopper.config");
+            args = CmdArgs.readFromConfig("config.properties", "graphhopper.config");
         } catch (Exception ex)
         {
             throw new RuntimeException(ex);

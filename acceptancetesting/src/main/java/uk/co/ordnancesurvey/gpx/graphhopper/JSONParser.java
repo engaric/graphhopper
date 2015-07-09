@@ -115,7 +115,7 @@ public class JSONParser {
 			LOG.info("distance :" + distance);
 			if (null != annotation_text) {
 				w.addExtensionData("Annotation_text", annotation_text
-						.getAsString().trim());
+						.getAsString().replaceAll(" ",""));
 				LOG.info("annotation_text: "
 						+ annotation_text.getAsString().trim());
 			}

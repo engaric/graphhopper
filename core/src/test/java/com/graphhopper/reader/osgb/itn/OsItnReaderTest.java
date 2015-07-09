@@ -20,6 +20,8 @@ package com.graphhopper.reader.osgb.itn;
 import static com.graphhopper.util.GHUtility.count;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -52,7 +54,19 @@ import com.graphhopper.util.GHUtility;
 public class OsItnReaderTest extends AbstractOsItnReaderTest {
 
     private static final Logger logger = LoggerFactory.getLogger(OsItnReaderTest.class);
-    private static final InputStream COMPLEX_ITN_EXAMPLE = OsItnReader.class.getResourceAsStream("os-itn-sample.xml");
+    
+    @Test
+    public void testReadVersionInfo() throws IOException {
+        final boolean turnRestrictionsImport = true;
+        final boolean is3D = false;
+        final GraphHopperStorage graph = configureStorage(turnRestrictionsImport, is3D);
+
+        final File file = new File("./src/test/resources/com/graphhopper/reader/os-itn-no-entry-multipoint-crossroad.xml");
+        readGraphFile(graph, file);
+        
+        assertNotNull(graph.getProperties().get("itn.data_version"));
+        assertEquals("GDS-58096-1", graph.getProperties().get("itn.data_version"));
+    }
 
     @Test
     public void testReadItnNoEntryMultipointCrossroad() throws IOException {

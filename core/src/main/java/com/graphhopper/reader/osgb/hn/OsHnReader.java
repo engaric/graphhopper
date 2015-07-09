@@ -51,6 +51,9 @@ public class OsHnReader extends AbstractOsReader<Long> {
             logger.error(PREPROCESS_FORMAT, hnFile.getName());
             in = new OsHnInputFile(hnFile);
             in.setWorkerThreads(workerThreads).open();
+            System.out.println("OsHnReader.preProcessSingleFile(" + in.getDataVersion()
+            		+ ":" + graphStorage + ")");
+            graphStorage.getProperties().put("hn.data_version", in.getDataVersion());
             preProcessSingleFile(in);
         } finally {
             Helper.close(in);

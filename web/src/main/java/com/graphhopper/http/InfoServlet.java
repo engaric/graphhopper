@@ -68,18 +68,33 @@ public class InfoServlet extends GHBaseServlet
         json.put("features", features);
 
         json.put("version", Constants.VERSION);
+        String versionType = (Constants.SNAPSHOT) ? "!! NON-PRODUCTION RELEASE !!" : "Production";
+        json.put("version.type", versionType);
+        
+        
         json.put("build_date", Constants.BUILD_DATE);
 
         StorableProperties props = hopper.getGraph().getProperties();
-        json.put("import_date", props.get("osmreader.import.date"));
-
-        if (!Helper.isEmpty(props.get("prepare.date")))
-            json.put("prepare_date", props.get("prepare.date"));
-        
-        //build information
-        Manifests.append(req.getServletContext());
-        json.put("release-version", Manifests.read("release-version"));
+        addIfSet(json, props, "osmreader.import.date", "import_date");
+        addIfSet(json, props, "prepare.date");
+        addIfSet(json, props, "itn.data_version");
+        addIfSet(json, props, "hn.data_version");
+        addIfSet(json, props, "dpn.data_version");
+        addIfSet(json, props, "import_version");
+        addIfSet(json, props, "import_version.type");
 
         writeJson(req, res, json);
     }
+
+	private void addIfSet(JSONObject json, StorableProperties props,
+			String propertyName) {
+		addIfSet(json, props, propertyName, propertyName);
+	}
+
+	private void addIfSet(JSONObject json, StorableProperties props, String propertyName, String outputName) {
+		String value = props.get(propertyName);
+		if(!Helper.isEmpty(value)) {
+			json.put(outputName, value);
+		}
+	}
 }

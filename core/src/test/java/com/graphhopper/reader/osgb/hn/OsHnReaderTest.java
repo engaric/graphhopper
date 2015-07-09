@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.reader.osgb.AbstractOsItnReaderTest;
 import com.graphhopper.storage.GraphStorage;
+import com.graphhopper.storage.StorableProperties;
 import com.graphhopper.util.CmdArgs;
 import com.graphhopper.util.EdgeExplorer;
 import com.graphhopper.util.Instruction;
@@ -77,7 +78,13 @@ public class OsHnReaderTest extends AbstractOsItnReaderTest {
         assertEquals(Instruction.TURN_SLIGHT_RIGHT, instructionList.get(2).getSign());
         assertEquals("END ROAD", instructionList.get(2).getName());
         assertEquals(Instruction.FINISH, instructionList.get(3).getSign());
-
+    }
+    
+    @Test
+    public void testHNVersionInfo() {
+    	GraphHopper graphHopper = readHN();
+    	StorableProperties properties = graphHopper.getGraph().getProperties();
+    	assertEquals("HighwaysNetwork_March2015", properties.get("hn.data_version"));
     }
 
     /**
@@ -89,22 +96,7 @@ public class OsHnReaderTest extends AbstractOsItnReaderTest {
      */
     @Test
     public void testMotorwayARoadNetwork_WithHighwaysNetworkData() {
-        System.out.println("===>>> testMotorwayARoadNetwork_WithHighwaysNetworkData()");
-        String graphLoc = "./target/output/testMotorwayARoadNetwork_WithHighwaysNetworkData/os-itn-hn-test-network-gh";
-        String inputFile = "./src/test/resources/com/graphhopper/reader/os-itn-hn-test-network.xml";
-
-
-        Map<String, String> args = new HashMap<>();
-        args.put("hn.data", "./src/test/resources/com/graphhopper/reader/hn/os-hn-single-urban.xml");
-        args.put("hn.graph.location", "./target/output/testMotorwayARoadNetwork_WithHighwaysNetworkData/highways_network");
-        args.put("graph.location", graphLoc);
-        args.put("osmreader.osm", inputFile);
-        args.put("config", "../config.properties");
-        CmdArgs commandLineArguments = new CmdArgs(args);
-        commandLineArguments = CmdArgs.readFromConfigAndMerge(commandLineArguments, "config", "graphhopper.config");
-
-        GraphHopper graphHopper = new GraphHopper().setInMemory().setAsItnReader().init(commandLineArguments).setCHEnable(false).setEncodingManager(encodingManager);
-        graphHopper.importOrLoad();
+        GraphHopper graphHopper = readHN();
         GraphStorage graph = graphHopper.getGraph();
 
         //        printNodes(graph.createEdgeExplorer(carOutEdges), 6);
@@ -126,6 +118,27 @@ public class OsHnReaderTest extends AbstractOsItnReaderTest {
         assertEquals("END ROAD", instructionList.get(2).getName());
         assertEquals(Instruction.FINISH, instructionList.get(3).getSign());
 
+    }
+
+	private GraphHopper readHN()
+    {
+	    System.out.println("===>>> testMotorwayARoadNetwork_WithHighwaysNetworkData()");
+        String graphLoc = "./target/output/testMotorwayARoadNetwork_WithHighwaysNetworkData/os-itn-hn-test-network-gh";
+        String inputFile = "./src/test/resources/com/graphhopper/reader/os-itn-hn-test-network.xml";
+
+
+        Map<String, String> args = new HashMap<>();
+        args.put("hn.data", "./src/test/resources/com/graphhopper/reader/hn/os-hn-single-urban.xml");
+        args.put("hn.graph.location", "./target/output/testMotorwayARoadNetwork_WithHighwaysNetworkData/highways_network");
+        args.put("graph.location", graphLoc);
+        args.put("osmreader.osm", inputFile);
+        args.put("config", "../config.properties");
+        CmdArgs commandLineArguments = new CmdArgs(args);
+        commandLineArguments = CmdArgs.readFromConfigAndMerge(commandLineArguments, "config", "graphhopper.config");
+
+        GraphHopper graphHopper = new GraphHopper().setInMemory().setAsItnReader().init(commandLineArguments).setCHEnable(false).setEncodingManager(encodingManager);
+        graphHopper.importOrLoad();
+	    return graphHopper;
     }
 
     private void testNodes(GraphStorage graph) {
