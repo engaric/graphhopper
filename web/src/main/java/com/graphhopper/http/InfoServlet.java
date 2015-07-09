@@ -68,6 +68,10 @@ public class InfoServlet extends GHBaseServlet
         json.put("features", features);
 
         json.put("version", Constants.VERSION);
+        String versionType = (Constants.SNAPSHOT) ? "!! NON-PRODUCTION RELEASE !!" : "Production";
+        json.put("version.type", versionType);
+        
+        
         json.put("build_date", Constants.BUILD_DATE);
 
         StorableProperties props = hopper.getGraph().getProperties();
@@ -75,6 +79,8 @@ public class InfoServlet extends GHBaseServlet
 
         if (!Helper.isEmpty(props.get("prepare.date")))
             json.put("prepare_date", props.get("prepare.date"));
+        
+        json.put("", Constants.SNAPSHOT);
         
         //build information
 //        Manifests.append(req.getServletContext());
