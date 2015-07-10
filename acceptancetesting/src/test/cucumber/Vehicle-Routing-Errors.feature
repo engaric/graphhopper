@@ -1,4 +1,4 @@
-Feature: Verify Error Messages for Vehicle Routing Service (Exeter)
+Feature: Verify Error Messages for vehicle Routing service
    As a user
    I want to get a valid Error message and status code for a invalid route request
 
@@ -396,7 +396,7 @@ Feature: Verify Error Messages for Vehicle Routing Service (Exeter)
       | car         |            | fastest   | GET        | json           | OK                 | 200        |
       | car         |            | fastest   | OPTIONS    | json           | OK                 | 200        |
 
-  @Routing @Current
+  @Routing 
   Scenario Outline: Verify  a route for emergencey services on a(Transit through Springfield-private true )
     Given I have route point as
       | pointA              | pointB              |
@@ -413,7 +413,7 @@ Feature: Verify Error Messages for Vehicle Routing Service (Exeter)
       | errorMessage                             | statusCode |
       | Cannot find point 0: 50.733653,-3.523541 | 400        |
 
-  @Routing
+  @Routing @Current
   Scenario Outline: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
     Given I have route point as
       | pointA       | pointB       |

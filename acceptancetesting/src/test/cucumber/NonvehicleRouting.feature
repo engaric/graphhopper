@@ -1,4 +1,4 @@
-Feature: Verify a route from A to B for DPN
+Feature: Verify a route from A to B for Non-Vehicle
     As a user
     I want to get a route from location A to location B by Foot using the routing service
     And route should be the fastest route and contain the waypoints,restrictions,time and other instructions

@@ -1,4 +1,4 @@
-Feature: Smoke Tests- Peak District: Verify Error Messsage for a route from A to B
+Feature: Non-Vehicle Routing Smoke Tests
    As a user
    I want to get a route from location A to location B using the routing service
    And route should be the fastest route and contain the waypoints,restrictions,time and other instructions
