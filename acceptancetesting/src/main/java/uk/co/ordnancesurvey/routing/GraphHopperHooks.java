@@ -56,7 +56,7 @@ public class GraphHopperHooks {
 
 		testON = IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "Service");
-		init();
+		graphUiUtil= new GraphHopperUIUtil();
 
 	}
 
