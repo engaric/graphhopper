@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,6 +48,7 @@ import uk.co.ordnancesurvey.api.srs.OpenCoordConverter;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
+import com.graphhopper.InvalidPointParameter;
 import com.graphhopper.http.validation.BooleanValidator;
 import com.graphhopper.http.validation.CaseInsensitiveStringListValidator;
 import com.graphhopper.routing.AlgorithmOptions;
@@ -254,14 +256,31 @@ public class GraphHopperServlet extends GHBaseServlet {
 					ghRsp = hopper.route(request);
 				}
 			}
-		} catch (Exception e) {
-			if (e instanceof IllegalArgumentException) {
-				e = new InvalidParameterException(e.getMessage());
-			}
+		} catch (IllegalArgumentException iae) {
+			Exception ipe = new InvalidParameterException(iae.getMessage());
+			ghRsp = new GHResponse().addError(ipe);
+		}
+		catch (Exception e) {
 			ghRsp = new GHResponse().addError(e);
 		} finally {
 			if (!ghRsp.hasErrors() && !writeGPX) {
 				transformer.transformCoordinates(ghRsp);
+			}
+			if(ghRsp.hasErrors()  && !isInternalSRS(srs)) {
+				List<Throwable> errors = ghRsp.getErrors();
+				Iterator<Throwable> iterator = errors.iterator();
+				List<Throwable> newErrors = new ArrayList<Throwable>();
+				while(iterator.hasNext()) {
+					Throwable throwable = iterator.next();
+					if (throwable instanceof InvalidPointParameter) {
+						iterator.remove();
+						InvalidPointParameter ipp = (InvalidPointParameter) throwable;
+						String[] pointsAsStr = getParams(httpReq, "point");
+						ipp = new InvalidPointParameter(ipp.getIndex(), pointsAsStr[ipp.getIndex()]);
+						newErrors.add(ipp);
+					}
+				}
+				errors.addAll(newErrors);
 			}
 			float took = sw.stop().getSeconds();
 			String infoStr = httpReq.getRemoteAddr() + " "
@@ -316,6 +335,10 @@ public class GraphHopperServlet extends GHBaseServlet {
 		}
 
 		return ghRsp;
+	}
+
+	private boolean isInternalSRS(String srs) {
+		return srs.equalsIgnoreCase(OpenCoordConverter.WGS84_CRS_CODE) || srs.equalsIgnoreCase("WGS84");
 	}
 
 	private String buildBooleanErrorMessageString(String paramValue,
