@@ -28,7 +28,7 @@ public class GraphHopperHooks {
 
 	DataTable routePointsTable;
 
-	@Before({ "~@WebOnly", "~@SampleScenario" ,"~@ErrorMessages"})
+	@Before({ "~@WebOnly", "~@SampleScenario" ,"~@ErrorMessages","~@Smoke"})
 	public void init() {
 		
 
@@ -56,7 +56,7 @@ public class GraphHopperHooks {
 
 		testON = IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "Service");
-		init();
+		graphUiUtil= new GraphHopperUIUtil();
 
 	}
 

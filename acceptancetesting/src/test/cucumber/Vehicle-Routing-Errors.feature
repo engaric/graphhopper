@@ -47,6 +47,26 @@ Feature: Verify Error Messages for vehicle Routing service
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                 | statusCode |
       | car         |            | fastest   | json           | Point 50.729961,string is not a valid point. Point must be a comma separated coordinate in WGS84 projection. | 400        |
 
+
+  # Parameter :  point
+  @ErrorMessages
+  Scenario Outline: Incorrect Parameter Value "point"
+    Given I have route point as
+      | pointA           | pointB              |
+      | 50.729961 | 50.723364,-3.523895 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                 | statusCode |
+      | car         |            | fastest   | json           | Point 50.729961 is not a valid point. Point must be a comma separated coordinate in WGS84 projection. | 400        |
+
+
+
   # Parameter :  point
   @ErrorMessages
   Scenario Outline: Incorrect Parameter Value "point"
@@ -117,7 +137,7 @@ Feature: Verify Error Messages for vehicle Routing service
       | car         |            | fastest   | json           | No point parameter provided. | 400        |
 
   # Parameter :  vehicle
-  @ErrorMessages @Smoke
+  @ErrorMessages 
   Scenario Outline: Missing Parameter "vehicle"
     Given I have route point as
       | pointA              | pointB              |
@@ -134,7 +154,7 @@ Feature: Verify Error Messages for vehicle Routing service
       | foot        |            | fastest   | json           | No vehicle parameter provided. | 400        |
 
   # Parameter :  weighting
-  @ErrorMessages @Smoke
+  @ErrorMessages 
   Scenario Outline: Invalid Parameter Value for "weighting"
     Given I have route point as
       | pointA              | pointB              |
@@ -497,7 +517,7 @@ Feature: Verify Error Messages for vehicle Routing service
       | zh_CN  |
 
   # Parameter :  weighting
-  @ErrorMessages @Smoke
+  @ErrorMessages 
   Scenario Outline: Valid Parameter Values for "weighting"
     Given I have route point as
       | pointA              | pointB              |

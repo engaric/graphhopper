@@ -5,7 +5,7 @@ Feature: Vehicle Routing Smoke Tests
 
   #Error Messages
   #Successful request
-  @ErrorMessages @Smoke
+  @Smoke
   Scenario Outline: Successful request with all parameters
     Given I have route <point> as
       | pointA              | pointB              |
@@ -32,7 +32,7 @@ Feature: Vehicle Routing Smoke Tests
       | POinT | VEHiCLE | WEIGHtING | LOCaLE | DEbUG | POINTs_ENCODED | CALc_POINTS | INSTRuCTIONS | ALGOrITHM | TYpE |
 
   # Parameter :  vehicle
-  @ErrorMessages @Smoke
+  @Smoke
   Scenario Outline: Incorrect Parameter Value for "Vehicle"
     Given I have route point as
       | pointA              | pointB              |
@@ -54,7 +54,7 @@ Feature: Vehicle Routing Smoke Tests
       | Bike        |            | fastest   | Vehicle Bike is not a valid vehicle. Valid vehicles are car,emv  | 400        | Bad Request      |
 
   # Parameter :  vehicle
-  @ErrorMessages @Smoke
+  @Smoke
   Scenario Outline: Incorrect Parameter Name "vehicles"
     Given I have route point as
       | pointA              | pointB              |
@@ -72,7 +72,7 @@ Feature: Vehicle Routing Smoke Tests
       | car         |            | fastest   | json           | No vehicle parameter provided. | 400        |
 
   # Parameter :  avoidances
-  @ErrorMessages
+@Smoke
   Scenario Outline: Invalid Parameter Value for "avoidances"
     Given I have route point as
       | pointA              | pointB              |
