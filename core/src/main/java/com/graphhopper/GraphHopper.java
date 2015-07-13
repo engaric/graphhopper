@@ -1077,9 +1077,7 @@ public class GraphHopper implements GraphHopperAPI
 			GHPoint point = points.get(placeIndex);
 			QueryResult res = locationIndex.findClosest(point.lat, point.lon, edgeFilter);
 			if (!res.isValid())
-				rsp.addError(new IllegalArgumentException("Cannot find point " + placeIndex + ": "
-						+ point));
-
+				rsp.addError(new InvalidPointParameter(placeIndex,point));
 			qResults.add(res);
 		}
 
