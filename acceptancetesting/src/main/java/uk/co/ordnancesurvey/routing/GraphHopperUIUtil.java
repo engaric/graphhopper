@@ -733,8 +733,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 			actualResponseMsg = statusLine.getReasonPhrase();
 
 		} catch (IOException e) {
-			LOG.info("Exception raised whilst attempting to call graphhopper server "
-					+ e.getMessage());
+			LOG.info("Exception raised whilst attempting to call graphhopper server ", e);
 		}
 
 		if (serviceResponse != null && serviceResponse.length() > 0) {

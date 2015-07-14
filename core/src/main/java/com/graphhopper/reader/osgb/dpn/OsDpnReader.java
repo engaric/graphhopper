@@ -190,6 +190,7 @@ public class OsDpnReader extends AbstractOsReader<String> {
                     }
                 }
             }
+            graphStorage.getProperties().put("dpn.data_version", in.getDataVersion());
         } catch (Exception ex) {
             throw new RuntimeException("Problem while parsing file", ex);
         } finally {

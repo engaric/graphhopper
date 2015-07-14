@@ -65,7 +65,7 @@ public class OsItnReaderTest extends AbstractOsItnReaderTest {
         readGraphFile(graph, file);
         
         assertNotNull(graph.getProperties().get("itn.data_version"));
-        assertNotEquals("", graph.getProperties().get("itn.data_version"));
+        assertEquals("GDS-58096-1", graph.getProperties().get("itn.data_version"));
     }
 
     @Test

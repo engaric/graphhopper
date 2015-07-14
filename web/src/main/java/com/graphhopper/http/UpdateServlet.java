@@ -160,24 +160,30 @@ public class UpdateServlet extends GHBaseServlet
 		}
 	}
 
-	private List<GHPoint> getPoints( HttpServletRequest req ) throws IOException
+	private List<GHPoint> getPoints( HttpServletRequest req ) throws IOException, InvalidParameterException
 	{
 		String[] pointsAsStr = getParams(req, "point");
 		final List<GHPoint> infoPoints = new ArrayList<GHPoint>(pointsAsStr.length);
+		String[] srs = getParams(req, "srs");
+		String useSrs;
+		if(srs.length>0)
+		    useSrs = srs[0];
+		else 
+		    useSrs = defaultSRS;
 		for (String str : pointsAsStr)
-		{
-			String[] fromStrs = str.split(",");
-			String[] srs = getParams(req, "srs");
-			if (fromStrs.length == 2)
-			{
-				GHPoint place;
-				if(srs.length>0)
-					place = GHPoint.parse(str, srs[0]);
-				else 
-					place = GHPoint.parse(str, defaultSRS);
-				if (place != null)
-					infoPoints.add(place);
-			}
+		    {
+			GHPoint place;
+			place = GHPoint.parse(str, useSrs);
+			if (place != null)
+			    infoPoints.add(place);
+			else
+		        {
+		                throw new InvalidParameterException(
+		                        "Point "
+		                                + str
+		                                + " is not a valid point. Point must be a comma separated coordinate in "
+		                                + useSrs + " projection.");
+		        }
 		}
 
 		return infoPoints;

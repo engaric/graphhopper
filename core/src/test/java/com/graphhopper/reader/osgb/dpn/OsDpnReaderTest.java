@@ -3,6 +3,8 @@ package com.graphhopper.reader.osgb.dpn;
 import static com.graphhopper.util.GHUtility.count;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -21,6 +23,13 @@ public class OsDpnReaderTest extends AbstractOsDpnReaderTest
 {
     private GraphStorage graphStorage;
 
+    @Test
+    public void testReadVersionInfo() throws IOException {
+        configure(0);
+        assertNotNull(graphStorage.getProperties().get("dpn.data_version"));
+        assertEquals("DPN", graphStorage.getProperties().get("dpn.data_version"));
+    }
+    
     @Test
     public void testReadDpnSampleLayout() throws IOException
     {
