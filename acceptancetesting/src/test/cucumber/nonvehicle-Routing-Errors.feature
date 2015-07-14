@@ -401,7 +401,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
       | 51.206305,-3.683483 | 51.195761,-3.848208 |
     And I have vehicle as "foot"
     And I have srs as "BNG"
-    And I have output_srs as "BNG"
+    And I have output_srs as "WGS84"
     When I request for a route
     Then I should be able to verify the response message as "<errorMessage>"
     Then I should be able to verify the statuscode as "<statusCode>"
@@ -417,7 +417,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
       | 146580,282492 | 145684,270956 |
     And I have vehicle as "mtb"
     And I have srs as "WGS84"
-    And I have output_srs as "WGS84"
+    And I have output_srs as "BNG"
     When I request for a route
     Then I should be able to verify the response message as "<errorMessage>"
     Then I should be able to verify the statuscode as "<statusCode>"
@@ -425,6 +425,10 @@ Feature: Verify Error Messages for non-vehicle Routing service
     Examples: 
       | errorMessage                           | statusCode |
       | Cannot find point 0: 146580.0,282492.0 | 400        |
+      
+      
+      
+      
 
   # Nearest Point : Invalid Parameter Value "point"
   @ErrorMessages
@@ -540,7 +544,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
       | astar             |
       | astarbi           |
       | dijkstrabi        |
-      | dijkstraOneToMany |
+      
 
   @ErrorMessages
   Scenario Outline: verify valid parameter values for "debug "

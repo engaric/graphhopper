@@ -431,9 +431,9 @@ Feature: Verify Error Messages for vehicle Routing service
 
     Examples: 
       | errorMessage                             | statusCode |
-      | Cannot find point 0: 50.733653,-3.523541 | 400        |
+      | Cannot find point 0: 49.76680946391223,-7.556455017393835 | 400        |
 
-  @Routing @Current
+  @Routing 
   Scenario Outline: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
     Given I have route point as
       | pointA       | pointB       |
@@ -448,7 +448,7 @@ Feature: Verify Error Messages for vehicle Routing service
 
     Examples: 
       | errorMessage                      | statusCode |
-      | Cannot find point 0: 93778,292579 | 400        |
+      | Cannot find point 0: 93778.0,292579.0 | 400        |
 
   # Nearest Point : Invalid Parameter Value "point"
   @ErrorMessages
@@ -564,7 +564,7 @@ Feature: Verify Error Messages for vehicle Routing service
       | astar             |
       | astarbi           |
       | dijkstrabi        |
-      | dijkstraOneToMany |
+      
 
   @ErrorMessages
   Scenario Outline: verify valid parameter values for "debug "
