@@ -28,9 +28,8 @@ public class GraphHopperHooks {
 
 	DataTable routePointsTable;
 
-	@Before({ "~@WebOnly", "~@SampleScenario" ,"~@ErrorMessages","~@Smoke"})
+	@Before({ "~@WebOnly", "~@SampleScenario", "~@ErrorMessages", "~@Smoke" })
 	public void init() {
-		
 
 		graphUiUtil = (IntegrationTestProperties
 				.getTestPropertyBool("viaApigee") == true) ? new GraphHopperUIUtil(
@@ -51,12 +50,12 @@ public class GraphHopperHooks {
 
 	}
 
-	@Before("@ErrorMessages")
+	@Before("@ErrorMessages,@Smoke")
 	public void overrideTestONPropertyToBoth() {
 
 		testON = IntegrationTestProperties.getTestProperty("testON");
 		IntegrationTestProperties.setTestProperty("testON", "Service");
-		graphUiUtil= new GraphHopperUIUtil();
+		graphUiUtil = new GraphHopperUIUtil();
 
 	}
 
@@ -192,12 +191,9 @@ public class GraphHopperHooks {
 		graphUiUtil.verifyHttpStatusCode(statusCode);
 
 	}
-	
-	
-	
+
 	@And("^I receive a valid routing response$")
-	public void I_receive_a_valid_routing_response()
-	{
+	public void I_receive_a_valid_routing_response() {
 		graphUiUtil.isValidRouteResponse();
 	}
 
@@ -225,45 +221,40 @@ public class GraphHopperHooks {
 
 			break;
 		default:
-			
-if(null!=routePointsTable){
-			List<List<String>> data = routePointsTable.raw();
 
-			String[] points = new String[data.get(1).size()];
-			points = data.get(1).toArray(points);
+			if (null != routePointsTable) {
+				List<List<String>> data = routePointsTable.raw();
 
-			if (points[0].split(",").length == 2) {
-				graphUiUtil.getRouteFromServiceWithParameters();
-				graphUiUtil.getRouteFromUI();
-			} else {
+				String[] points = new String[data.get(1).size()];
+				points = data.get(1).toArray(points);
 
-				graphUiUtil.getRouteFromUI();
+				if (points[0].split(",").length == 2) {
+					graphUiUtil.getRouteFromServiceWithParameters();
+					graphUiUtil.getRouteFromUI();
+				} else {
+
+					graphUiUtil.getRouteFromUI();
+				}
+
+				break;
+
 			}
 
-			break;
-
-		}
-		
-		
-		else
-		{
-			graphUiUtil.getRouteFromServiceWithParameters();
-			graphUiUtil.getRouteFromUI();
-		}
+			else {
+				graphUiUtil.getRouteFromServiceWithParameters();
+				graphUiUtil.getRouteFromUI();
+			}
 		}
 
 	}
-	
 
 	@And("^I prefix the string \"([^\"]*)\" and append the string \"([^\"]*)\" to service URL$")
-	public void I_override_the_service_URL_to_invalid_URL(String str1,String str2)
-	{
-		graphUiUtil.servicePrefixString=str1;
-		graphUiUtil.serviceAppendString=str2;
-				
+	public void I_override_the_service_URL_to_invalid_URL(String str1,
+			String str2) {
+		graphUiUtil.servicePrefixString = str1;
+		graphUiUtil.serviceAppendString = str2;
+
 	}
-	
-	
 
 	@And("^I request for HTTP \"([^\"]*)\" method$")
 	public void I_request_for_http_mehtod(String httpMethod) {
@@ -285,7 +276,7 @@ if(null!=routePointsTable){
 
 	}
 
-	@After
+	@After({ "~@ErrorMessages", "~@Smoke" })
 	public void closeBrowser(Scenario sc) {
 
 		if (sc.isFailed()) {
