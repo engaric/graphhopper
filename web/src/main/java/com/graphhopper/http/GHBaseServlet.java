@@ -39,6 +39,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -231,7 +232,7 @@ public class GHBaseServlet extends HttpServlet
             Map<String, String> map = new HashMap<String, String>();
             json.put("error", map);
             Throwable throwable = rsp.getErrors().get(0);
-            map.put("message", throwable.getMessage());
+            map.put("message", StringEscapeUtils.escapeHtml(throwable.getMessage()));
             String statusCode = "" + HttpStatus.BAD_REQUEST_400;
             if (throwable instanceof APIException)
             {
@@ -244,7 +245,7 @@ public class GHBaseServlet extends HttpServlet
             for (Throwable t : rsp.getErrors())
             {
                 Map<String, String> hintMap = new HashMap<String, String>();
-                hintMap.put("message", t.getMessage());
+                hintMap.put("message", StringEscapeUtils.escapeHtml(t.getMessage()));
                 if (internalErrorsAllowed)
                 {
                     hintMap.put("details", t.getClass().getName());
