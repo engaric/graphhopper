@@ -28,6 +28,7 @@ public class HttpClientUtils {
     private static HttpClientBuilder builder = null;
 
     static {
+    	System.setProperty("jsse.enableSNIExtension", "false");
         createBasicClient();
         try {
             configureOutboundSSL();
