@@ -51,6 +51,41 @@ Feature: Verify Error Messages for non-vehicle Routing service
   Scenario Outline: Incorrect Parameter Value "point"
     Given I have route point as
       | pointA           | pointB              |
+      | 50.729961 | 50.723364,-3.523895 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    And I have srs as "WGS84"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                 | statusCode |
+      | foot        |            | fastest   | json           | Point 50.729961 is not a valid point. Point must be a comma separated coordinate in BNG projection. | 400        |
+
+  @ErrorMessages
+  Scenario Outline: Incorrect Parameter Value "point"
+    Given I have route point as
+      | pointA           | pointB              |
+      | 50.729961 | 50.723364,-3.523895 |
+    And I have vehicle as "<vehicleType>"
+    And I have weighting as "<routeType>"
+    And I have type as "<responseFormat>"
+    And I have srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the response message as "<errorMessage>"
+    Then I should be able to verify the statuscode as "<statusCode>"
+
+    Examples: 
+      | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                 | statusCode |
+      | foot        |            | fastest   | json           | Point 50.729961 is not a valid point. Point must be a comma separated coordinate in BNG projection. | 400        |
+
+
+  @ErrorMessages
+  Scenario Outline: Incorrect Parameter Value "point"
+    Given I have route point as
+      | pointA           | pointB              |
       | 50.729961,string | 50.723364,-3.523895 |
     And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
@@ -115,7 +150,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
       | foot        |            | fastest   | json           | No point parameter provided. | 400        |
 
   # Parameter :  vehicle
-  @ErrorMessages @Smoke
+  @ErrorMessages
   Scenario Outline: Missing Parameter "vehicle"
     Given I have route point as
       | pointA              | pointB              |
@@ -132,7 +167,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
       | foot        |            | fastest   | json           | No vehicle parameter provided. | 400        |
 
   # Parameter :  weighting
-  @ErrorMessages @Smoke
+  @ErrorMessages 
   Scenario Outline: Invalid Parameter Value for "weighting"
     Given I have route point as
       | pointA              | pointB              |
@@ -394,7 +429,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
       | mtb         |            | fastest   | GET        | json           | OK                 | 200        |
       | foot        |            | fastest   | OPTIONS    | json           | OK                 | 200        |
 
-  @Routing
+    @ErrorMessages
   Scenario Outline: Invalid Parameter Value for "point in BNG"
     Given I have route point as
       | pointA              | pointB              |
@@ -410,7 +445,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
       | errorMessage                                              | statusCode |
       | Cannot find point 0: 49.766808346389624,-7.55644832086991 | 400        |
 
-  @Routing
+    @ErrorMessages
   Scenario Outline: Invalid Parameter Value for "point in WGS84"
     Given I have route point as
       | pointA        | pointB        |
@@ -426,8 +461,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
       | errorMessage                           | statusCode |
       | Cannot find point 0: 146580.0,282492.0 | 400        |
       
-      
-      
+       
       
 
   # Nearest Point : Invalid Parameter Value "point"
