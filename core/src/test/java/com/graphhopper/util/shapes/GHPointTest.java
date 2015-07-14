@@ -69,13 +69,14 @@ public class GHPointTest
     
     @Test
     public void testParseWithInvalidPoint() {
-    	try {
-    		GHPoint.parse("100000000000000000,2", "BNG");
-    		fail("Error should have been thrown");
-    	}
-    	catch(IllegalArgumentException iae) {
-    		assertEquals("Point 100000000000000000,2 is not a valid point. Point must be a comma separated coordinate in BNG projection.", iae.getMessage());
-    	}
+        GHPoint parse = GHPoint.parse("100000000000000000");
+        assertNull(parse);
+    }
+    
+    @Test
+    public void testParseWithInvalidPointAndSpecifiedSrs() {
+    	GHPoint parse = GHPoint.parse("100000000000000000,2", "BNG");
+    	assertNull(parse);
     }
     
     @Test

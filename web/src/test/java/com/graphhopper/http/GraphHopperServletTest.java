@@ -246,6 +246,42 @@ public class GraphHopperServletTest
 		                + " is not a valid point. Point must be a comma separated coordinate in WGS84 projection.",
 		        ghResponse.getErrors().get(0).getMessage());
 	}
+	
+	@Test
+        public void testGetGHResponseWithPartialPoint() throws IOException,
+                MissingParameterException, NoSuchParameterException, InvalidParameterException
+        {
+                allParameters.put("point", new String[] { "12" });
+                allParameters.put("vehicle", new String[] { VEHICLES[0] });
+                allParameters.put("locale", new String[] { LOCALES[0] });
+                when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
+
+                GHResponse ghResponse = graphHopperServlet.getGHResponse(httpServletRequest,
+                        httpServletResponse);
+                assertEquals(
+                        "Point 12 is not a valid point. Point must be a comma separated coordinate in WGS84 projection.",
+                        ghResponse.getErrors().get(0).getMessage());
+        }
+        
+	
+	@Test
+	public void testGetGHResponseWithUnparsablePointInAlternateProjection() throws IOException,
+	        MissingParameterException, NoSuchParameterException, InvalidParameterException
+	{
+		allParameters.put("point", new String[] { UNPARSABLE_POINT });
+		allParameters.put("vehicle", new String[] { VEHICLES[0] });
+		allParameters.put("locale", new String[] { LOCALES[0] });
+		allParameters.put("srs", new String[] { "EPSG:27700" });
+		when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
+
+		GHResponse ghResponse = graphHopperServlet.getGHResponse(httpServletRequest,
+		        httpServletResponse);
+		assertEquals(
+		        "Point "
+		                + UNPARSABLE_POINT
+		                + " is not a valid point. Point must be a comma separated coordinate in EPSG:27700 projection.",
+		        ghResponse.getErrors().get(0).getMessage());
+	}
 
 	@Test
 	public void testGetGHResponseWithCorrectLocales() throws IOException,
