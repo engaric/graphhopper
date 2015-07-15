@@ -61,9 +61,6 @@ public class GraphHopperServletTest
 
 	@Mock
 	HttpServletResponse httpServletResponse;
-	
-	@Mock
-	PrintWriter printWriter;
 
 	Map<String, String[]> allParameters;
 
@@ -264,49 +261,6 @@ public class GraphHopperServletTest
                 assertEquals(
                         "Point 12 is not a valid point. Point must be a comma separated coordinate in WGS84 projection.",
                         ghResponse.getErrors().get(0).getMessage());
-        }
-	
-	@Test
-        public void testGetGHResponseWithXSSInjection() throws IOException,
-                MissingParameterException, NoSuchParameterException, InvalidParameterException, ServletException
-        {
-                allParameters.put("point", new String[] { "<iMg SrC=vBsCrIpT:MsgBox(28224)>" });
-                allParameters.put("vehicle", new String[] { VEHICLES[0] });
-                allParameters.put("locale", new String[] { LOCALES[0] });
-                when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
-                when(httpServletResponse.getWriter()).thenReturn(printWriter);
-                graphHopperServlet.doGet(httpServletRequest,
-                        httpServletResponse);
-                verify(printWriter).append("{" + System.lineSeparator()
-                        + "  \"error\": {" + System.lineSeparator()
-                        + "    \"message\": \"Point &lt;iMg SrC=vBsCrIpT:MsgBox(28224)&gt; is not a valid point. Point must be a comma separated coordinate in WGS84 projection.\","  + System.lineSeparator()
-                        + "    \"statuscode\": \"400\""  + System.lineSeparator()
-                        + "  },"  + System.lineSeparator()
-                        + "  \"hints\": [{\"message\": \"Point &lt;iMg SrC=vBsCrIpT:MsgBox(28224)&gt; is not a valid point. Point must be a comma separated coordinate in WGS84 projection.\"}]"  + System.lineSeparator()
-                        + "}");
-        }
-	
-	@Test
-        public void testGetGHResponseWithXSSInjectionXML() throws IOException,
-                MissingParameterException, NoSuchParameterException, InvalidParameterException, ServletException
-        {
-                allParameters.put("point", new String[] { "<iMg SrC=vBsCrIpT:MsgBox(28224)>" });
-                allParameters.put("vehicle", new String[] { VEHICLES[0] });
-                allParameters.put("locale", new String[] { LOCALES[0] });
-                allParameters.put("type", new String[] { "gpx" });
-                when(httpServletRequest.getParameterMap()).thenReturn(allParameters);
-                when(httpServletResponse.getWriter()).thenReturn(printWriter);
-                graphHopperServlet.doGet(httpServletRequest,
-                        httpServletResponse);
-                verify(printWriter).append("<?xml version=\"1.0\" "
-                        + "encoding=\"UTF-8\" standalone=\"no\"?>"
-                        + "<gpx creator=\"GraphHopper\" version=\"1.1\">"
-                        + "<metadata><extensions>"
-                        + "<message>Point &lt;iMg SrC=vBsCrIpT:MsgBox(28224)&gt; is not a valid point. Point must be a comma separated coordinate in WGS84 projection.</message>"
-                        + "<hints>"
-                        + "<error message=\"Point &lt;iMg SrC=vBsCrIpT:MsgBox(28224)&gt; is not a valid point. Point must be a comma separated coordinate in WGS84 projection.\"/>"
-                        + "</hints>"
-                        + "</extensions></metadata></gpx>");
         }
         
 	
