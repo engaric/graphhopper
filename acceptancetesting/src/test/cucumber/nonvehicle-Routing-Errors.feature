@@ -736,13 +736,13 @@ Feature: Verify Error Messages for non-vehicle Routing service
     And I have srs as "WGS84"
     And I have output_srs as "<output_srs>"
     When I request for a route
-    Then I should be able to verify the http response message as "OK"
-    Then I should be able to verify the http statuscode as "200"
+     Then I should be able to verify the http response message as "<httpResponse>"
+    Then I should be able to verify the http statuscode as "<StatusCode>"
 
     Examples: 
-      | output_srs |
-      | WGS84      |
-      | BNG        |
+      | SRS   | httpResponse | StatusCode |
+      | WGS84 | OK           | 200        |
+      | BNG   | Bad Request  | 400        |
 
   @ErrorMessages
   Scenario Outline: verify valid parameter values for "private "
