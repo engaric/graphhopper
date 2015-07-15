@@ -70,7 +70,7 @@ public class GHServletModule extends ServletModule
 		serve("/route", "/route/").with(GraphHopperServlet.class);
 		bind(GraphHopperServlet.class).in(Singleton.class);
 
-		if (args.getBool("update.enable", true))
+		if (args.getBool("update.enable", false))
 		{
 			serve("/update*").with(UpdateServlet.class);
 			bind(UpdateServlet.class).in(Singleton.class);
