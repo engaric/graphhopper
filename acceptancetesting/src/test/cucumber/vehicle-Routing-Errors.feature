@@ -429,7 +429,7 @@ Feature: Verify Error Messages for vehicle Routing service
       | car         |            | fastest   | GET        | json           | OK                 | 200        |
       | car         |            | fastest   | OPTIONS    | json           | OK                 | 200        |
 
-  @ErrorMessages @Current
+  @ErrorMessages 
   Scenario Outline: Verify  a route for emergencey services on a(Transit through Springfield-private true )
     Given I have route point as
       | pointA              | pointB              |
@@ -693,7 +693,7 @@ Feature: Verify Error Messages for vehicle Routing service
       | gpx  |
       | json |
 
-  @ErrorMessages @Current
+  @ErrorMessages 
   Scenario Outline: verify valid parameter values for "SRS "
     Given I have route point as
       | pointA              | pointB              |
