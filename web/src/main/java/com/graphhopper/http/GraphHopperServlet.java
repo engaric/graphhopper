@@ -34,15 +34,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.geotools.referencing.CRS;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
-import uk.co.ordnancesurvey.api.srs.LatLong;
 import uk.co.ordnancesurvey.api.srs.OpenCoordConverter;
 
 import com.graphhopper.GHRequest;
@@ -64,7 +58,6 @@ import com.graphhopper.util.StopWatch;
 import com.graphhopper.util.TranslationMap;
 import com.graphhopper.util.shapes.BBox;
 import com.graphhopper.util.shapes.GHPoint;
-import com.graphhopper.util.shapes.GHPoint3D;
 import com.graphhopper.util.shapes.GHResponseCoordinateTransformer;
 
 /**
@@ -133,7 +126,12 @@ public class GraphHopperServlet extends GHBaseServlet {
 
 			if (outputSrs.length() > 0) {
 				transformer = new GHResponseCoordinateTransformer(outputSrs);
+			} else {
+			    String errMesg = "Srs is not a valid output_srs.";
+                            ghRsp = new GHResponse()
+                                    .addError(new InvalidParameterException(errMesg));
 			}
+			
 
 			if (!new CaseInsensitiveStringListValidator().isValid(localeStr,
 					TranslationMap.LOCALES)) {
