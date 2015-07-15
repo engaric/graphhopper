@@ -62,7 +62,7 @@ Feature: Verify Error Messages for non-vehicle Routing service
 
     Examples: 
       | vehicleType | avoidances | routeType | responseFormat | errorMessage                                                                                                 | statusCode |
-      | foot        |            | fastest   | json           | Point 50.729961 is not a valid point. Point must be a comma separated coordinate in BNG projection. | 400        |
+      | foot        |            | fastest   | json           | Point 50.729961 is not a valid point. Point must be a comma separated coordinate in Point 50.729961 is not a valid point. Point must be a comma separated coordinate in BNG projection.| 400        |
 
   @ErrorMessages
   Scenario Outline: Incorrect Parameter Value "point"
