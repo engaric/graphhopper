@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>com.graphhopper</groupId>
 		<artifactId>graphhopper-parent</artifactId>
-		<version>0.4.5.7</version>
+		<version>0.4.5.8-SNAPSHOT</version>
 	</parent>
 	<properties>
 		<jetty.version>8.1.16.v20140903</jetty.version>
