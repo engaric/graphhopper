@@ -1387,7 +1387,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
 
   # BNG , WGS84 and Web Mercator Projections
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+  Scenario: Verify  a route for non-emergencey services on a(WGS84 - WGS84 )
     Given I have route point as
       | pointA              | pointB              |
       | 50.733653,-3.523541 | 50.732695,-3.520218 |
@@ -1401,7 +1401,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | 50.733764,-3.523212 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+  Scenario: Verify  a route for non-emergencey services on a(WGS84 - BNG )
     Given I have route point as
       | pointA              | pointB              |
       | 50.733653,-3.523541 | 50.732695,-3.520218 |
@@ -1415,7 +1415,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | 292602.008429, 93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+  Scenario: Verify  a route for non-emergencey services on a(WGS84 - EPSG3857 )
     Given I have route point as
       | pointA              | pointB              |
       | 50.733653,-3.523541 | 50.732695,-3.520218 |
@@ -1429,7 +1429,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | -392202.145615,6574334.078484 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+  Scenario: Verify  a route for non-emergencey services on a(BNG - BNG )
     Given I have route point as
       | pointA       | pointB       |
       | 292575,93781 | 292736,93681 |
@@ -1443,7 +1443,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | 292602.008429,93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Not to transit through Springfield-private false )
+  Scenario: Verify  a route for non-emergencey services on a(BNG - WGS84 )
     Given I have route point as
       | pointA       | pointB       |
       | 292629,93798 | 292736,93681 |
@@ -1457,7 +1457,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | 50.734191,-3.521511 | Turn right onto CULVERLAND ROAD | 158.0   | SE        | 6009 | 178.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Not to transit through Springfield-private false )
+  Scenario: Verify  a route for non-emergencey services on a(BNG - EPSG3857 )
     Given I have route point as
       | pointA       | pointB       |
       | 292629,93798 | 292736,93681 |
@@ -1471,10 +1471,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | -392012.815504,6574409.165676 | Turn right onto CULVERLAND ROAD | 158.0   | SE        | 6009 | 178.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+  Scenario: Verify  a route for non-emergencey services on a(EPSG3847 - EPSG3847)
     Given I have route point as
       | pointA                       | pointB                       |
-      # | 292575,93781 | 292736,93681 |
       | -392244.444361,6574318.99362 | -391987.333934,6574166.12626 |
     And I have vehicle as "car"
     And I have private as "true"
@@ -1486,7 +1485,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | -392202.145615,6574334.078484 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Not to transit through Springfield-private false )
+  Scenario: Verify  a route for non-emergencey services on a(EPSG3847 - WGS84 )
     Given I have route point as
       | pointA                       | pointB                       |
       | -392244.444361,6574318.99362 | -391987.333934,6574166.12626 |
@@ -1500,7 +1499,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | 50.733764,-3.523212 | Turn right onto VICTORIA STREET | 158.0   | SE        | 7186 | 213.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Not to transit through Springfield-private false )
+  Scenario: Verify  a route for non-emergencey services on a(EPSG3847 - BNG )
     Given I have route point as
       | pointA                       | pointB                       |
       | -392244.444361,6574318.99362 | -391987.333934,6574166.12626 |
