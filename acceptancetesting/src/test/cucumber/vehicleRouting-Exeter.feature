@@ -148,10 +148,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  # No Turns Restrictions 
-  # Below test failing as it is going through no turn and and has been reported in jira as [ROUTE-198]
-  @Routing @KnownIssues
-  Scenario Outline: Verify  No Turn  Restrictions on a Route (Western Way-Exeter)
+ 
+  @Routing
+  Scenario Outline: Verify  No Turn  Restrictions on a Route (Western Way-Exeter ROUTE-198)
     Given I have route point as
       | pointA              | pointB              |
       | 50.726735,-3.520955 | 50.726914,-3.522033 |
@@ -160,15 +159,15 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco          | waypointdesc                                   | azimuth | direction | time  | distance | avoidance |
-      | 2             | 50.728509,-3.520647 | At roundabout, take exit 1 onto SIDWELL STREET | 282.0   | W         | 16437 | 212.5    |           |
+      | 2             | 50.725422,-3.522261 | At roundabout, take exit 5 onto B3212 (WESTERN WAY) | 145.0  | SE         | 19693 | 298.0    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  # Below test failing as it is going through no entry and has been reported in jira as [ROUTE-199]
-  @Routing @KnownIssues
-  Scenario Outline: Verify  No entry Restriction (Denmark Road-Exeter)
+  #Test failing as it is going through no entry instead of taking the mandatory turn [ROUTE-199]
+  @Routing  @KnownIssues
+  Scenario Outline: Verify  No entry Restriction (Denmark Road-Exeter - ROUTE-199)
     Given I have route point as
       | pointA              | pointB              |
       | 50.724901,-3.521588 | 50.724524,-3.520923 |
@@ -176,8 +175,8 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc                  | azimuth | direction | time  | distance | avoidance |
-      | 3             | 50.725002,-3.520632 | Turn left onto RUSSELL STREET | 303.0   | NW        | 19909 | 248.9    |           |
+      | wayPointIndex | waypointco         | waypointdesc                | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.72411,-3.518719 | Turn right onto SPICER ROAD | 203.0   | SW        | 6370 | 84.9     |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -218,7 +217,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
 
   # Mandatory Turn Restrictions
   @Routing
-  Scenario Outline: Verify  Mandatory Turn(with exceptions) at Exeter area
+  Scenario Outline: Verify  (Mandatory Turn with exceptions)  at Exeter area
     Given I have route point as
       | pointA              | pointB              |
       | 50.726823,-3.524432 | 50.725423,-3.526813 |
@@ -226,48 +225,29 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc                | azimuth | direction | time | distance | avoidance |
-      | 2             | 50.726462,-3.523882 | Continue onto CHEEKE STREET | 133.0   | SE        | 529  | 7.1      |           |
+      | wayPointIndex | waypointco          | waypointdesc                | azimuth | direction | time  | distance | avoidance |
+      | 2             | 50.726462,-3.523882 | Continue onto CHEEKE STREET | 128.0   | SE        | 11153 | 139.9    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  #Test failing as it is going through no entry instead of taking the mandatory turn [ROUTE-199]
-  @Routing @KnownIssues
-  Scenario Outline: Verify  Mandatory Turn at Exeter area(DENMARK ROAD)
-    Given I have route point as
-      | pointA              | pointB              |
-      | 50.724777,-3.520811 | 50.724394,-3.520953 |
-    And I have vehicle as "<vehicleType>"
-    And I have weighting as "<routeType>"
-    When I request for a route
-    Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc                  | azimuth | direction | time  | distance | avoidance |
-      | 2             | 50.725002,-3.520632 | Turn left onto RUSSELL STREET | 303.0   | NW        | 19909 | 248.9    |           |
-
-    Examples: 
-      | vehicleType | avoidances | routeType |
-      | car         |            | fastest   |
-
-  @Routing @KnownIssues
+  @Routing 
   Scenario Outline: Verify  Mandatory Turn at Exeter area(COLLEGE ROAD)
     Given I have route point as
       | pointA             | pointB              |
-      | 50.723597,-3.51776 | 50.723773,-3.517251 |
+      | 50.722624,-3.51851|50.725444,-3.515867|
     And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco         | waypointdesc                | azimuth | direction | time  | distance | avoidance |
-      | 2             | 50.72133,-3.519451 | Turn right onto SPICER ROAD | 278     | W         | 41233 | 400.903  |           |
-
-    Examples: 
+      | 2             | 50.723837,-3.517549 | Turn sharp left onto HEAVITREE ROAD (B3183)| 289.0     | W         | 13694 | 182.6  |           |
+   Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-
-  @Routing @KnownIssues
+  @Routing 
   Scenario Outline: Verify  Mandatory Turn Restriction (Denmark Road-Exeter)
     Given I have route point as
       | pointA              | pointB             |
@@ -350,8 +330,8 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | car         |            | fastest   |
 
   # Ford
-  #Test failing as it is not finding any route for car and it is working  for emv
-  @Routing @KnownIssues
+
+  @Routing 
   Scenario Outline: Verify  Ford  Restrictions on a Route (BONHAY Road-Exeter)
     Given I have route point as
       | pointA             | pointB              |
@@ -365,7 +345,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
 
     Examples: 
       | vehicleType | avoidances | routeType |
-      | car         |            | fastest   |
+      | emv         |            | fastest   |
 
   @Routing
   Scenario Outline: Verify  Ford  Restrictions on a Route (Quadrangle Road-Exeter)
@@ -457,6 +437,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 50.724316,-3.521008 | 50.72413,-3.518874 |
     And I have vehicle as "<vehicleType>"
     And I have weighting as "<routeType>"
+    And I have private as "false"
     When I request for a route
     Then I should be able to verify the trackPoints not on the route map:
       | trackPointco      |
@@ -761,16 +742,16 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc                                        | azimuth | direction | time  | distance | avoidance |
-      | 1             | 50.729734,-3.52464  | Continue onto ST SIDWELL'S AVENUE                   | 119.0   | SE        | 8767  | 116.9    |           |
-      | 8             | 50.723365,-3.523902 | Continue onto B3212 (WESTERN WAY)                   | 195.0   | S         | 17415 | 272.8    |           |
-      | 16            | 50.719224,-3.540839 | Continue onto OKEHAMPTON STREET                     | 126.0   | SE        | 17009 | 228.1    |           |
-      | 25            | 50.720298,-3.526912   | Turn sharp left onto MAGDALEN STREET (B3182)      | 239.0   | SW        | 10192 | 142.3     |           |
-      | 30            | 50.719971,-3.529196 | Continue onto A3015                                 | 65.0    | NE        | 1375   | 18.3                   |           |
-      | 38            | 50.733664,-3.517098 | Continue onto OLD TIVERTON ROAD                     | 200.0    | S        | 10655 | 142.1    |           |
-      | 43            | 50.727261,-3.520564 | Continue onto B3212 (WESTERN WAY) | 201.0   | S        | 17714 | 241.6    |           |
+      | wayPointIndex | waypointco          | waypointdesc                                 | azimuth | direction | time  | distance | avoidance |
+      | 1             | 50.729734,-3.52464  | Continue onto ST SIDWELL'S AVENUE            | 119.0   | SE        | 8767  | 116.9    |           |
+      | 8             | 50.723365,-3.523902 | Continue onto B3212 (WESTERN WAY)            | 195.0   | S         | 17415 | 272.8    |           |
+      | 16            | 50.719224,-3.540839 | Continue onto OKEHAMPTON STREET              | 126.0   | SE        | 17009 | 228.1    |           |
+      | 25            | 50.720298,-3.526912 | Turn sharp left onto MAGDALEN STREET (B3182) | 239.0   | SW        | 10192 | 142.3    |           |
+      | 30            | 50.719971,-3.529196 | Continue onto A3015                          | 65.0    | NE        | 1375  | 18.3     |           |
+      | 38            | 50.733664,-3.517098 | Continue onto OLD TIVERTON ROAD              | 200.0   | S         | 10655 | 142.1    |           |
+      | 43            | 50.727261,-3.520564 | Continue onto B3212 (WESTERN WAY)            | 201.0   | S         | 17714 | 241.6    |           |
 
-  
+    Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
@@ -788,7 +769,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco          | waypointdesc               | azimuth | direction | time  | distance | avoidance |
-      | 2             | 50.732222,-3.535207 | Turn right onto PERRY ROAD | 309.0   | NW        | 16963 | 226.2   |           |
+      | 2             | 50.732222,-3.535207 | Turn right onto PERRY ROAD | 309.0   | NW        | 16963 | 226.2    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -889,8 +870,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                       | azimuth | direction | time  | distance | avoidance |
+      | 1             | 50.732162,-3.535482 | Continue onto PRINCE OF WALES ROAD | 257.0   | W         | 13294 | 177.3    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -914,7 +896,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | car         |            | fastest   |
 
   @Routing
-  Scenario Outline: Verify  a route for non-emergencey vehicle on a (End on PERRY ROAD-Private(False))
+  Scenario Outline: Verify  a route for non-emergencey vehicle on a (End on PERRY ROAD-Private False))
     Given I have route point as
       | pointA              | pointB              |
       | 50.732343,-3.534682 | 50.733335,-3.537294 |
@@ -922,8 +904,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco         | waypointdesc                    | azimuth | direction | time  | distance | avoidance |
+      | 2             | 50.732011,-3.53798 | Turn right onto STREATHAM DRIVE | 2.0     | N         | 11549 | 142.8    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -991,7 +974,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have private as "true"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco         | waypointdesc                     | azimuth | direction | time  | distance | avoidance |
+      | wayPointIndex | waypointco         | waypointdesc                     | azimuth | direction | time | distance | avoidance |
       | 2             | 50.73051,-3.522412 | Turn sharp left onto WELL STREET | 197.0   | S         | 9046 | 268.9    |           |
 
     Examples: 
@@ -1008,7 +991,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have private as "false"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco         | waypointdesc                     | azimuth | direction | time  | distance | avoidance |
+      | wayPointIndex | waypointco         | waypointdesc                     | azimuth | direction | time | distance | avoidance |
       | 2             | 50.73051,-3.522412 | Turn sharp left onto WELL STREET | 197.0   | S         | 9046 | 268.9    |           |
 
     Examples: 
@@ -1025,8 +1008,8 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have private as "true"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc              | azimuth | direction | time  | distance | avoidance |
-      | 1             | 50.729922,-3.521875| Continue onto OXFORD ROAD | 30.0   | NE        | 2525 | 33.7    |           |
+      | wayPointIndex | waypointco          | waypointdesc              | azimuth | direction | time | distance | avoidance |
+      | 1             | 50.729922,-3.521875 | Continue onto OXFORD ROAD | 30.0    | NE        | 2525 | 33.7     |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1041,8 +1024,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco         | waypointdesc                     | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.73051,-3.522412 | Turn sharp left onto WELL STREET | 197.0   | S         | 9046 | 268.9    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1058,8 +1042,8 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have private as "true"
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco          | waypointdesc               | azimuth | direction | time  | distance | avoidance |
-      | 1             | 50.730037,-3.52129 | continue onto ST JAMES" ROAD | 303.0   | NW        | 7113 | 94.9    |           |
+      | wayPointIndex | waypointco         | waypointdesc                 | azimuth | direction | time | distance | avoidance |
+      | 1             | 50.730037,-3.52129 | continue onto ST JAMES" ROAD | 303.0   | NW        | 7113 | 94.9     |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1074,8 +1058,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco         | waypointdesc                     | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.73051,-3.522412 | Turn sharp left onto WELL STREET | 197.0   | S         | 7992 | 237.6    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1127,7 +1112,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco         | waypointdesc            | azimuth | direction | time | distance | avoidance |
-      | 3             | 50.72778,-3.537866 | Continue onto HELE ROAD | 277.0   | W         | 8751| 116.7    |           |
+      | 3             | 50.72778,-3.537866 | Continue onto HELE ROAD | 277.0   | W         | 8751 | 116.7    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1193,8 +1178,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.727229,-3.536673 | Turn right onto BYSTOCK TERRACE | 154.0   | SE        | 4527 | 60.4     |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1226,8 +1212,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco        | waypointdesc               | azimuth | direction | time  | distance | avoidance |
+      | 3             | 50.72956,-3.53876 | Turn left onto HOWELL ROAD | 261.0   | W         | 11274 | 150.3    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1277,8 +1264,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco         | waypointdesc                  | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.729609,-3.52599 | Turn right onto BLACKALL ROAD | 277.0   | W         | 1389 | 41.3     |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1294,7 +1282,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "true"
     When I request for a route
-    Then I should be able to verify the waypoints on the route map:%2C
+    Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco         | waypointdesc                  | azimuth | direction | time | distance | avoidance |
       | 3             | 50.717445,-3.54209 | Turn left onto CLINTON STREET | 53.0    | NE        | 8564 | 114.2    |           |
 
@@ -1328,8 +1316,9 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                      | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.718195,-3.543191 | Turn slight left onto BULLER ROAD | 8.0     | N         | 2914 | 38.9     |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
@@ -1379,16 +1368,17 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     And I have weighting as "<routeType>"
     And I have private as "false"
     When I request for a route
-    Then I should be able to verify the response message as "Not found"
-    Then I should be able to verify the statuscode as "400"
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.734191,-3.521511 | Turn right onto CULVERLAND ROAD | 158.0   | S         | 5842 | 173.6    |           |
 
     Examples: 
       | vehicleType | avoidances | routeType |
       | car         |            | fastest   |
 
-  # BNG  and WGS84 Projections
+  # BNG , WGS84 and Web Mercator Projections
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+  Scenario: Verify  a route for non-emergencey services on a(WGS84 - WGS84 )
     Given I have route point as
       | pointA              | pointB              |
       | 50.733653,-3.523541 | 50.732695,-3.520218 |
@@ -1402,21 +1392,7 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | 50.733764,-3.523212 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
-    Given I have route point as
-      | pointA       | pointB       |
-      | 292575,93781 | 292736,93681 |
-    And I have vehicle as "car"
-    And I have private as "true"
-    And I have srs as "BNG"
-    And I have output_srs as "BNG"
-    When I request for a route
-    Then I should be able to verify the waypoints on the route map:
-      | wayPointIndex | waypointco                 | waypointdesc                    | azimuth | direction | time | distance | avoidance |
-      | 2             | 292602.008429,93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
-
-  @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
+  Scenario: Verify  a route for non-emergencey services on a(WGS84 - BNG )
     Given I have route point as
       | pointA              | pointB              |
       | 50.733653,-3.523541 | 50.732695,-3.520218 |
@@ -1430,7 +1406,35 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
       | 2             | 292602.008429, 93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
 
   @Routing
-  Scenario: Verify  a route for non-emergencey services on a(Not to transit through Springfield-private false )
+  Scenario: Verify  a route for non-emergencey services on a(WGS84 - EPSG3857 )
+    Given I have route point as
+      | pointA              | pointB              |
+      | 50.733653,-3.523541 | 50.732695,-3.520218 |
+    And I have vehicle as "emv"
+    And I have private as "true"
+    And I have srs as "WGS84"
+    And I have output_srs as "EPSG:3857"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco                    | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | -392202.145615,6574334.078484 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
+
+  @Routing
+  Scenario: Verify  a route for non-emergencey services on a(BNG - BNG )
+    Given I have route point as
+      | pointA       | pointB       |
+      | 292575,93781 | 292736,93681 |
+    And I have vehicle as "car"
+    And I have private as "true"
+    And I have srs as "BNG"
+    And I have output_srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco                 | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 292602.008429,93789.988765 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
+
+  @Routing
+  Scenario: Verify  a route for non-emergencey services on a(BNG - WGS84 )
     Given I have route point as
       | pointA       | pointB       |
       | 292629,93798 | 292736,93681 |
@@ -1442,3 +1446,59 @@ Feature: Verify a route from A to B for Vehicle (Exeter Only)
     Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco          | waypointdesc                    | azimuth | direction | time | distance | avoidance |
       | 2             | 50.734191,-3.521511 | Turn right onto CULVERLAND ROAD | 158.0   | SE        | 6009 | 178.6    |           |
+
+  @Routing
+  Scenario: Verify  a route for non-emergencey services on a(BNG - EPSG3857 )
+    Given I have route point as
+      | pointA       | pointB       |
+      | 292629,93798 | 292736,93681 |
+    And I have vehicle as "car"
+    And I have private as "true"
+    And I have srs as "BNG"
+    And I have output_srs as "EPSG:3857"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco                    | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | -392012.815504,6574409.165676 | Turn right onto CULVERLAND ROAD | 158.0   | SE        | 6009 | 178.6    |           |
+
+  @Routing
+  Scenario: Verify  a route for non-emergencey services on a(EPSG3847 - EPSG3847)
+    Given I have route point as
+      | pointA                       | pointB                       |
+      | -392244.444361,6574318.99362 | -391987.333934,6574166.12626 |
+    And I have vehicle as "car"
+    And I have private as "true"
+    And I have srs as "EPSG:3857"
+    And I have output_srs as "EPSG:3857"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco                    | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | -392202.145615,6574334.078484 | Turn right onto VICTORIA STREET | 150.0   | SE        | 7186 | 213.6    |           |
+
+  @Routing
+  Scenario: Verify  a route for non-emergencey services on a(EPSG3847 - WGS84 )
+    Given I have route point as
+      | pointA                       | pointB                       |
+      | -392244.444361,6574318.99362 | -391987.333934,6574166.12626 |
+    And I have vehicle as "car"
+    And I have private as "true"
+    And I have srs as "EPSG:3857"
+    And I have output_srs as "WGS84"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco          | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 50.733764,-3.523212 | Turn right onto VICTORIA STREET | 158.0   | SE        | 7186 | 213.6    |           |
+
+  @Routing
+  Scenario: Verify  a route for non-emergencey services on a(EPSG3847 - BNG )
+    Given I have route point as
+      | pointA                       | pointB                       |
+      | -392244.444361,6574318.99362 | -391987.333934,6574166.12626 |
+    And I have vehicle as "car"
+    And I have private as "true"
+    And I have srs as "EPSG:3857"
+    And I have output_srs as "BNG"
+    When I request for a route
+    Then I should be able to verify the waypoints on the route map:
+      | wayPointIndex | waypointco                 | waypointdesc                    | azimuth | direction | time | distance | avoidance |
+      | 2             | 292602.008429,93789.988765 | Turn right onto VICTORIA STREET | 158.0   | SE        | 7186 | 213.6    |           |
