@@ -2,7 +2,6 @@ package uk.co.ordnancesurvey.routing;
 
 import static uk.co.ordnancesurvey.webtests.base.ComponentValueSource.INNER_HTML;
 import uk.co.ordnancesurvey.webtests.base.ComponentByXPATH;
-import uk.co.ordnancesurvey.webtests.base.ComponentClass;
 import uk.co.ordnancesurvey.webtests.base.ComponentID;
 import uk.co.ordnancesurvey.webtests.base.ComponentIdentification;
 import uk.co.ordnancesurvey.webtests.base.ComponentIdentifier;
