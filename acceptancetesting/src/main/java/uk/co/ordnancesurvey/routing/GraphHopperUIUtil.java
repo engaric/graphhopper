@@ -1084,14 +1084,6 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		}
 	}
 
-	private void verifyUIErrorMessage(String responseMessage) {
-
-		Assert.assertTrue("Web Interface: Actual Error Message"
-				+ getTextValue(ERROR_MESSAGE) + " is not matching with :"
-				+ responseMessage, getTextValue(ERROR_MESSAGE)
-				.equalsIgnoreCase(responseMessage));
-
-	}
 
 	public void verifyStatusCode(int statusCode) {
 		if (requestParameters.get("type").get(0).equalsIgnoreCase("gpx")) {
