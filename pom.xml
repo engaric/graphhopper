@@ -5,7 +5,7 @@
 	<groupId>com.graphhopper</groupId>
 	<artifactId>graphhopper-parent</artifactId>
 	<name>GraphHopper Parent Project</name>
-	<version>0.4.5.9</version>
+	<version>0.4.5.10-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>http://graphhopper.com</url>
 	<inceptionYear>2012</inceptionYear>
