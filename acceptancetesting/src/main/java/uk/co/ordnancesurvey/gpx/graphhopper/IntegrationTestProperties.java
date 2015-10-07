@@ -26,14 +26,9 @@ public final class IntegrationTestProperties {
     private static final String TEST_PROPERTIES = "testProperties";
     private static final String OVERRIDING_FROM_SYSTEM_PROPERTY = "Overriding {} from system property {}";
     private static final String ERROR_DURING_LOAD = "ERROR DURING LOAD";
-
-    public static final String AWS_SECRET_KEY = "aws.secretKey";
-    public static final String AWS_ACCESS_KEY_ID = "aws.accessKeyId";
-
     private Properties testProperties = null;
     private static IntegrationTestProperties instance = null;
-    private static final Logger LOG = LoggerFactory
-            .getLogger(IntegrationTestProperties.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IntegrationTestProperties.class);
 
     public static String getTestProperty(final String property) {
         loadIfRequired();
@@ -44,20 +39,18 @@ public final class IntegrationTestProperties {
         String propertyValue = getTestProperty(property);
         return Integer.parseInt(propertyValue);
     }
-    
-    
-	public static void setTestProperty(final String property, final String value) {
-				instance.setProperty(property,value);
-		
-	}
+
+    public static void setTestProperty(final String property, final String value) {
+        instance.setProperty(property, value);
+
+    }
 
     public static boolean getTestPropertyBool(final String property) {
         String testProperty = getTestProperty(property);
         boolean valid = false;
         if (null != testProperty) {
             testProperty = testProperty.toLowerCase();
-            valid = (TRUE.equals(testProperty) || YES.equals(testProperty) || BOOL_FLAG
-                    .equals(testProperty));
+            valid = (TRUE.equals(testProperty) || YES.equals(testProperty) || BOOL_FLAG.equals(testProperty));
         }
         return valid;
     }
@@ -72,9 +65,10 @@ public final class IntegrationTestProperties {
         return testProperties.getProperty(property);
     }
 
-    public void setProperty(String property,String value) {
-         testProperties.setProperty(property,value);
+    public void setProperty(String property, String value) {
+        testProperties.setProperty(property, value);
     }
+
     private IntegrationTestProperties() {
         testProperties = new Properties();
 
@@ -114,8 +108,7 @@ public final class IntegrationTestProperties {
     }
 
     private void copyProperties(Properties srcProp, Properties destProp) {
-        for (Enumeration propertyNames = srcProp.propertyNames(); propertyNames
-                .hasMoreElements();) {
+        for (Enumeration propertyNames = srcProp.propertyNames(); propertyNames.hasMoreElements();) {
             Object key = propertyNames.nextElement();
             Object value = srcProp.get(key);
             if (destProp.containsKey(key)) {
