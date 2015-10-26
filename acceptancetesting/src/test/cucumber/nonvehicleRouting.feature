@@ -1351,3 +1351,5 @@ Feature: Verify a route from A to B for Non-Vehicle
     Examples: 
       | vehicleType | avoidances | routeType |
       | foot        |            | fastest   |
+
+      # Need to add  some scenarios for cycle routes with avoidances
