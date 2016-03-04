@@ -1,35 +1,37 @@
 package com.graphhopper.http;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.routing.util.EdgeFilter;
+import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.storage.index.QueryResult;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class NearestServletTest
 {
@@ -49,6 +51,12 @@ public class NearestServletTest
     private GraphHopper graphHopper;
 
     @Mock
+    private EncodingManager encodingManager;
+
+    @Mock
+    private FlagEncoder flagEncoder;
+
+    @Mock
     QueryResult queryResult;
 
     private Map<String, String[]> requestParameters;
@@ -58,6 +66,7 @@ public class NearestServletTest
     private PrintWriter writer;
 
     private final String[] SINGLE_POINT = { "50.728198,-3.534516" };
+    private final String[] SINGLE_VEHICLE = { "car" };
     private final String[] INVALID_TOO_MANY_POINTS = { "50.728198,-3.534516", "50.726807,-3.530156" };
 
     @Before
@@ -82,6 +91,9 @@ public class NearestServletTest
         writer = new PrintWriter("httpServletResponseContents");
         when(httpServletResponse.getWriter()).thenReturn(writer);
         when(graphHopper.hasElevation()).thenReturn(false);
+        when(graphHopper.getEncodingManager()).thenReturn(encodingManager);
+        when(encodingManager.getEncoder("car")).thenReturn(flagEncoder);
+        when(flagEncoder.toString()).thenReturn("car");
     }
 
     @After
@@ -123,6 +135,33 @@ public class NearestServletTest
         when(queryResult.isValid()).thenReturn(false);
 
         nearestServlet.doGet(httpServletRequest, httpServletResponse);
+        ArgumentCaptor<EdgeFilter> argument = ArgumentCaptor.forClass(EdgeFilter.class);
+        verify(locationIndex).findClosest(anyDouble(), anyDouble(), argument.capture());
+        assertTrue("com.graphhopper.routing.util.EdgeFilter", argument.getValue().toString().startsWith("com.graphhopper.routing.util.EdgeFilter"));
+
+
+        writer.flush();
+        assertTrue(FileUtils.readFileToString(new File("httpServletResponseContents"), "UTF-8")
+                .contains("Nearest point cannot be found!"));
+    }
+
+    @Test
+    public void testDoGetHttpServletRequestHttpServletResponseWithOnePointAndVehicle()
+            throws ServletException, IOException
+    {
+
+        requestParameters.put("point", SINGLE_POINT);
+        requestParameters.put("vehicle", SINGLE_VEHICLE);
+        when(httpServletRequest.getParameterMap()).thenReturn(requestParameters);
+        when(graphHopper.getLocationIndex()).thenReturn(locationIndex);
+        when(locationIndex.findClosest(anyDouble(), anyDouble(), any(EdgeFilter.class)))
+                .thenReturn(queryResult);
+        when(queryResult.isValid()).thenReturn(false);
+
+        nearestServlet.doGet(httpServletRequest, httpServletResponse);
+        ArgumentCaptor<EdgeFilter> argument = ArgumentCaptor.forClass(EdgeFilter.class);
+        verify(locationIndex).findClosest(anyDouble(), anyDouble(), argument.capture());
+        assertEquals("car, in:true, out:true", argument.getValue().toString());
 
         writer.flush();
         assertTrue(FileUtils.readFileToString(new File("httpServletResponseContents"), "UTF-8")

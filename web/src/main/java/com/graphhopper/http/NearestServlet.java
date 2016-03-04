@@ -17,26 +17,11 @@
  */
 package com.graphhopper.http;
 
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
-
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
+import com.graphhopper.routing.util.DefaultEdgeFilter;
 import com.graphhopper.routing.util.EdgeFilter;
+import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.storage.index.LocationIndex;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.DistanceCalc;
@@ -44,6 +29,21 @@ import com.graphhopper.util.Helper;
 import com.graphhopper.util.shapes.GHPoint;
 import com.graphhopper.util.shapes.GHPoint3D;
 import com.graphhopper.util.shapes.GHResponseCoordinateTransformer;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 /**
  * @author svantulden
@@ -62,27 +62,35 @@ public class NearestServlet extends GHBaseServlet
 		GHResponse ghRsp = null;
 		Map<String, Object> map = new HashMap<>();
 		GHResponseCoordinateTransformer transformer = null;
-		try
-		{
-			ApiResource.NEAREST.checkAllRequestParameters(httpReq);
-			String srs = getParam(httpReq, "srs", defaultSRS);
-			String outputSrs = getParam(httpReq, "output_srs", srs);
+		try {
+            ApiResource.NEAREST.checkAllRequestParameters(httpReq);
+            String srs = getParam(httpReq, "srs", defaultSRS);
+            String outputSrs = getParam(httpReq, "output_srs", srs);
+            String vehicleStr = getParam(httpReq, "vehicle", null);
 
-			List<GHPoint> infoPoints = getPoints(httpReq, "point");
-			if (infoPoints.size() > 1)
-			{
-				throw new InvalidParameterException(
-				        "Only one point should be specified and it must be a comma separated coordinate in "
-				        + srs
-				        + " projection.");
-			}
-			
-			boolean enabledElevation = getBooleanParam(httpReq, "elevation", false);
-			transformer = new GHResponseCoordinateTransformer(outputSrs);
+            List<GHPoint> infoPoints = getPoints(httpReq, "point");
+            if (infoPoints.size() > 1) {
+                throw new InvalidParameterException(
+                        "Only one point should be specified and it must be a comma separated coordinate in "
+                                + srs
+                                + " projection.");
+            }
 
-			GHPoint place = infoPoints.get(0);
-			LocationIndex index = hopper.getLocationIndex();
-			QueryResult qr = index.findClosest(place.lat, place.lon, EdgeFilter.ALL_EDGES);
+            boolean enabledElevation = getBooleanParam(httpReq, "elevation", false);
+            transformer = new GHResponseCoordinateTransformer(outputSrs);
+
+            GHPoint place = infoPoints.get(0);
+            LocationIndex index = hopper.getLocationIndex();
+            EdgeFilter filter;
+            if (null != vehicleStr) {
+                FlagEncoder algoVehicle = hopper.getEncodingManager()
+                    .getEncoder(vehicleStr);
+                filter = new DefaultEdgeFilter(algoVehicle, true, true);
+            } else {
+                filter = EdgeFilter.ALL_EDGES;
+            }
+
+			QueryResult qr = index.findClosest(place.lat, place.lon, filter);
 			if (!qr.isValid())
 			{
 				map.put("error", "Nearest point cannot be found!");
