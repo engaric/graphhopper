@@ -1,15 +1,15 @@
 package com.graphhopper.reader;
 
-import java.util.Collection;
-
 import com.graphhopper.routing.util.TurnCostEncoder;
 import com.graphhopper.util.EdgeExplorer;
 
+import java.util.Collection;
+
 public interface TurnRelation {
 
-	public abstract long getOsmIdFrom();
+	long getOsmIdFrom();
 
-	public abstract long getOsmIdTo();
+	long getOsmIdTo();
 
 	/**
 	 * transforms this relation into a collection of node cost entries
@@ -18,7 +18,7 @@ public interface TurnRelation {
 	 * @param edgeInExplorer an edge filter which only allows incoming edges
 	 * @return a collection of node cost entries which can be added to the graph later
 	 */
-	public abstract Collection<ITurnCostTableEntry> getRestrictionAsEntries(
+	Collection<ITurnCostTableEntry> getRestrictionAsEntries(
 			TurnCostEncoder encoder, EdgeExplorer edgeOutExplorer,
 			EdgeExplorer edgeInExplorer, DataReader osmReader);
 
