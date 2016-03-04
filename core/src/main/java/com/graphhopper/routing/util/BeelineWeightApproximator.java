@@ -3,7 +3,6 @@ package com.graphhopper.routing.util;
 import com.graphhopper.storage.NodeAccess;
 import com.graphhopper.util.DistanceCalc;
 import com.graphhopper.util.DistanceCalcEarth;
-import com.graphhopper.util.DistancePlaneProjection;
 
 /**
  * Approximates the distance to the goalNode by weighting the beeline distance according to the distance weighting
