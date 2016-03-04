@@ -6,17 +6,16 @@ import com.graphhopper.reader.OSMElement;
 import com.graphhopper.reader.OSMNode;
 import com.graphhopper.reader.OSMRelation;
 import com.graphhopper.reader.OSMWay;
+import gnu.trove.list.TLongList;
 import org.openstreetmap.osmosis.osmbinary.Fileformat;
 import org.openstreetmap.osmosis.osmbinary.Osmformat;
-import gnu.trove.list.TLongList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Converts PBF block data into decoded entities ready to be passed into an Osmosis pipeline. This
