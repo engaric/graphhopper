@@ -1,3 +1,4 @@
+@Vehicle @ITN
 Feature: Verify a route from A to B for Vehicle (Full ITN)
    As a user
    I want to get a route from location A to location B using the routing service

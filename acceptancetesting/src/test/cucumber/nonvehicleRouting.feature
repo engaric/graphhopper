@@ -1,3 +1,4 @@
+@NonVehicle
 Feature: Verify a route from A to B for Non-Vehicle
     As a user
     I want to get a route from location A to location B by Foot using the routing service

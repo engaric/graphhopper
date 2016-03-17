@@ -1,3 +1,4 @@
+@Vehicle @ExeterSample
 Feature: Verify a route from A to B for Vehicle (Exeter Only)
     As a user
     I want to get a route from location A to location B using the routing service

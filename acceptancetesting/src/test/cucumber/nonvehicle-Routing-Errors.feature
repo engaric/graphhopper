@@ -1,3 +1,4 @@
+@NonVehicle
 Feature: Verify Error Messages for non-vehicle Routing service
    As a user
    I want to get a valid Error message and status code for a invalid route request

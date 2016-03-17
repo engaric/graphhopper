@@ -1,3 +1,4 @@
+@NonVehicle
 Feature: Non-Vehicle Routing Smoke Tests
    As a user
    I want to get a route from location A to location B using the routing service
