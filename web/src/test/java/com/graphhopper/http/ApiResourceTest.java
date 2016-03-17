@@ -1,22 +1,19 @@
 package com.graphhopper.http;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.when;
-import static com.graphhopper.http.ApiResource.ROUTE;
-import static com.graphhopper.http.ApiResource.NEAREST;
-import static com.graphhopper.http.ApiResource.INFO;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.graphhopper.http.ApiResource.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 //The values of parameters are immaterial, there are only two classes of equivalence: [nullPointer] and [nonNullString].
 //One distinguishes between 'thenReturn(null)' and 'thenReturn(*nonNullString*)' only.
@@ -156,6 +153,7 @@ public class ApiResourceTest
 		// valid
 		allParameters.put("srs", new String[] { "x" });
 		allParameters.put("output_srs", new String[] {"x"});
+        allParameters.put("vehicle", new String[] {"x"});
 		when(request.getParameterMap()).thenReturn(allParameters);
 		try
 		{
@@ -175,6 +173,7 @@ public class ApiResourceTest
 		// valid
 		allParameters.put("srs", new String[] { "x" });
 		allParameters.put("output_srs", new String[] {"x"});
+        allParameters.put("vehicle", new String[] {"x"});
 		// incorrect
 		allParameters.put("bogus", new String[] { "x" });
 		when(request.getParameterMap()).thenReturn(allParameters);
@@ -187,7 +186,7 @@ public class ApiResourceTest
 		} catch (NoSuchParameterException e)
 		{
 			assertEquals(
-			        "Parameter bogus is not a valid parameter for resource nearest. Valid parameters for requested resource are point, srs, output_srs.",
+			        "Parameter bogus is not a valid parameter for resource nearest. Valid parameters for requested resource are point, srs, output_srs, vehicle.",
 			        e.getMessage());
 		}
 	}

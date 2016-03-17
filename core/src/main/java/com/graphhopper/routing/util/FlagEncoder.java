@@ -88,7 +88,7 @@ public interface FlagEncoder extends TurnCostEncoder
     /**
      * Reports wether this edge is part of a roundabout.
      */
-    static final int K_ROUNDABOUT = 2;
+    int K_ROUNDABOUT = 2;
 
     /**
      * Returns arbitrary boolean value identified by the specified key.
@@ -116,7 +116,7 @@ public interface FlagEncoder extends TurnCostEncoder
     /**
      * Returns true if the feature class is supported like TurnWeighting or PriorityWeighting.
      */
-    public boolean supports( Class<?> feature );
+    boolean supports( Class<?> feature );
 
     /**
      * @return additional cost or warning information for an instruction like ferry or road charges.

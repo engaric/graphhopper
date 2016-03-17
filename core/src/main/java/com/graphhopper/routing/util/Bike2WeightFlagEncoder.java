@@ -18,13 +18,12 @@
  */
 package com.graphhopper.routing.util;
 
-import static com.graphhopper.util.Helper.keepIn;
-
-import com.graphhopper.reader.OSMWay;
 import com.graphhopper.reader.Way;
 import com.graphhopper.util.BitUtil;
 import com.graphhopper.util.EdgeIteratorState;
 import com.graphhopper.util.PointList;
+
+import static com.graphhopper.util.Helper.keepIn;
 
 /**
  * Stores two speed values into an edge to support avoiding too much incline

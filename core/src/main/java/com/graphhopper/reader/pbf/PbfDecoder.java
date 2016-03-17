@@ -2,7 +2,6 @@
 package com.graphhopper.reader.pbf;
 
 import com.graphhopper.reader.OSMElement;
-import java.util.Date;
 
 import java.util.LinkedList;
 import java.util.List;

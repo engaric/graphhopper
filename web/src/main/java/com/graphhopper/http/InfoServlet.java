@@ -17,23 +17,20 @@
  */
 package com.graphhopper.http;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.json.JSONObject;
-
 import com.graphhopper.GraphHopper;
 import com.graphhopper.storage.StorableProperties;
 import com.graphhopper.util.Constants;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.shapes.BBox;
-import com.jcabi.manifests.Manifests;
+import org.json.JSONObject;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Peter Karich
@@ -69,7 +66,7 @@ public class InfoServlet extends GHBaseServlet
 
         json.put("version", Constants.VERSION);
         String versionType = (Constants.SNAPSHOT) ? "!! NON-PRODUCTION RELEASE !!" : "Production";
-        json.put("version.type", versionType);
+        json.put("version_type", versionType);
         
         
         json.put("build_date", Constants.BUILD_DATE);
@@ -77,9 +74,9 @@ public class InfoServlet extends GHBaseServlet
         StorableProperties props = hopper.getGraph().getProperties();
         addIfSet(json, props, "osmreader.import.date", "import_date");
         addIfSet(json, props, "prepare.date");
-        addIfSet(json, props, "itn.data_version");
-        addIfSet(json, props, "hn.data_version");
-        addIfSet(json, props, "dpn.data_version");
+        addIfSet(json, props, "itn.data_version","itn_data_version");
+        addIfSet(json, props, "hn.data_version","hn_data_version");
+        addIfSet(json, props, "dpn.data_version","dpn_data_version");
         addIfSet(json, props, "import_version");
         addIfSet(json, props, "import_version.type");
 

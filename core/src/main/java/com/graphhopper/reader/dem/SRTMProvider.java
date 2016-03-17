@@ -73,7 +73,7 @@ public class SRTMProvider implements ElevationProvider
     private final double precision = 1e7;
     private final double invPrecision = 1 / precision;
     // mirror: base = "http://mirror.ufs.ac.za/datasets/SRTM3/"
-    private String baseUrl = "http://dds.cr.usgs.gov/srtm/version2_1/SRTM3/";
+    private String baseUrl = "http://srtm.motoroute.me/SRTM3/";
     private boolean calcMean = false;
 
     public SRTMProvider()

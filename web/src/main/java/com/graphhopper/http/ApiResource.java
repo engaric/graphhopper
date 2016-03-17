@@ -12,7 +12,7 @@ public enum ApiResource
 	ROUTE("route", new String[] { "point", "vehicle" }, new String[] { "point", "vehicle",
 			"locale", "instructions", "weighting", "algorithm", "points_encoded", "debug",
 			"pretty", "calc_points", "type", "avoidances", "private", "srs", "output_srs" }), NEAREST("nearest",
-					new String[] { "point"}, new String[] { "point", "srs", "output_srs" }), INFO("info", new String[] {},
+					new String[] { "point"}, new String[] { "point", "srs", "output_srs", "vehicle" }), INFO("info", new String[] {},
 							new String[] {"srs"});
 
 	public String[] getMandatoryValues()
