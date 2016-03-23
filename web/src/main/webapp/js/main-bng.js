@@ -409,7 +409,7 @@ function getTopLeftCorners() {
 }
 
 	// The WMTS URL 
-	var url = "https://gwccluster2-env.elasticbeanstalk.com/service/wmts";
+	var url = "https://dte-wmts.eu-west-1.elasticbeanstalk.com/service/wmts";
 
     var osRoad = new L.TileLayer(url + '?height=256&width=256&tilematrixSet=EPSG%3A27700&version=1.0.0&style=&layer=Road%2027700&SERVICE=WMTS&REQUEST=GetTile&format=image/png&TileMatrix=EPSG:27700:{z}&TileRow={y}&TileCol={x}',{
        tileSize: 256,
@@ -440,6 +440,12 @@ function getTopLeftCorners() {
         continuousWorld: true,
         attribution: '&copy; <a href="http://os.uk/">Ordnance Survey</a> '
      });
+
+     var osImagery = new L.TileLayer(url + '?height=256&width=256&tilematrixSet=EPSG%3A27700&version=1.0.0&style=&layer=Imagery%2027700&SERVICE=WMTS&REQUEST=GetTile&format=image/png&TileMatrix=EPSG:27700:{z}&TileRow={y}&TileCol={x}',{
+             tileSize: 256,
+             continuousWorld: true,
+             attribution: '&copy; <a href="http://os.uk/">Ordnance Survey</a> '
+          });
 
     var lyrk = L.tileLayer('https://tiles.lyrk.org/' + tp + '/{z}/{x}/{y}?apikey=6e8cfef737a140e2a58c8122aaa26077', {
         attribution: osmAttr + ', <a href="https://geodienste.lyrk.de/">Lyrk</a>',
@@ -503,7 +509,8 @@ function getTopLeftCorners() {
     	"OS Outdoor": osOutdoor,
     	"OS Light": osLight,
     	"OS Night": osNight,
-    	"OS Leisure": osLeisure
+    	"OS Leisure": osLeisure,
+    	"OS Imagery": osImagery
     };
 
     var defaultLayer = baseMaps[selectLayer];
