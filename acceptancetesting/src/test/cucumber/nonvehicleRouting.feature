@@ -44,7 +44,8 @@ Feature: Verify a route from A to B for Non-Vehicle
     When I request for a route
     Then I should be able to verify the waypoints on the route map:
       | wayPointIndex | waypointco          | waypointdesc              | azimuth | direction | time   | distance | avoidance |
-      | 3             | 53.047941,-1.841795 | Turn right onto Back Lane | 340.0   | N         | 347789 | 483.0    |           |
+      | 3             | 53.047941,-1.841795 | Turn right onto Back Lane | 340.0   | N         | 160171 | 222.5    |           |
+     
 
     Examples: 
       | vehicleType |
@@ -514,7 +515,8 @@ Feature: Verify a route from A to B for Non-Vehicle
     Examples: 
       | vehicleType  |
       | mountainbike |
-
+      
+      
   # ARoad
   @Routing
   Scenario Outline: Verify DPN Route without  avoidance -(A Road )

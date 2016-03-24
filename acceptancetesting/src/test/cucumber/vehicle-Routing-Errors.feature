@@ -430,7 +430,7 @@ Feature: Verify Error Messages for vehicle Routing service
       | car         |            | fastest   | GET        | json           | OK                 | 200        |
       | car         |            | fastest   | OPTIONS    | json           | OK                 | 200        |
 
-  @ErrorMessages  @Current
+  @ErrorMessages  @KnownIssues
   Scenario Outline: Verify  a route for emergencey services on a(Transit through Springfield-private true )
     Given I have route point as
       | pointA              | pointB              |
@@ -447,7 +447,7 @@ Feature: Verify Error Messages for vehicle Routing service
       | errorMessage                             | statusCode |
       | Cannot find point 0: 50.733653,-3.523541 | 400        |
 
-  @ErrorMessages @Current
+  @ErrorMessages @KnownIssues
   Scenario Outline: Verify  a route for non-emergencey services on a(Transit through Springfield-private true )
     Given I have route point as
       | pointA       | pointB       |
