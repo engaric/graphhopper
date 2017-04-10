@@ -25,6 +25,7 @@ import org.apache.http.impl.client.HttpClients;
 
 public class HttpClientUtils {
     private static final String SSL_KEY_FILE = "sslKeyFile";
+    private static final String SSL_KEY_PASS = "sslKeyPass";
     private static HttpClientBuilder builder = null;
 
     static {
@@ -85,12 +86,13 @@ public class HttpClientUtils {
     private static KeyManager[] buildKeyManager(File keyFile) throws KeyStoreException, NoSuchAlgorithmException, CertificateException,
             IOException, UnrecoverableKeyException {
         KeyStore clientStore = KeyStore.getInstance("PKCS12");
+        String keyPass = IntegrationTestProperties.getTestProperty(SSL_KEY_PASS);
         try (final FileInputStream keyStream = new FileInputStream(keyFile)) {
-            clientStore.load(keyStream, "addressapi".toCharArray());
+            clientStore.load(keyStream, keyPass.toCharArray());
         }
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(clientStore, "addressapi".toCharArray());
+        kmf.init(clientStore, keyPass.toCharArray());
         KeyManager[] kms = kmf.getKeyManagers();
         return kms;
     }
