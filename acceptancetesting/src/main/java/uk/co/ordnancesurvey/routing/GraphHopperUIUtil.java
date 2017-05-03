@@ -713,28 +713,23 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 
 	}
 
-	public void getRouteFromServiceWithParameters(StringBuffer sb) {
+	public void getRouteFromServiceWithParameters(StringBuffer sb) throws IOException {
 
 		sendAndGetResponse(sb);
 
 	}
 
-	void sendAndGetResponse(StringBuffer sb) {
+	void sendAndGetResponse(StringBuffer sb) throws IOException {
 		String serviceResponse = "";
-		try {
-			CloseableHttpResponse httpResponse = dispatchServiceRequest(sb
+		CloseableHttpResponse httpResponse = dispatchServiceRequest(sb
 					.toString());
-			serviceResponse = IOUtils.toString(httpResponse.getEntity()
+		serviceResponse = IOUtils.toString(httpResponse.getEntity()
 					.getContent(), "UTF-8");
 
-			final StatusLine statusLine = httpResponse.getStatusLine();
+		final StatusLine statusLine = httpResponse.getStatusLine();
 
-			actualResponseCode = statusLine.getStatusCode();
-			actualResponseMsg = statusLine.getReasonPhrase();
-
-		} catch (IOException e) {
-			LOG.info("Exception raised whilst attempting to call graphhopper server ", e);
-		}
+		actualResponseCode = statusLine.getStatusCode();
+		actualResponseMsg = statusLine.getReasonPhrase();
 
 		if (serviceResponse != null && serviceResponse.length() > 0) {
 
@@ -817,7 +812,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		return httpClient.execute(httpRequest);
 	}
 
-	protected void getRouteFromServiceWithParameters() {
+	protected void getRouteFromServiceWithParameters() throws IOException {
 
 		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {
 			sb.append(IntegrationTestProperties
@@ -1097,7 +1092,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		return requestParameters;
 	}
 
-	public void getNearestPoint(String paramName, String pointA) {
+	public void getNearestPoint(String paramName, String pointA) throws IOException {
 
 		StringBuffer sb = new StringBuffer();
 		if (IntegrationTestProperties.getTestPropertyBool("viaApigee")) {

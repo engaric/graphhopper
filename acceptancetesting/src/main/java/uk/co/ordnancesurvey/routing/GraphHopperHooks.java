@@ -81,7 +81,7 @@ public class GraphHopperHooks {
 
 	@Given("^My routing ([^\"]*) for nearestPoint API as \"([^\"]*)\"$")
 	public void I_have_route_point_for_Nearest_Point_API(String paramName,
-			String pointA) {
+			String pointA) throws IOException {
 		graphUiUtil.getNearestPoint(paramName, pointA);
 
 	}
@@ -206,7 +206,7 @@ public class GraphHopperHooks {
 	}
 
 	@When("^I request for a route$")
-	public void I_request_for_route() {
+	public void I_request_for_route() throws IOException {
 
 		String testON = IntegrationTestProperties.getTestProperty("testON");
 
