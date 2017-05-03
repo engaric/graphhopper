@@ -35,6 +35,7 @@ public class HttpClientUtils {
 
     static {
     	System.setProperty("jsse.enableSNIExtension", "false");
+        System.setProperty("https.protocols","SSLv3");
         createBasicClient();
         try {
             configureOutboundSSL();
