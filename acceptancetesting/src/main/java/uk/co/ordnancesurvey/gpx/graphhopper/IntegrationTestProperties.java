@@ -41,8 +41,8 @@ public final class IntegrationTestProperties {
     }
 
     public static void setTestProperty(final String property, final String value) {
+        loadIfRequired();
         instance.setProperty(property, value);
-
     }
 
     public static boolean getTestPropertyBool(final String property) {

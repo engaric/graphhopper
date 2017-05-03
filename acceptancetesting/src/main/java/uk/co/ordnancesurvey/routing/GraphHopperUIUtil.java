@@ -808,7 +808,7 @@ public class GraphHopperUIUtil extends MultiplatformTest {
 		}
 		// HttpGet httpget = new HttpGet(serviceUrl);
 		addCustomHeaders(httpRequest);
-		LOG.trace("%s %s %s", httpRequest.getMethod(), httpRequest.getURI(), httpRequest.getRequestLine().toString());
+		LOG.trace("{} {} {}", httpRequest.getMethod(), httpRequest.getURI(), httpRequest.getRequestLine().toString());
 
 		return httpClient.execute(httpRequest);
 	}
