@@ -27,6 +27,8 @@ public class HttpClientUtils {
     private static final String SSL_KEY_FILE = "sslKeyFile";
     private static final String SSL_KEY_PASS = "sslKeyPass";
     private static HttpClientBuilder builder = null;
+    private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtils.class);
+
 
     static {
     	System.setProperty("jsse.enableSNIExtension", "false");
@@ -49,6 +51,9 @@ public class HttpClientUtils {
                 } catch (KeyStoreException | UnrecoverableKeyException | CertificateException | IOException e) {
                     e.printStackTrace();
                 }
+            }
+            else {
+                LOG.error("Failed read:" + keyFile.getAbsolutePath());
             }
         }
         SSLContext sslcontext;
