@@ -62,7 +62,8 @@ public final class IntegrationTestProperties {
     }
 
     public String getProperty(String property) {
-        return testProperties.getProperty(property);
+        String property testProperties.getProperty(property);
+        log.trace("Get:" + property + " = " + property);
     }
 
     public void setProperty(String property, String value) {
